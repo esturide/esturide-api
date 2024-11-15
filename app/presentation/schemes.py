@@ -104,7 +104,7 @@ class RideRequest(BaseModel):
 
 
 class RideStatus(BaseModel):
-    validate: bool
+    valid: bool
     cancel: bool
 
 

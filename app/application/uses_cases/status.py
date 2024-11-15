@@ -55,7 +55,7 @@ class DriverStatusCase(EventsStatus):
                     ListRides(
                         rides=[
                             RideStatus(
-                                validate=r.validate,
+                                valid=r.validate,
                                 cancel=r.cancel,
                             ) for r in rides
                         ],
