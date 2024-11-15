@@ -1,0 +1,32 @@
+from typing import Annotated, Tuple, Optional
+
+from fastapi import Depends, File
+from fastapi.security import OAuth2PasswordRequestForm
+
+from app.application.uses_cases.auth import AuthUseCase
+from app.application.uses_cases.ride import RideCase
+from app.application.uses_cases.travel import ScheduleCase
+from app.application.uses_cases.user import UserUseCase
+from app.core.depends import get_user_case, get_auth_case, get_schedule_case, get_ride_case, get_driver_events_case, \
+    get_passenger_events_case
+from app.core.oauth2 import oauth2_scheme
+from app.core.types import Token
+from app.domain.credentials import user_credentials, validate_admin_role, \
+    validate_permission_role, get_user_is_authenticated
+from app.domain.models import User
+
+DependUserManagementCase = Annotated[UserUseCase, Depends(get_user_case)]
+DependAuthCase = Annotated[AuthUseCase, Depends(get_auth_case)]
+DependScheduleCase = Annotated[ScheduleCase, Depends(get_schedule_case)]
+DependRideCase = Annotated[RideCase, Depends(get_ride_case)]
+DependDriverEventsCase = Annotated[RideCase, Depends(get_driver_events_case)]
+DependPassengerEventsCase = Annotated[RideCase, Depends(get_passenger_events_case)]
+
+OAuth2Scheme = Annotated[Token, Depends(oauth2_scheme)]
+OAuth2Form = Annotated[OAuth2PasswordRequestForm, Depends()]
+UserCredentials = Annotated[Tuple[bool, Optional[User]], Depends(user_credentials)]
+AuthUserCredentials = Annotated[User, Depends(get_user_is_authenticated)]
+AdminAuthenticated = Annotated[bool, Depends(validate_admin_role)]
+ManagerAuthenticated = Annotated[bool, Depends(validate_permission_role)]
+
+FileRequest = Annotated[bytes | None, File()]

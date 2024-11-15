@@ -1,0 +1,52 @@
+services:
+  api:
+    build: .
+    container_name: esturide-api
+    hostname: esturide-api
+    image: esturide-api:latest
+    restart: always
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/app
+      - .:/docs
+    depends_on:
+      - db
+    networks:
+      - net
+
+  db:
+    container_name: esturide-db
+    hostname: esturide-db
+    image: neo4j:latest
+    restart: always
+    ports:
+      - "7474:7474"
+      - "7473:7473"
+      - "7687:7687"
+    expose:
+      - 7474
+      - 7687
+    environment:
+      - NEO4J_ACCEPT_LICENSE_AGREEMENT=yes
+      - NEO4J_AUTH=${DB_USERNAME}/${DB_PASSWORD}
+      - NEO4J_apoc_export_file_enabled=true
+      - NEO4J_apoc_import_file_enabled=true
+      - NEO4J_apoc_import_file_use__neo4j__config=true
+      - dbms.connector.bolt.listen_address=:7687
+      - dbms.connector.bolt.advertised_address=:7687
+    volumes:
+      - .:/db_data/data:/data
+      - .:/db_data/logs:/logs
+      - .:/db_data/import:/var/lib/neo4j/import
+      - .:/db_data/plugins:/plugins
+    networks:
+      - net
+
+volumes:
+  db_data:
+  docs:
+
+networks:
+  net:
+    driver: bridge
