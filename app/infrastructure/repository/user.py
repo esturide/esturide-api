@@ -1,4 +1,5 @@
 from datetime import datetime, date
+from typing import Literal
 
 from app.domain.models import User
 
@@ -9,7 +10,7 @@ def convert_date(_date: date) -> datetime:
 
 class UserRepository:
     @staticmethod
-    async def get(**kwargs) -> tuple[False, None] | tuple[True, User]:
+    async def get(**kwargs) -> tuple[Literal[False], None] | tuple[Literal[True], User]:
         user = await User.nodes.get_or_none(**kwargs)
 
         if user is None:
@@ -32,7 +33,7 @@ class UserRepository:
             maternal_surname: str,
             paternal_surname: str,
             curp: str,
-            birth_date: datetime.date,
+            birth_date: date,
             email: str,
             password: str,
     ):
@@ -63,7 +64,7 @@ class UserRepository:
             maternal_surname: str,
             paternal_surname: str,
             curp: str,
-            birth_date: datetime.date,
+            birth_date: date,
             email: str,
             password: str,
     ):

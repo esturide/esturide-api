@@ -108,6 +108,15 @@ class RideStatus(BaseModel):
     cancel: bool
 
 
+class ScheduleStatus(BaseModel):
+    active: bool = False
+    terminate: bool = False
+    cancel: bool = False
+    current_passengers: int
+
+    ride: RideStatus
+
+
 class ListRides(BaseModel):
     rides: List[RideStatus]
     total_passengers: int

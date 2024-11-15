@@ -30,7 +30,7 @@ class RideCase:
             raise HTTPException(status_code=400, detail="The travel has reached the maximum number of occupants")
 
         if any([
-            user.code == passenger.code for passenger in await schedule.user_management_system
+            user.code == passenger.code for passenger in await schedule.users
         ]):
             raise HTTPException(status_code=409, detail="The ride was previously requested")
 

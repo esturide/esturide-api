@@ -9,7 +9,7 @@ from app.core.types import UUID
 from app.domain.models import User
 from app.domain.services.ride import RideService
 from app.domain.services.travel import ScheduleService
-from app.presentation.schemes import RideStatus, ListRides
+from app.presentation.schemes import RideStatus, ListRides, ScheduleStatus
 
 
 def send_data(model: BaseModel) -> str:
@@ -92,9 +92,15 @@ class UserStatusCase(EventsStatus):
                 ride = await self.ride_service.get(schedule, user)
 
                 yield send_data(
-                    RideStatus(
-                        validate=ride.validate,
-                        cancel=ride.cancel,
+                    ScheduleStatus(
+                        active=schedule.active,
+                        terminate=schedule.terminate,
+                        cancel=schedule.cancel,
+                        current_passengers=await schedule.current_passengers,
+                        ride=RideStatus(
+                            validate=ride.validate,
+                            cancel=ride.cancel,
+                        )
                     )
                 )
 

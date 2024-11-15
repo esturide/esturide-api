@@ -5,6 +5,7 @@ from fastapi.security import OAuth2PasswordRequestForm
 
 from app.application.uses_cases.auth import AuthUseCase
 from app.application.uses_cases.ride import RideCase
+from app.application.uses_cases.status import DriverStatusCase, UserStatusCase
 from app.application.uses_cases.travel import ScheduleCase
 from app.application.uses_cases.user import UserUseCase
 from app.core.depends import get_user_case, get_auth_case, get_schedule_case, get_ride_case, get_driver_events_case, \
@@ -19,8 +20,8 @@ DependUserManagementCase = Annotated[UserUseCase, Depends(get_user_case)]
 DependAuthCase = Annotated[AuthUseCase, Depends(get_auth_case)]
 DependScheduleCase = Annotated[ScheduleCase, Depends(get_schedule_case)]
 DependRideCase = Annotated[RideCase, Depends(get_ride_case)]
-DependDriverEventsCase = Annotated[RideCase, Depends(get_driver_events_case)]
-DependPassengerEventsCase = Annotated[RideCase, Depends(get_passenger_events_case)]
+DependDriverEventsCase = Annotated[DriverStatusCase, Depends(get_driver_events_case)]
+DependPassengerEventsCase = Annotated[UserStatusCase, Depends(get_passenger_events_case)]
 
 OAuth2Scheme = Annotated[Token, Depends(oauth2_scheme)]
 OAuth2Form = Annotated[OAuth2PasswordRequestForm, Depends()]
