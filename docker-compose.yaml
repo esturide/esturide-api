@@ -1,19 +1,5 @@
 services:
-  api:
-    build: .
-    container_name: esturide-api
-    hostname: esturide-api
-    image: esturide-api:latest
-    restart: always
-    ports:
-      - "8000:80"
-    volumes:
-      - .:/app
-      - .:/docs
-    depends_on:
-      - db
-    networks:
-      - net
+
 
   db:
     container_name: esturide-db
@@ -40,6 +26,22 @@ services:
       - .:/db_data/logs:/logs
       - .:/db_data/import:/var/lib/neo4j/import
       - .:/db_data/plugins:/plugins
+    networks:
+      - net
+
+  api:
+    build: .
+    container_name: esturide-api
+    hostname: esturide-api
+    image: esturide-api:latest
+    restart: always
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/app
+      - .:/docs
+    depends_on:
+      - db
     networks:
       - net
 
