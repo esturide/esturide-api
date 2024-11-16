@@ -11,6 +11,7 @@ user = APIRouter(
 
 @user.post('/')
 async def create_user(user: UserRequest, user_case: DependUserManagementCase):
+    print("!")
     status = await user_case.create(user)
 
     return {

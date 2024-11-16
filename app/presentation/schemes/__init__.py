@@ -2,7 +2,7 @@ import datetime
 import enum
 from typing import List
 
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, field_validator, EmailStr
 
 from app.core.types import UUID
 
@@ -29,7 +29,7 @@ class UserRequest(BaseModel):
     curp: str
     birth_date: datetime.date
 
-    email: str
+    email: EmailStr
     password: str
 
     @field_validator('birth_date')
