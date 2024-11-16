@@ -13,4 +13,5 @@ python-multipart~=0.0.17
 neo4j~=5.26.0
 neomodel~=5.4.0
 aiofiles~=24.1.0
-mypy~=1.13.0
+
+faker~=33.0.0
