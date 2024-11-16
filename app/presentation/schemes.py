@@ -2,7 +2,7 @@ import datetime
 import enum
 from typing import List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, field_validator
 
 from app.core.types import UUID
 
@@ -31,6 +31,16 @@ class UserRequest(BaseModel):
 
     email: str
     password: str
+
+    @field_validator('birth_date')
+    def check_age(cls, birth_date):
+        today = datetime.date.today()
+        age = today.year - birth_date.year - ((today.month, today.day) < (birth_date.month, birth_date.day))
+
+        if age < 18:
+            raise ValueError('The person must be over 18 years old')
+
+        return birth_date
 
 
 class UserResponse(BaseModel):
