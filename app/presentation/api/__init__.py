@@ -8,5 +8,5 @@ root = APIRouter(
 @root.get('/')
 async def index():
     return {
-        "status": "ok",
+        "msg": "Hello World"
     }
