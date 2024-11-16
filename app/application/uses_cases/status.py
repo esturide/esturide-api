@@ -98,7 +98,7 @@ class UserStatusCase(EventsStatus):
                         cancel=schedule.cancel,
                         current_passengers=await schedule.current_passengers,
                         ride=RideStatus(
-                            validate=ride.validate,
+                            valid=ride.validate,
                             cancel=ride.cancel,
                         )
                     )
