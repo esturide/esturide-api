@@ -3,15 +3,15 @@ import random
 from faker import Faker
 
 
-def random_user_code():
+def random_user_student_code() -> int:
     return random.randint(100000001, 9999999999)
 
 
-def create_dummy_user_data() -> dict:
-    faker = Faker('es_MX')
+def create_dummy_user_data(locale: str = 'es_MX') -> dict:
+    faker = Faker(locale)
 
     return dict(
-        code=random_user_code(),
+        code=random_user_student_code(),
         firstname=faker.name(),
         maternal_surname=faker.last_name(),
         paternal_surname=faker.last_name(),
