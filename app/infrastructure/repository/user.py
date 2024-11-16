@@ -1,11 +1,7 @@
-from datetime import datetime, date
+from datetime import date
 from typing import Literal
 
 from app.domain.models import User
-
-
-def convert_date(_date: date) -> datetime:
-    return datetime.combine(_date.today(), datetime.min.time())
 
 
 class UserRepository:
@@ -43,7 +39,7 @@ class UserRepository:
             maternal_surname=maternal_surname,
             paternal_surname=paternal_surname,
             curp=curp,
-            birth_date=convert_date(birth_date),
+            birth_date=birth_date,
             email=email,
             password=password,
         )
@@ -74,7 +70,7 @@ class UserRepository:
         user.maternal_surname = maternal_surname
         user.paternal_surname = paternal_surname
         user.curp = curp
-        user.birth_date = convert_date(birth_date)
+        user.birth_date = birth_date
         user.email = email
         user.password = password
 
