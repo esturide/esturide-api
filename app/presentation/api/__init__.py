@@ -23,8 +23,6 @@ async def factory_user(user_case: DependUserManagementCase):
     for _ in range(30):
         data = create_dummy_user_data()
 
-        print(data)
-
         await user_case.create(
             UserRequest(**data),
         )
