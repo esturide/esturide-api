@@ -14,4 +14,8 @@ neo4j~=5.26.0
 neomodel~=5.4.0
 aiofiles~=24.1.0
 
+mypy~=1.13.0
 faker~=33.0.0
+pytest~=8.3.3
+pytest-asyncio~=0.24.0
+requests~=2.32.3
