@@ -2,6 +2,9 @@ from pydantic_settings import BaseSettings
 
 
 class DefaultSettings(BaseSettings):
+    api_host: str = 'localhost'
+    api_port: int = 8000
+
     db_name: str
     db_username: str
     db_password: str
