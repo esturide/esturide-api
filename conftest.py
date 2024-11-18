@@ -1,7 +1,7 @@
 import pytest
 import requests
 
-from app.core import settings
+from app.core.conf import settings
 
 
 @pytest.fixture(scope='session', autouse=True)
