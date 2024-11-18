@@ -21,6 +21,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+# Hardcoded code, then we move it.
 origins = [
     "localhost:80",
     "127.0.0.1:8000"
