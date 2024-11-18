@@ -1,6 +1,8 @@
 import pytest
 import requests
 
+from app.core import settings
+
 
 @pytest.fixture(scope='session', autouse=True)
 def hello_world():
@@ -28,7 +30,7 @@ def http_service(docker_ip, docker_services):
 
 @pytest.fixture(scope='session', autouse=True)
 def default_url():
-    return "http://localhost:8000"
+    return f"http://{settings.api_host}:{settings.api_port}"
 
 
 @pytest.fixture(scope='session', autouse=True)
