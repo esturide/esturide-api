@@ -11,8 +11,7 @@ driver = APIRouter(
 
 @driver.post('/')
 async def register_automobile(user: UserRequest):
-    ...
-
+    return {"message" : f"automobile correctly registered"}
 
 @driver.get('/{code}')
 async def get_automobile(code: int):
