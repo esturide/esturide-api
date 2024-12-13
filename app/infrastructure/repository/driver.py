@@ -47,3 +47,16 @@ class DriverRepository:
         await driver.save()
         
         return True, driver
+    
+    @staticmethod
+    async def delete(code: int) -> bool:
+        status, user = await DriverRepository.get_driver_by_code(code)
+
+        if not status:
+            return False
+
+        user.valid_user = False
+        user.role = 'S'
+        await user.save()
+
+        return True
