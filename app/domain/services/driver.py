@@ -1,5 +1,6 @@
 from app.infrastructure.repository.driver import DriverRepository
 from app.presentation.schemes import UserRequest, ProfileUpdateRequest
+from fastapi import HTTPException
 
 
 class DriverService:
@@ -10,7 +11,7 @@ class DriverService:
         return await self.__driver_repository.get_driver_by_code(driver_code)
 
     async def create(self, user_req: UserRequest):
-        return await self.__driver_repository.create(
+        status, user = await self.__driver_repository.create_or_update(
             code=user_req.code,
             firstname=user_req.firstname,
             maternal_surname=user_req.maternal_surname,
@@ -20,23 +21,12 @@ class DriverService:
             email=user_req.email,
             password=user_req.password,
         )
-
-    async def update(self, code: int, driver_req: ProfileUpdateRequest):
-        status, driver = await self.__driver_repository.get_driver_by_code(code)
-
+    
         if not status:
-            return False, None
+            raise HTTPException(status_code=404, detail="User with the given code not found. Driver not created.")
 
-        return await self.__driver_repository.create(
-            code=code,
-            firstname=driver_req.firstname,
-            maternal_surname=driver_req.maternal_surname,
-            paternal_surname=driver_req.paternal_surname,
-            curp=driver_req.curp,
-            birth_date=driver_req.birth_date,
-            email=driver_req.email,
-            password=driver_req.password,
-        )
+        return {"status": "success", "message": "Driver created successfully", "driver_id": user.code}
+
 
     async def delete(self, code: int):
         return await self.__driver_repository.delete(code)
