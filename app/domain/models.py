@@ -1,3 +1,4 @@
+from typing import Required
 from neomodel import AsyncStructuredNode, UniqueIdProperty, StringProperty, DateProperty, EmailProperty, \
     BooleanProperty, IntegerProperty, DateTimeProperty, AsyncStructuredRel, \
     AsyncRelationshipTo, AsyncRelationshipFrom, AsyncOne
@@ -126,3 +127,12 @@ class Schedule(AsyncStructuredNode):
     @property
     async def current_passengers(self):
         return len(await self.passengers.all())
+
+
+class Rating(AsyncStructuredNode):
+    overall = IntegerProperty(required=True, choices=range(1,6))
+    punctuality = IntegerProperty(required=True, choices=range(1,6))
+    driving_behavior = IntegerProperty(required=True, choices=range(1,6))
+
+    passenger = AsyncRelationshipFrom("User", "RATED")
+    schedule = AsyncRelationshipFrom("Schedule", "RATING")
