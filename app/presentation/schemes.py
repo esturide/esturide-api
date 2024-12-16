@@ -2,7 +2,7 @@ import datetime
 import enum
 from typing import List
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.core.types import UUID
 
@@ -125,3 +125,13 @@ class ListRides(BaseModel):
 class AuthTravelRequest(BaseModel):
     user_id: str
     trip_id: str
+
+
+
+class RateRequest(BaseModel):
+    user_id: str
+    schedule_id: str
+    overall: int = Field(..., ge=1, le=5)
+    punctuality: int = Field(..., ge=1, le=5)
+    driving_behavior: int = Field(..., ge=1, le=5)
+
