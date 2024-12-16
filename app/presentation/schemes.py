@@ -120,3 +120,8 @@ class ScheduleStatus(BaseModel):
 class ListRides(BaseModel):
     rides: List[RideStatus]
     total_passengers: int
+
+
+class AuthTravelRequest(BaseModel):
+    user_id: str
+    trip_id: str
