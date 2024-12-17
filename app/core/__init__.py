@@ -1,6 +1,7 @@
 import contextlib
 
 from fastapi import FastAPI
+from fastapi_cors import CORS
 
 from app.core.conf import DefaultSettings, settings
 from app.core.db import connect_db
@@ -18,4 +19,14 @@ async def lifespan(_app: FastAPI):
 app = FastAPI(
     title=DEFAULT_APP_NAME,
     lifespan=lifespan,
+)
+
+origins = ["*"]
+
+app.add_middleware(
+    CORS,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
