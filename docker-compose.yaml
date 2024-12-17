@@ -1,6 +1,5 @@
 services:
 
-
   db:
     container_name: esturide-db
     hostname: esturide-db

@@ -1,7 +1,7 @@
 import contextlib
 
 from fastapi import FastAPI
-from fastapi_cors import CORS
+from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.conf import DefaultSettings, settings
 from app.core.db import connect_db
@@ -24,7 +24,7 @@ app = FastAPI(
 origins = ["*"]
 
 app.add_middleware(
-    CORS,
+    CORSMiddleware,
     allow_origins=origins,
     allow_credentials=True,
     allow_methods=["*"],
