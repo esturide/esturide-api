@@ -22,5 +22,16 @@ primary_region = 'gdl'
   cpus = 1
   memory_mb = 1024
 
-[release]
-  image = "esturide-api:latest"
+[[mounts]]
+  source = "db_data"
+  destination = "/data"
+  source = "logs"
+  destination = "/logs"
+  source = "import"
+  destination = "/var/lib/neo4j/import"
+  source = "plugins"
+  destination = "/plugins"
+
+[experimental]
+  allowed_public_ports = [8000, 7474, 7687]
+  auto_rollback = true
