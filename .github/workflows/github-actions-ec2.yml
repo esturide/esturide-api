@@ -36,5 +36,5 @@ jobs:
           aws_access_key_id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws_secret_access_key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           ssh_key: ${{ secrets.SSH_PRIVATE_KEY }}
-          ec2_instance_id: ${{ secrets.EC2_INSTANCE_ID }}
+          ec2_instance_id: 0ab5fc71a5ae1b919
           docker_compose_file: docker-compose.yml
