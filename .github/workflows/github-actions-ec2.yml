@@ -24,13 +24,6 @@ jobs:
           REMOTE_USER: ${{ secrets.USERNAME }}
           SSH_PRIVATE_KEY: ${{ secrets.EC2_SSH_KEY }}
 
-      - name: Build and push Docker image
-        uses: docker/build-push-action@v2
-        with:
-          context: .
-          push: true
-          tags: esturide-api/esturide-api:latest
-
       - name: Deploy to EC2
         uses: bitovi/github-actions-deploy-docker-to-ec2@v1.0.1
         with:
