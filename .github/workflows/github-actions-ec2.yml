@@ -29,10 +29,6 @@ jobs:
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v3
-        with:
-          context: .
-          push: true
-          tags: esturide-api/esturide-api:latest
 
       - name: Deploy to EC2
         uses: bitovi/github-actions-deploy-docker-to-ec2@v1.0.1
