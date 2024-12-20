@@ -41,6 +41,19 @@ services:
       - .:/docs
     depends_on:
       - db
+      - nginx
+    networks:
+      - net
+
+  nginx:
+    image: nginx:latest
+    container_name: esturide-proxy
+    volumes:
+      - ./.nginx/.nginx.conf:/etc/.nginx/.nginx.conf
+    environment:
+      - PUBLIC_HOST_PROXY_IP=${PUBLIC_HOST_PROXY_IP}
+    ports:
+      - "80:80"
     networks:
       - net
 
