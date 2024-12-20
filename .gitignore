@@ -107,7 +107,6 @@ celerybeat.pid
 # Environments
 .env
 .env.localhost
-.env.debug
 .venv
 env/
 venv/
