@@ -24,10 +24,10 @@ class DriverUseCase:
     async def create(self, driver_req: UserRequest):
         if not driver_req.code > 100000000:
             raise HTTPException(status_code=401, detail="Invalid driver code")
-        response = await self.__driver_service.create(driver_req)
-        return response
 
-        raise HTTPException(status_code=401, detail="Invalid credentials")
+        response = await self.__driver_service.create(driver_req)
+
+        return response
 
     async def delete(self, code: int, uuid_user_code: int):
         if uuid_user_code == code:

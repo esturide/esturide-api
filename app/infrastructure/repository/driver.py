@@ -28,12 +28,9 @@ class DriverRepository:
         email: str,
         password: str,
     ):
-        # Buscar si ya existe el usuario con el mismo código
         user = await User.nodes.get_or_none(code=code)
     
         if user:
-            # Actualiza los datos si el usuario existe
-            print("Se encontró un usuario existente. Actualizando...")
             user.firstname = firstname
             user.maternal_surname = maternal_surname
             user.paternal_surname = paternal_surname
@@ -41,12 +38,10 @@ class DriverRepository:
             user.birth_date = birth_date
             user.email = email
             user.password = password
-            user.role = 'D'  # Forzar el rol a 'D'
+            user.role = 'D'
             await user.save()
             return True, user
         else:
-            # No se encontró el usuario, no se crea uno nuevo
-            print("No se encontró un usuario con el código proporcionado.")
             return False, None
   
         
