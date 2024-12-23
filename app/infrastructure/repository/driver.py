@@ -29,22 +29,23 @@ class DriverRepository:
         password: str,
     ):
         user = await User.nodes.get_or_none(code=code)
-    
-        if user:
-            user.firstname = firstname
-            user.maternal_surname = maternal_surname
-            user.paternal_surname = paternal_surname
-            user.curp = curp
-            user.birth_date = birth_date
-            user.email = email
-            user.password = password
-            user.role = 'D'
-            await user.save()
-            return True, user
-        else:
+
+        if user is None:
             return False, None
-  
-        
+
+        user.firstname = firstname
+        user.maternal_surname = maternal_surname
+        user.paternal_surname = paternal_surname
+        user.curp = curp
+        user.birth_date = birth_date
+        user.email = email
+        user.password = password
+        user.role = 'D'
+
+        await user.save()
+
+        return True, user
+
     @staticmethod
     async def delete(code: int) -> bool:
         status, user = await DriverRepository.get_driver_by_code(code)
