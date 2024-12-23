@@ -13,7 +13,6 @@ class RatingService:
         if user not in await schedule.passengers.all():
             raise ValueError("User did not participate in this trip")
 
-
         if not schedule.terminate:
             raise ValueError("Trip is not completed")
 

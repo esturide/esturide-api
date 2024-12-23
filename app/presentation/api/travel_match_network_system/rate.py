@@ -1,13 +1,13 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Depends
 from app.presentation.schemes import RateRequest
 from app.application.uses_cases.rate import rate_trip
 
 rate = APIRouter(prefix="/rate", tags=["Rating"])
 
 @rate.post("/rate_trip")
-async def rate_travel(request: RateRequest):
+async def rate_travel(request: RateRequest, rate = Depends(rate_trip)):
     try:
-        await rate_trip(
+        await rate(
             user_id = request.user_id,
             schedule_id = request.schedule_id,
             overall = request.overall,
@@ -20,4 +20,3 @@ async def rate_travel(request: RateRequest):
         raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail="An error ocurred")
-
