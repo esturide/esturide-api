@@ -2,7 +2,7 @@ import datetime
 import enum
 from typing import List
 
-from pydantic import BaseModel, field_validator, EmailStr
+from pydantic import BaseModel, Field, field_validator
 
 from app.core.types import UUID
 
@@ -29,7 +29,7 @@ class UserRequest(BaseModel):
     curp: str
     birth_date: datetime.date
 
-    email: EmailStr
+    email: str
     password: str
 
     @field_validator('birth_date')
@@ -130,3 +130,18 @@ class ScheduleStatus(BaseModel):
 class ListRides(BaseModel):
     rides: List[RideStatus]
     total_passengers: int
+
+
+class AuthTravelRequest(BaseModel):
+    user_id: str
+    trip_id: str
+
+
+
+class RateRequest(BaseModel):
+    user_id: str
+    schedule_id: str
+    overall: int = Field(..., ge=1, le=5)
+    punctuality: int = Field(..., ge=1, le=5)
+    driving_behavior: int = Field(..., ge=1, le=5)
+
