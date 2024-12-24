@@ -2,7 +2,7 @@ import datetime
 import enum
 from typing import List
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from app.core.types import UUID
 
