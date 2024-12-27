@@ -20,6 +20,20 @@ class Travel(AsyncStructuredRel):
     time = DateTimeProperty(default_now=True)
 
 
+class Order(AsyncStructuredRel):
+    time = DateTimeProperty(default_now=True)
+
+
+class Transaction(AsyncStructuredRel):
+    time = DateTimeProperty(default_now=True)
+
+
+class Receiver(AsyncStructuredRel):
+    time = DateTimeProperty(default_now=True)
+    accept = StringProperty()
+    status = StringProperty()
+
+
 class User(AsyncStructuredNode):
     ROLES = {
         'S': 'student',
@@ -48,6 +62,10 @@ class User(AsyncStructuredNode):
     cars = AsyncRelationshipTo('Automobile', 'OWNS')
     rides = AsyncRelationshipTo("Schedule", 'RIDE', model=Ride)
     schedules = AsyncRelationshipTo("Schedule", 'TRAVEL', model=Travel)
+
+    payments = AsyncRelationshipTo('Payment', 'ORDER')
+    payouts = AsyncRelationshipTo('Payout', 'TRANSACTION')
+    received = AsyncRelationshipFrom('Payout', 'RECEIVER')
 
     @property
     def is_admin(self):
@@ -136,3 +154,22 @@ class Rating(AsyncStructuredNode):
 
     passenger = AsyncRelationshipFrom("User", "RATED")
     schedule = AsyncRelationshipFrom("Schedule", "RATING")
+
+
+class Payment(AsyncStructuredNode):
+    uuid = UniqueIdProperty(indexed=True)
+
+    amount = IntegerProperty()
+    service = IntegerProperty()
+    status = IntegerProperty()
+
+    wallet = AsyncRelationshipFrom('User', 'ORDER')
+
+
+class Payout(AsyncStructuredNode):
+    uuid = UniqueIdProperty(indexed=True)
+    amount = IntegerProperty(required=True)
+
+    passenger = AsyncRelationshipFrom('User', 'TRANSACTION', model=Transaction)
+    ride = AsyncRelationshipTo('Schedule', 'REGISTER')
+    driver = AsyncRelationshipTo('User', 'RECEIVER', model=Receiver)
