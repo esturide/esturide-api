@@ -606,3 +606,4 @@ FodyWeavers.xsd
 *.json
 
 # End of https://mrkandreev.name/snippets/gitignore-generator/#Python,PyCharm+all,VisualStudio
+.vercel
