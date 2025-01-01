@@ -67,6 +67,7 @@ class User(AsyncStructuredNode):
 
 
 class Automobile(AsyncStructuredNode):
+    code = IntegerProperty(indexed=True, unique_index=True)
     brand = StringProperty(required=True, unique_index=True)
     year = IntegerProperty(required=True)
     model = StringProperty(required=True)
