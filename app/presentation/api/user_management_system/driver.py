@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from app.core.dependencies import DependUserManagementCase, AdminAuthenticated, AuthUserCredentials
 from app.presentation.schemes import UserRequest, ProfileUpdateRequest
 from app.application.uses_cases.driver import DriverUseCase
 
