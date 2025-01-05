@@ -37,7 +37,7 @@ cd esturide-api
 
 Execute the following command in the terminal:
 ```
-docker-compose up --build
+docker compose up --build
 ```
 
 This command will build the Docker image if it doesn't exist and start the service.
@@ -48,8 +48,9 @@ Once the application is running, visit the `/docs` endpoint (e.g., http://localh
 
 ## Docker Commands
 
-- `docker-compose up`: Starts the containers. If the image does not exist, Docker Compose automatically builds it using the `Dockerfile`.
-- `docker-compose up --build`: Forces the build of the image even if it already exists and then starts the container. Useful when you have made changes to the `Dockerfile` or need to rebuild the image for any other reason.
+- `docker compose up`: Starts the containers. If the image does not exist, Docker Compose automatically builds it using the `Dockerfile`.
+- `docker compose up --build`: Forces the build of the image even if it already exists and then starts the container. Useful when you have made changes to the `Dockerfile` or need to rebuild the image for any other reason.
+- `docker system prune -a --volumes`: Force and purge data base.
 
 ## Contributing
 
