@@ -10,8 +10,8 @@ email-validator~=2.2.0
 pyjwt~=2.9.0
 passlib~=1.7.4
 python-multipart~=0.0.17
-neo4j~=5.26.0
-neomodel~=5.4.0
+neo4j~=5.27.0
+neomodel~=5.4.2
 aiofiles~=24.1.0
 
 mypy~=1.13.0
