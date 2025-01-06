@@ -21,5 +21,5 @@ class DefaultSettings(BaseSettings):
         env_file=".env"
     )
 
-c
+
 settings = DefaultSettings()
