@@ -44,7 +44,7 @@ This command will build the Docker image if it doesn't exist and start the servi
 
 ## Usage
 
-Once the application is running, visit the `/docs` endpoint (e.g., http://localhost:8080/docs) to view the Swagger UI documentation, which provides a detailed explanation of each endpoint and the ability to test them directly.
+Once the application is running, visit the `/docs` endpoint (e.g., http://localhost:8000/docs) to view the Swagger UI documentation, which provides a detailed explanation of each endpoint and the ability to test them directly.
 
 ## Docker Commands
 
