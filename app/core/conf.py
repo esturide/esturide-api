@@ -11,7 +11,6 @@ class DefaultSettings(BaseSettings):
     db_password: str
     db_port: int
     db_host: str
-    db_uri: str
     db_url: str
 
     secret_key: str
@@ -22,5 +21,5 @@ class DefaultSettings(BaseSettings):
         env_file=".env"
     )
 
-
+c
 settings = DefaultSettings()
