@@ -1,15 +1,10 @@
-# fly.toml app configuration file generated for esturide-api on 2025-01-06T00:06:40Z
-#
-# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
-#
-
 app = 'esturide-api'
 primary_region = 'gdl'
 
 [build]
 
 [http_service]
-  internal_port = 80
+  internal_port = 8000
   force_https = true
   auto_stop_machines = 'stop'
   auto_start_machines = true
