@@ -145,3 +145,19 @@ class RateRequest(BaseModel):
     punctuality: int = Field(..., ge=1, le=5)
     driving_behavior: int = Field(..., ge=1, le=5)
 
+import datetime
+from pydantic import BaseModel
+
+
+class AutomobileRequest(BaseModel):
+    code: int
+    brand: str
+    year: int
+    model: str
+
+
+class AutomobileResponse(BaseModel):
+    code: int
+    brand: str
+    year: int
+    model: str
