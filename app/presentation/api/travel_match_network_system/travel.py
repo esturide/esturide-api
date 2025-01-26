@@ -1,19 +1,21 @@
+from typing import List
+
 from fastapi import APIRouter, HTTPException
 
 from app.core.dependencies import DependScheduleCase, AuthUserCredentials
 from app.core.types import UUID
-from app.presentation.schemes import ScheduleTravel
+from app.presentation.schemes import ScheduleTravel, TravelResult
 
 travel = APIRouter(prefix="/travel", tags=["Travels"])
 
 
 @travel.get("/search")
-async def search_travel(schedule_case: DependScheduleCase, auth_user: AuthUserCredentials, limit: int = 16):
+async def search_travel(schedule_case: DependScheduleCase, auth_user: AuthUserCredentials, limit: int = 16) -> List[TravelResult]:
     return await schedule_case.get_all_travels(limit)
 
 
 @travel.get("/")
-async def get_all_travels(schedule_case: DependScheduleCase, auth_user: AuthUserCredentials, limit: int = 16):
+async def get_all_travels(schedule_case: DependScheduleCase, auth_user: AuthUserCredentials, limit: int = 16) -> List[TravelResult]:
     return await schedule_case.get_all_travels(limit)
 
 

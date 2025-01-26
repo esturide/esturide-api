@@ -1,6 +1,5 @@
 import datetime
 import enum
-from typing import List
 
 from pydantic import BaseModel, Field, field_validator
 
@@ -100,7 +99,7 @@ class TravelResult(BaseModel):
     active: bool = False
     terminate: bool = False
     cancel: bool = False
-    max_passengers: int = 4
+    max_passengers: int = Field(4, alias='maxPassengers')
 
     driver: DriverProfile
 
@@ -111,25 +110,6 @@ class TravelResult(BaseModel):
 class RideRequest(BaseModel):
     origin: TrackingRecord
     travel_uuid: UUID
-
-
-class RideStatus(BaseModel):
-    valid: bool
-    cancel: bool
-
-
-class ScheduleStatus(BaseModel):
-    active: bool = False
-    terminate: bool = False
-    cancel: bool = False
-    current_passengers: int
-
-    ride: RideStatus
-
-
-class ListRides(BaseModel):
-    rides: List[RideStatus]
-    total_passengers: int
 
 
 class AuthTravelRequest(BaseModel):
