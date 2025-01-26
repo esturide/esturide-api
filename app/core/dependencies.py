@@ -24,7 +24,7 @@ DependScheduleCase = Annotated[ScheduleCase, Depends(get_schedule_case)]
 DependRideCase = Annotated[RideCase, Depends(get_ride_case)]
 DependDriverEventsCase = Annotated[DriverStatusCase, Depends(get_driver_events_case)]
 DependPassengerEventsCase = Annotated[UserStatusCase, Depends(get_passenger_events_case)]
-EventsTestingCase = Annotated[EventsTestingCase, Depends(get_events_testing_case)]
+DependEventsTestingCase = Annotated[EventsTestingCase, Depends(get_events_testing_case)]
 
 OAuth2Scheme = Annotated[Token, Depends(oauth2_scheme)]
 OAuth2Form = Annotated[OAuth2PasswordRequestForm, Depends()]

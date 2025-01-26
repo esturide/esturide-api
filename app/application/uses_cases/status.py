@@ -112,6 +112,7 @@ class UserStatusCase(EventsStatus):
 
 class EventsTestingCase:
     async def echo(self, websocket: WebSocket):
+
         while True:
             received = await websocket.receive()
 

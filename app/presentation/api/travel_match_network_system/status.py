@@ -1,9 +1,9 @@
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter, HTTPException, Query
 from sse_starlette.sse import EventSourceResponse
 from starlette.websockets import WebSocket
 
 from app.core.dependencies import DependDriverEventsCase, DependPassengerEventsCase, AuthUserCredentials, \
-    EventsTestingCase
+    DependEventsTestingCase
 from app.core.types import UUID
 from app.domain.credentials import get_user_credentials_header
 from app.presentation.schemes.status import ListRides, ScheduleStatus
@@ -12,18 +12,36 @@ status = APIRouter(prefix="/status", tags=["Status notify"])
 
 
 @status.websocket("/testing_echo")
-async def ws_echo(websocket: WebSocket, events: EventsTestingCase):
+async def ws_echo(websocket: WebSocket, events: DependEventsTestingCase):
+    await websocket.accept()
     await events.echo(websocket)
 
 
 @status.websocket("/testing_echo_auth")
-async def ws_echo_auth(uuid: UUID, websocket: WebSocket, events: EventsTestingCase):
-    status, user = await get_user_credentials_header(dict(websocket.headers))
+async def ws_echo_auth(websocket: WebSocket, events: DependEventsTestingCase):
+    await websocket.accept(subprotocol="auth-v1")
 
-    if not status:
-        raise HTTPException(status_code=401, detail="Token no found")
+    try:
+        token = await websocket.receive_text()
 
-    await events.echo(websocket)
+        status, user = await get_user_credentials_header({"access_token": f"{token}"})
+
+        if not status:
+            #raise HTTPException(status_code=401, detail="Token no found")
+            await websocket.close(code=1008, reason="Token not found or invalid.")
+            return
+
+        while True:
+            try:
+                await events.echo(websocket)
+            except Exception as e:
+                print(f"WebSocket receive/send error: {e}")
+                break
+
+    except Exception as e:
+        print(f"WebSocket error: {e}")
+    finally:
+        await websocket.close(code=1000, reason="Connection closed normally.")
 
 
 @status.websocket("/driver/{uuid}")
