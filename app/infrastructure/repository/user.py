@@ -1,6 +1,9 @@
 from datetime import date
 from typing import Literal
 
+from app.core.oauth2 import secure_decode
+from app.core.types import Token
+
 from app.domain.models import User
 
 
@@ -21,6 +24,12 @@ class UserRepository:
     @staticmethod
     async def get_user_by_email(email: str):
         return await UserRepository.get(email=email)
+
+    @staticmethod
+    async def get_user_by_token(token: Token):
+        with secure_decode(token) as decoded:
+            if code := decoded.get("code"):
+                return await UserRepository.get_user_by_code(code)
 
     @staticmethod
     async def create(
