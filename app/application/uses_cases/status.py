@@ -116,3 +116,13 @@ class EventsTestingCase:
             received = await websocket.receive()
 
             await websocket.send_text(f"Echo: {received}")
+
+    async def echo_auth(self, websocket: WebSocket):
+        received = await websocket.receive()
+
+        await websocket.send_text(f"Echo: {received}")
+
+        while True:
+            received = await websocket.receive()
+
+            await websocket.send_text(f"Echo: {received}")
