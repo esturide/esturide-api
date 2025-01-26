@@ -1,12 +1,16 @@
 from fastapi import APIRouter
 
+from app.core.enum import Status
+from app.presentation.schemes import StatusMessage
+
 root = APIRouter(
     tags=["Root"]
 )
 
 
-@root.get('/')
+@root.get('/', response_model=StatusMessage)
 async def index():
     return {
-        "msg": "Hello World"
+        'status': Status.success,
+        'message': "Everything works correctly."
     }
