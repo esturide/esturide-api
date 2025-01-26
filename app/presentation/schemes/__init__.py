@@ -137,16 +137,12 @@ class AuthTravelRequest(BaseModel):
     trip_id: str
 
 
-
 class RateRequest(BaseModel):
     user_id: str
     schedule_id: str
     overall: int = Field(..., ge=1, le=5)
     punctuality: int = Field(..., ge=1, le=5)
     driving_behavior: int = Field(..., ge=1, le=5)
-
-import datetime
-from pydantic import BaseModel
 
 
 class AutomobileRequest(BaseModel):
