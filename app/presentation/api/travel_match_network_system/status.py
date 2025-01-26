@@ -16,7 +16,7 @@ async def ws_echo(websocket: WebSocket, events: EventsTestingCase):
     await events.echo(websocket)
 
 
-@status.websocket("/testing_echo")
+@status.websocket("/testing_echo_auth")
 async def ws_echo_auth(uuid: UUID, websocket: WebSocket, events: EventsTestingCase):
     status, user = await get_user_credentials_header(dict(websocket.headers))
 
