@@ -4,7 +4,7 @@ from fastapi import APIRouter, HTTPException
 
 from app.core.dependencies import DependScheduleCase, AuthUserCredentials
 from app.core.types import UUID
-from app.presentation.schemes import ScheduleTravel, TravelResult
+from app.presentation.schemes.travels import ScheduleTravel, TravelResult
 
 travel = APIRouter(prefix="/travel", tags=["Travels"])
 

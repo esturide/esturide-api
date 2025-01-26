@@ -3,7 +3,8 @@ from fastapi import HTTPException
 from app.core.types import UUID
 from app.domain.models import User, Schedule, Record
 from app.domain.services.travel import ScheduleService
-from app.presentation.schemes import TravelResult, DriverProfile, ScheduleTravel, TrackingRecord
+from app.presentation.schemes import DriverProfile
+from app.presentation.schemes.travels import TravelResult, TrackingRecord, ScheduleTravel
 
 
 def create_travel_scheme(schedule: Schedule, driver: User, origin: Record, destination: Record):

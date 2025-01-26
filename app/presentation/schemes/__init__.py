@@ -4,6 +4,7 @@ import enum
 from pydantic import BaseModel, Field, field_validator
 
 from app.core.types import UUID
+from app.presentation.schemes.travels import TrackingRecord
 
 
 class AccessCredential(BaseModel):
@@ -77,34 +78,6 @@ class AutomobileProfile(BaseModel):
     brand: str
     year: str
     model: int
-
-
-class TrackingRecord(BaseModel):
-    location: str = ""
-    latitude: str = "0.000000"
-    longitude: str = "0.000000"
-
-
-class ScheduleTravel(BaseModel):
-    start: TrackingRecord
-    end: TrackingRecord
-    price: int
-    max_passengers: int = 4
-
-
-class TravelResult(BaseModel):
-    uuid: UUID
-
-    price: int
-    active: bool = False
-    terminate: bool = False
-    cancel: bool = False
-    max_passengers: int = Field(4, alias='maxPassengers')
-
-    driver: DriverProfile
-
-    origin: TrackingRecord
-    destination: TrackingRecord
 
 
 class RideRequest(BaseModel):
