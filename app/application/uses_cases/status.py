@@ -1,5 +1,6 @@
 import abc
 import asyncio
+from functools import lru_cache
 
 from fastapi import HTTPException
 from pydantic import BaseModel
@@ -107,3 +108,11 @@ class UserStatusCase(EventsStatus):
                 await asyncio.sleep(5)
 
         return event_generator()
+
+
+class EventsTestingCase:
+    async def echo(self, websocket: WebSocket):
+        while True:
+            received = await websocket.receive()
+
+            await websocket.send_text(f"Echo: {received}")
