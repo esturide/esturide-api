@@ -2,12 +2,23 @@ from fastapi import APIRouter, HTTPException
 from sse_starlette.sse import EventSourceResponse
 from starlette.websockets import WebSocket
 
-from app.core.dependencies import DependDriverEventsCase, DependPassengerEventsCase, AuthUserCredentials
+from app.core.dependencies import DependDriverEventsCase, DependPassengerEventsCase, AuthUserCredentials, \
+    EventsTestingCase
 from app.core.types import UUID
 from app.domain.credentials import get_user_credentials_header
-from app.presentation.schemes.status import RideStatus, ListRides, ScheduleStatus
+from app.presentation.schemes.status import ListRides, ScheduleStatus
 
 status = APIRouter(prefix="/status", tags=["Status notify"])
+
+
+@status.websocket("/testing_echo")
+async def ws_echo(websocket: WebSocket, events: EventsTestingCase):
+    status, user = await get_user_credentials_header(dict(websocket.headers))
+
+    if not status:
+        print("No credentials found")
+
+    await events.echo(websocket)
 
 
 @status.websocket("/driver/{uuid}")
