@@ -1,9 +1,7 @@
 from app.infrastructure.repository.automobile import AutomobileRepository
 from app.presentation.schemes import AutomobileRequest, AutomobileResponse
 from fastapi import HTTPException
-from fastapi import FastAPI, Request  
-from fastapi.responses import JSONResponse
-import app.exception_handler as exc_handler
+import app.core.exception as exc_handler
 
 class AutomobileService:
     def __init__(self):
