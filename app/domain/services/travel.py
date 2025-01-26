@@ -3,7 +3,7 @@ from fastapi import HTTPException
 from app.core.types import UUID
 from app.domain.models import User
 from app.infrastructure.repository.travels import ScheduleRepository, LocationData
-from app.presentation.schemes import ScheduleTravel
+from app.presentation.schemes.travels import ScheduleTravel
 
 
 class ScheduleService:

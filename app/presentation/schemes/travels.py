@@ -1,12 +1,7 @@
 from pydantic import BaseModel, Field
 
 from app.core.types import UUID
-
-
-class TrackingRecord(BaseModel):
-    location: str = ""
-    latitude: str = "0.000000"
-    longitude: str = "0.000000"
+from app.presentation.schemes import DriverProfile, TrackingRecord
 
 
 class ScheduleTravel(BaseModel):
