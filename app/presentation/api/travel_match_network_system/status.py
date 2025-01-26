@@ -13,10 +13,15 @@ status = APIRouter(prefix="/status", tags=["Status notify"])
 
 @status.websocket("/testing_echo")
 async def ws_echo(websocket: WebSocket, events: EventsTestingCase):
+    await events.echo(websocket)
+
+
+@status.websocket("/testing_echo")
+async def ws_echo_auth(uuid: UUID, websocket: WebSocket, events: EventsTestingCase):
     status, user = await get_user_credentials_header(dict(websocket.headers))
 
     if not status:
-        print("No credentials found")
+        raise HTTPException(status_code=401, detail="Token no found")
 
     await events.echo(websocket)
 
