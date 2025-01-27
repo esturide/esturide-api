@@ -1,28 +1,14 @@
-from fastapi import APIRouter, HTTPException, Query
+from fastapi import APIRouter, HTTPException
 from sse_starlette.sse import EventSourceResponse
-from starlette.websockets import WebSocket, WebSocketDisconnect
+from starlette.websockets import WebSocket
 
 from app.core.dependencies import DependDriverEventsCase, DependPassengerEventsCase, AuthUserCredentials, \
-    DependEventsTestingCase, DependEventsSocketCase
-from app.core.types import UUID, Status
+    DependEventsTestingCase
+from app.core.types import UUID
 from app.domain.credentials import get_user_credentials_header
 from app.presentation.schemes.status import ListRides, ScheduleStatus
-from app.presentation.schemes.websocket import StatusMessageWebSocket
 
 status = APIRouter(prefix="/status", tags=["Status notify"])
-
-
-@status.websocket('/echo')
-async def ws_echo_hello_world(websocket: WebSocket, events: DependEventsSocketCase):
-    try:
-        await events.echo(websocket)
-    except HTTPException as e:
-        await websocket.send_json(StatusMessageWebSocket(
-            message=e.detail,
-            status=Status.failure
-        ).model_dump())
-    finally:
-        await websocket.close()
 
 
 @status.websocket("/testing_echo")
@@ -41,7 +27,7 @@ async def ws_echo_auth(websocket: WebSocket, events: DependEventsTestingCase):
         status, user = await get_user_credentials_header({"access_token": f"{token}"})
 
         if not status:
-            #raise HTTPException(status_code=401, detail="Token no found")
+            # raise HTTPException(status_code=401, detail="Token no found")
             await websocket.close(code=1008, reason="Token not found or invalid.")
             return
 
