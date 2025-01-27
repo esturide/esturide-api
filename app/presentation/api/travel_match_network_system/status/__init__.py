@@ -14,7 +14,7 @@ status = APIRouter(prefix="/status", tags=["Status notify"])
 @status.websocket("/testing_echo")
 async def ws_echo(websocket: WebSocket, events: DependEventsTestingCase):
     await websocket.accept()
-    await events.echo(websocket)
+    await events.validate_token(websocket)
 
 
 @status.websocket("/testing_echo_auth")
@@ -33,7 +33,7 @@ async def ws_echo_auth(websocket: WebSocket, events: DependEventsTestingCase):
 
         while True:
             try:
-                await events.echo(websocket)
+                await events.validate_token(websocket)
             except Exception as e:
                 print(f"WebSocket receive/send error: {e}")
                 break

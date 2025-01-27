@@ -18,9 +18,9 @@ async def index():
 
 
 @status_socket.websocket('/echo')
-async def ws_echo(websocket: WebSocket, events: DependEventsSocketCase):
+async def validate_token(websocket: WebSocket, events: DependEventsSocketCase):
     try:
-        await events.echo(websocket)
+        await events.validate_token(websocket)
     except HTTPException as e:
         await websocket.send_json(StatusMessageWebSocket(
             message=e.detail,

@@ -10,7 +10,7 @@ class EventsSocket:
     def __init__(self):
         self.__auth_service = AuthenticationCredentialsService()
 
-    async def echo(self, websocket: WebSocket):
+    async def validate_token(self, websocket: WebSocket):
         await websocket.accept()
 
         data = await websocket.receive_json()
