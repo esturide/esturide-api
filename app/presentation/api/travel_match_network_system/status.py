@@ -1,19 +1,28 @@
 from fastapi import APIRouter, HTTPException, Query
 from sse_starlette.sse import EventSourceResponse
-from starlette.websockets import WebSocket
+from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from app.core.dependencies import DependDriverEventsCase, DependPassengerEventsCase, AuthUserCredentials, \
     DependEventsTestingCase, DependEventsSocketCase
-from app.core.types import UUID
+from app.core.types import UUID, Status
 from app.domain.credentials import get_user_credentials_header
 from app.presentation.schemes.status import ListRides, ScheduleStatus
+from app.presentation.schemes.websocket import StatusMessageWebSocket
 
 status = APIRouter(prefix="/status", tags=["Status notify"])
 
 
 @status.websocket('/echo')
 async def ws_echo_hello_world(websocket: WebSocket, events: DependEventsSocketCase):
-    await events.echo(websocket)
+    try:
+        await events.echo(websocket)
+    except HTTPException as e:
+        await websocket.send_json(StatusMessageWebSocket(
+            message=e.detail,
+            status=Status.failure
+        ).model_dump())
+    finally:
+        await websocket.close()
 
 
 @status.websocket("/testing_echo")

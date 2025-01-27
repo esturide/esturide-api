@@ -1,3 +1,4 @@
+from fastapi import HTTPException
 from starlette.websockets import WebSocket
 
 from app.core.types import Status
@@ -18,11 +19,12 @@ class EventsSocket:
         is_valid = await self.__auth_service.validate(credentials.access_token)
 
         if not is_valid:
-            await websocket.send_json(StatusMessageWebSocket(
-                message="Failure authenticating.",
-                status=Status.failure
-            ).model_dump())
+            raise HTTPException(
+                status_code=401,
+                detail="Invalid access token.",
+            )
 
-            await websocket.close()
-
-        await websocket.send_json(credentials.model_dump())
+        await websocket.send_json(StatusMessageWebSocket(
+            message="Token is valid.",
+            status=Status.success
+        ).model_dump())
