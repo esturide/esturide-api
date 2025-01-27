@@ -18,3 +18,7 @@ class StatusResponseWebSocket(BaseModel, Generic[K]):
 class StatusMessageWebSocket(BaseModel):
     message: str
     status: Status
+
+
+class CommandWebSocket(BaseModel):
+    command: str

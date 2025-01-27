@@ -11,7 +11,7 @@ from app.domain.services.user import AuthenticationCredentialsService
 from app.presentation.schemes import UserResponse
 from app.presentation.schemes.status import RideStatus, ListRides, RidesStatus, PassengerRideStatus, PassengerProfile
 from app.presentation.schemes.websocket import CredentialsAuthenticationWebsocket, StatusMessageWebSocket, \
-    StatusResponseWebSocket
+    StatusResponseWebSocket, CommandWebSocket
 
 
 async def authentication_jwt_websocket(auth: AuthenticationCredentialsService, data):
@@ -70,11 +70,7 @@ class EventsSocketNotifications:
 
 class DriverEventsSocket(EventsSocketNotifications):
     async def notification(self, websocket: WebSocket, uuid: UUID):
-        await get_user_from_token(self.auth_service, await websocket.receive_json())
-
-        status, schedule = await self.schedule_service.get(uuid)
-
-        while True:
+        async def get_ride_status():
             rides = await self.ride_service.get_all_rides(schedule)
             passengers = await schedule.passengers.all()
 
@@ -103,6 +99,13 @@ class DriverEventsSocket(EventsSocketNotifications):
                     }),
                 status=Status.success,
             ).model_dump())
+
+        await get_user_from_token(self.auth_service, await websocket.receive_json())
+
+        status, schedule = await self.schedule_service.get(uuid)
+
+        while True:
+            await get_ride_status()
 
             await asyncio.sleep(5)
 
