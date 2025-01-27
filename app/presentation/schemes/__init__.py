@@ -1,10 +1,23 @@
 import datetime
 import enum
-from typing import List
 
+from typing import List, TypeVar, Generic
 from pydantic import BaseModel, Field, field_validator
 
-from app.core.types import UUID
+from app.core.types import UUID, Status
+
+
+T = TypeVar('T')
+
+
+class StatusResponse(BaseModel, Generic[T]):
+    data: List[T] | T
+    status: Status = Field(..., title="Status response")
+
+
+class StatusMessage(BaseModel):
+    status: Status = Field(..., title="Status response")
+    message: str = Field(..., title="Message response")
 
 
 class AccessCredential(BaseModel):
@@ -144,9 +157,6 @@ class RateRequest(BaseModel):
     overall: int = Field(..., ge=1, le=5)
     punctuality: int = Field(..., ge=1, le=5)
     driving_behavior: int = Field(..., ge=1, le=5)
-
-import datetime
-from pydantic import BaseModel
 
 
 class AutomobileRequest(BaseModel):

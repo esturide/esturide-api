@@ -5,6 +5,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.core.conf import DefaultSettings, settings
 from app.core.db import connect_db
+from app.core.enum import Status
 
 DEFAULT_APP_NAME = "Esturide (μ) API"
 

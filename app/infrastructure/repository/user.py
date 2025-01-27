@@ -3,7 +3,6 @@ from typing import Literal
 
 from app.core.oauth2 import secure_decode
 from app.core.types import Token
-
 from app.domain.models import User
 
 
