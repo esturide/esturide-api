@@ -1,6 +1,7 @@
 from app.infrastructure.repository.automobile import AutomobileRepository
 from app.presentation.schemes import AutomobileRequest, AutomobileResponse
 from fastapi import HTTPException
+import app.core.exception as exc_handler
 
 class AutomobileService:
     def __init__(self):
@@ -9,7 +10,7 @@ class AutomobileService:
     async def get_automobile_by_code(self, code: int):
         automobile = await self.repository.get_automobile_by_code(code)
         if not automobile:
-            raise HTTPException(status_code=404, detail="Automobile not found")
+            raise exc_handler.ResourceNotFoundException()
         return automobile
 
     async def create_automobile(self, automobile_request: AutomobileRequest):
