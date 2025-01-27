@@ -1,6 +1,8 @@
 import dataclasses
 from typing import Tuple, Literal
 
+from neomodel import DoesNotExist
+
 from app.domain.models import Schedule, User, Ride
 
 
@@ -20,7 +22,7 @@ class RideRepository:
             if ride is None:
                 return False, None
 
-        except Ride.DoesNotExist:
+        except DoesNotExist:
             return False, None
         else:
             return True, ride

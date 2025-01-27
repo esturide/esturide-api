@@ -1,7 +1,7 @@
 from typing import Required
 from neomodel import AsyncStructuredNode, UniqueIdProperty, StringProperty, DateProperty, EmailProperty, \
     BooleanProperty, IntegerProperty, DateTimeProperty, AsyncStructuredRel, \
-    AsyncRelationshipTo, AsyncRelationshipFrom, AsyncOne
+    AsyncRelationshipTo, AsyncRelationshipFrom, AsyncOne, AsyncZeroOrOne
 
 
 class RecordTrackingMixin:
@@ -46,8 +46,8 @@ class User(AsyncStructuredNode):
     role = StringProperty(choices=ROLES, default='S')
 
     cars = AsyncRelationshipTo('Automobile', 'OWNS')
-    rides = AsyncRelationshipTo("Schedule", 'RIDE', model=Ride)
-    schedules = AsyncRelationshipTo("Schedule", 'TRAVEL', model=Travel)
+    rides = AsyncRelationshipTo("Schedule", 'RIDE_TO', model=Ride, cardinality=AsyncZeroOrOne)
+    schedules = AsyncRelationshipTo("Schedule", 'DRIVER_TO', model=Travel, cardinality=AsyncOne)
 
     @property
     def is_admin(self):
@@ -99,8 +99,8 @@ class Schedule(AsyncStructuredNode):
     tracking = AsyncRelationshipTo('Record', 'TRACKING')
     destination = AsyncRelationshipFrom('Record', 'END', cardinality=AsyncOne)
 
-    passengers = AsyncRelationshipFrom("User", 'RIDE', model=Ride)
-    driver = AsyncRelationshipFrom("User", 'TRAVEL', model=Travel)
+    passengers = AsyncRelationshipFrom("User", 'RIDE_TO', model=Ride, cardinality=AsyncZeroOrOne)
+    driver = AsyncRelationshipFrom("User", 'DRIVER_TO', model=Travel, cardinality=AsyncOne)
     car = AsyncRelationshipFrom('Automobile', 'DRIVE')
 
     @property

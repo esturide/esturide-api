@@ -1,8 +1,8 @@
 from fastapi import HTTPException, APIRouter
-from starlette.websockets import WebSocket
+from starlette.websockets import WebSocket, WebSocketDisconnect
 
 from app.core.dependencies import DependEventsSocketCase, DependDriverEventsSocketCase, DependPassengerEventsSocketCase
-from app.core.types import Status
+from app.core.types import Status, UUID
 from app.presentation.schemes import StatusMessage
 from app.presentation.schemes.websocket import StatusMessageWebSocket
 
@@ -19,9 +19,12 @@ async def index():
 
 @status_socket.websocket('/token')
 async def validate_token(websocket: WebSocket, events: DependEventsSocketCase):
+    await websocket.accept()
+
     try:
-        await websocket.accept()
         await events.validate_token(websocket)
+    except WebSocketDisconnect:
+        await websocket.close()
     except HTTPException as e:
         await websocket.send_json(StatusMessageWebSocket(
             message=e.detail,
@@ -31,29 +34,44 @@ async def validate_token(websocket: WebSocket, events: DependEventsSocketCase):
         await websocket.close()
 
 
+@status_socket.websocket('/driver/{uuid}')
+async def validate_token(uuid: UUID, websocket: WebSocket, events: DependDriverEventsSocketCase):
+    await websocket.accept()
 
-@status_socket.websocket('/driver')
-async def validate_token(websocket: WebSocket, events: DependDriverEventsSocketCase):
     try:
-        await websocket.accept()
-        await events.notification(websocket)
+        await events.notification(websocket, uuid)
+    except WebSocketDisconnect:
+        await websocket.close()
     except HTTPException as e:
         await websocket.send_json(StatusMessageWebSocket(
             message=e.detail,
+            status=Status.failure
+        ).model_dump())
+    except Exception:
+        await websocket.send_json(StatusMessageWebSocket(
+            message="Maybe something went wrong.",
             status=Status.failure
         ).model_dump())
     finally:
         await websocket.close()
 
 
-@status_socket.websocket('/passenger')
-async def validate_token(websocket: WebSocket, events: DependPassengerEventsSocketCase):
+@status_socket.websocket('/passenger/{uuid}')
+async def validate_token(uuid: UUID, websocket: WebSocket, events: DependPassengerEventsSocketCase):
+    await websocket.accept()
+
     try:
-        await websocket.accept()
-        await events.notification(websocket)
+        await events.notification(websocket, uuid)
+    except WebSocketDisconnect:
+        await websocket.close()
     except HTTPException as e:
         await websocket.send_json(StatusMessageWebSocket(
             message=e.detail,
+            status=Status.failure
+        ).model_dump())
+    except Exception:
+        await websocket.send_json(StatusMessageWebSocket(
+            message="Maybe something went wrong.",
             status=Status.failure
         ).model_dump())
     finally:

@@ -33,7 +33,7 @@ class ScheduleRepository:
     @staticmethod
     async def filter_ordered_time(limit: int = 16) -> List[Tuple[Schedule, Travel, User]]:
         query = f"""
-        MATCH (p: User)-[r: TRAVEL]->(c: Schedule) 
+        MATCH (p: User)-[r: DRIVER_TO]->(c: Schedule) 
             RETURN c, r, p 
             ORDER BY r.time DESC 
             LIMIT {limit}
@@ -49,7 +49,7 @@ class ScheduleRepository:
     @staticmethod
     async def filter_actives(limit: int = 16) -> List[Tuple[Schedule, Travel, User]]:
         query = f"""
-        MATCH (p: User)-[r: TRAVEL]->(c: Schedule) 
+        MATCH (p: User)-[r: DRIVER_TO]->(c: Schedule) 
             WHERE r.active = true 
             RETURN c, r, p 
             ORDER BY r.time DESC 
@@ -66,7 +66,7 @@ class ScheduleRepository:
     @staticmethod
     async def filter_last_travels_by_driver(code: int, limit: int = 16) -> List[Schedule]:
         query = f"""
-        MATCH (p: User)-[r: TRAVEL]->(c: Schedule) 
+        MATCH (p: User)-[r: DRIVER_TO]->(c: Schedule) 
             WHERE p.code = {code} 
             RETURN c
             ORDER BY r.time 

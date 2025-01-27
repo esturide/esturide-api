@@ -45,6 +45,16 @@ class AuthenticationCredentialsService:
 
         return True
 
+    async def get_user_from_token(self, token: Token):
+        if not check_if_expired(token):
+            return False
+
+        with secure_decode(token) as decoded:
+            if code := decoded.get("code"):
+                return await self.__user_repository.get_user_by_code(code)
+
+        return False, None
+
 
 class UserService:
     def __init__(self):

@@ -59,6 +59,11 @@ def secure_decode(token: Token):
             status_code=401,
             detail="Signature verification failed.",
         )
+    except jwt.DecodeError:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid token.",
+        )
 
 
 oauth2_scheme = get_oauth2_token()
