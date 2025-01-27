@@ -25,6 +25,15 @@ async def http_exception_handler(request, exc):
     return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
 
 
+async def invalid_credentials_handler(request, exc):
+    error_response = StatusMessage(
+        status=Status.failure,
+        message="Signature verification failed."
+    )
+
+    return JSONResponse(status_code=200, content=error_response.model_dump())
+
+
 async def global_exception_handler(request, exc):
     return JSONResponse(
         status_code=500,

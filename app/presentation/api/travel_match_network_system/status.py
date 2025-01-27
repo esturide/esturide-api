@@ -3,12 +3,17 @@ from sse_starlette.sse import EventSourceResponse
 from starlette.websockets import WebSocket
 
 from app.core.dependencies import DependDriverEventsCase, DependPassengerEventsCase, AuthUserCredentials, \
-    DependEventsTestingCase
+    DependEventsTestingCase, DependEventsSocketCase
 from app.core.types import UUID
 from app.domain.credentials import get_user_credentials_header
 from app.presentation.schemes.status import ListRides, ScheduleStatus
 
 status = APIRouter(prefix="/status", tags=["Status notify"])
+
+
+@status.websocket('/echo')
+async def ws_echo_hello_world(websocket: WebSocket, events: DependEventsSocketCase):
+    await events.echo(websocket)
 
 
 @status.websocket("/testing_echo")
