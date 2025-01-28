@@ -3,9 +3,12 @@ from functools import lru_cache
 from app.application.uses_cases.auth import AuthUseCase
 from app.application.uses_cases.ride import RideCase
 from app.application.uses_cases.status import DriverStatusCase, UserStatusCase, EventsTestingCase
-from app.application.uses_cases.status.socket import EventsSocket, DriverEventsSocket, PassengerEventsSocket
+from app.application.uses_cases.status.socket import EventsSocket
+from app.application.uses_cases.status.socket.driver import DriverEventsSocket
+from app.application.uses_cases.status.socket.passenger import PassengerEventsSocket
 from app.application.uses_cases.travel import ScheduleCase
 from app.application.uses_cases.user import UserUseCase
+from app.core.manager import SocketConnectionManager
 
 
 @lru_cache
@@ -56,3 +59,8 @@ def get_driver_events_socket():
 @lru_cache
 def get_passenger_events_socket():
     return PassengerEventsSocket()
+
+
+@lru_cache
+def get_socket_connection_manager():
+    return SocketConnectionManager()

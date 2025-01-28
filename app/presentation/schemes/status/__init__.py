@@ -14,8 +14,8 @@ class PassengerProfile(BaseModel):
     code: int
 
     firstname: str
-    maternal_surname: str
-    paternal_surname: str
+    maternal_surname: str = Field(..., alias='maternalSurname')
+    paternal_surname: str = Field(..., alias='paternalSurname')
 
 
 class PassengerRideStatus(RideStatus):
