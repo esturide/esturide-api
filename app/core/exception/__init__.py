@@ -1,6 +1,8 @@
+import typing
+
 
 class ResponseException(Exception):
-    def __init__(self, status_code: int, detail: str):
+    def __init__(self, status_code: int, detail: typing.LiteralString):
         self.status_code = status_code
         self.detail = detail
 
