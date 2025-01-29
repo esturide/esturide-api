@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.core.dependencies import DependUserManagementCase, AdminAuthenticated, AuthUserCredentials
+from app.core.dependencies import DependUserManagementCase, AdminAuthenticated, AuthUserCredentials, OAuth2Scheme, DependAuthCase
 from app.presentation.schemes import UserRequest, ProfileUpdateRequest
 
 user = APIRouter(
@@ -41,3 +41,17 @@ async def delete_user(code: int, user_case: DependUserManagementCase, auth_user:
     return {
         "status": "success" if status else "failure",
     }
+
+@user.post('/check')
+async def check_token(token: OAuth2Scheme, auth: DependAuthCase):
+    status = await auth.check(token)
+
+    if status:
+        return {"status": "success"}
+    else:
+        return {"status": "failed"}
+
+@user.post('/profile')
+async def get_profile(token: OAuth2Scheme, auth: DependAuthCase):
+    return await auth.get_user_profile(token)
+
