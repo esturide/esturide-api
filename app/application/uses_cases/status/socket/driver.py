@@ -8,7 +8,7 @@ from app.presentation.schemes.websocket import StatusResponseWebSocket, StatusMe
 
 
 class DriverEventsSocket(EventsSocketNotifications):
-    async def get_ride_status(self, session: SessionSocket, uuid: UUID):
+    async def ride_status(self, session: SessionSocket, uuid: UUID):
         while True:
             status, schedule = await self.schedule_service.get(uuid)
             rides = await self.ride_service.get_all_rides(schedule)
@@ -57,7 +57,7 @@ class DriverEventsSocket(EventsSocketNotifications):
             status=Status.success
         ))
 
-        send_task = asyncio.create_task(self.get_ride_status(session, uuid))
+        send_task = asyncio.create_task(self.ride_status(session, uuid))
         receive_task = asyncio.create_task(self.tracking_user_gps(session, uuid))
 
         await asyncio.gather(send_task, receive_task)
