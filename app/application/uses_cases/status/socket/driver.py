@@ -8,8 +8,8 @@ from app.presentation.schemes.websocket import StatusResponseWebSocket, StatusMe
 
 
 class DriverEventsSocket(EventsSocketNotifications):
-    async def notification(self, session: SessionSocket, uuid: UUID):
-        async def get_ride_status():
+    async def get_ride_status(self, session: SessionSocket, uuid: UUID):
+        while True:
             status, schedule = await self.schedule_service.get(uuid)
             rides = await self.ride_service.get_all_rides(schedule)
             passengers = await schedule.passengers.all()
@@ -40,8 +40,16 @@ class DriverEventsSocket(EventsSocketNotifications):
                 status=Status.success,
             ))
 
-        async def tracking_user_gps(): ...
+            await asyncio.sleep(1)
 
+    async def tracking_user_gps(self, session: SessionSocket, uuid: UUID):
+        while True:
+            echo = await session.websocket.receive_text()
+            await session.websocket.send_text(f"{echo}")
+
+            await asyncio.sleep(1)
+
+    async def pipeline(self, session: SessionSocket, uuid: UUID):
         await session.get_user_from_token(self.auth_service)
 
         await session.send_model(StatusMessageWebSocket(
@@ -49,11 +57,7 @@ class DriverEventsSocket(EventsSocketNotifications):
             status=Status.success
         ))
 
-        while True:
-            await get_ride_status()     # OUT
-            await tracking_user_gps()   # IN
+        send_task = asyncio.create_task(self.get_ride_status(session, uuid))
+        receive_task = asyncio.create_task(self.tracking_user_gps(session, uuid))
 
-            await asyncio.sleep(5)
-
-    async def tracking(self, session: SessionSocket):
-        user = await session.get_user_from_token(self.auth_service)
+        await asyncio.gather(send_task, receive_task)

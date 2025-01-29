@@ -24,10 +24,11 @@ class SocketConnectionManager:
                 message=e.detail,
                 status=Status.failure
             ).model_dump())
-        except Exception:
+        except Exception as e:
             await websocket.send_json(StatusMessageWebSocket(
                 message="Maybe something went wrong.",
                 status=Status.failure
             ).model_dump())
+            raise e
         finally:
             await websocket.close()
