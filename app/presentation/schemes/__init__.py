@@ -4,6 +4,7 @@ import enum
 from typing import List, TypeVar, Generic
 from pydantic import BaseModel, Field, field_validator
 
+from app.core.enum import RoleUser
 from app.core.types import UUID, Status
 
 
@@ -23,15 +24,6 @@ class StatusMessage(BaseModel):
 class AccessCredential(BaseModel):
     access_token: str
     token_type: str = "bearer"
-
-
-class RoleUser(str, enum.Enum):
-    not_verified = 'not_verified'
-    user = 'user'
-    admin = 'admin'
-    staff = 'staff'
-    student = 'student'
-
 
 class UserRequest(BaseModel):
     code: int

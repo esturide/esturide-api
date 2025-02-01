@@ -25,9 +25,20 @@ async def login(form: OAuth2Form, auth: DependAuthCase) -> AccessCredential:
     )
 
 
-@auth.get("/logout")
+@auth.get("/logout", response_model=StatusMessage)
 async def logout(token: OAuth2Scheme, auth: DependAuthCase):
-    return await auth.logout(token)
+    status = await auth.logout(token)
+
+    if status:
+        return {
+            "status": Status.success,
+            "message": "Loggout successful."
+        }
+
+    return {
+        "status": Status.failure,
+        "message": "Loggout failed."
+    }
 
 
 @auth.post("/check", response_model=StatusMessage)

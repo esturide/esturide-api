@@ -1,7 +1,8 @@
-from typing import Required
 from neomodel import AsyncStructuredNode, UniqueIdProperty, StringProperty, DateProperty, EmailProperty, \
     BooleanProperty, IntegerProperty, DateTimeProperty, AsyncStructuredRel, \
     AsyncRelationshipTo, AsyncRelationshipFrom, AsyncOne, AsyncZeroOrOne
+
+from app.core.enum import RoleUser
 
 
 class RecordTrackingMixin:
@@ -22,9 +23,9 @@ class Travel(AsyncStructuredRel):
 
 class User(AsyncStructuredNode):
     ROLES = {
-        'S': 'student',
+        'P': 'passenger',
         'D': 'driver',
-        'N': 'intern',
+        'N': 'not-verified',
         'F': 'staff',
         'A': 'admin'
     }
@@ -43,7 +44,7 @@ class User(AsyncStructuredNode):
 
     valid_user = BooleanProperty(required=False, default=False)
 
-    role = StringProperty(choices=ROLES, default='S')
+    role = StringProperty(choices=ROLES, default='N')
 
     cars = AsyncRelationshipTo('Automobile', 'OWNS')
     rides = AsyncRelationshipTo("Schedule", 'RIDE_TO', model=Ride, cardinality=AsyncZeroOrOne)
@@ -64,6 +65,13 @@ class User(AsyncStructuredNode):
     @property
     def is_validate(self):
         return self.valid_user
+
+    @property
+    def role_value(self):
+        try:
+            return RoleUser[User.ROLES[self.role]]
+        except KeyError:
+            return RoleUser.not_verified
 
 
 class Automobile(AsyncStructuredNode):
