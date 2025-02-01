@@ -13,7 +13,7 @@ class RideStatus(BaseModel):
 class PassengerProfile(BaseModel):
     code: int
 
-    firstname: str
+    firstname: str = Field(..., alias='firstName')
     maternal_surname: str = Field(..., alias='maternalSurname')
     paternal_surname: str = Field(..., alias='paternalSurname')
 
@@ -33,10 +33,10 @@ class ScheduleStatus(BaseModel):
 
 
 class ListRides(BaseModel):
-    rides: List[RideStatus]
+    rides: List[RideStatus] = Field(..., alias='rides')
     total_passengers: int = Field(..., alias='totalPassengers')
 
 
 class RidesStatus(BaseModel):
-    rides: List[PassengerRideStatus]
+    rides: List[PassengerRideStatus] = Field(..., alias='rides')
     total_passengers: int = Field(..., alias='totalPassengers')
