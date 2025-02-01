@@ -119,3 +119,10 @@ class ScheduleRepository:
             await user.schedules.connect(schedule)
 
         return status, schedule
+
+    @staticmethod
+    async def tracking_user(
+            code: int,
+            tracking: LocationData
+    ):
+        ...

@@ -94,9 +94,9 @@ class AutomobileProfile(BaseModel):
 
 
 class TrackingRecord(BaseModel):
-    location: str = ""
-    latitude: str = "0.000000"
-    longitude: str = "0.000000"
+    location: float = 0
+    latitude: float = 0
+    longitude: float = 0
 
 class RideRequest(BaseModel):
     origin: TrackingRecord
