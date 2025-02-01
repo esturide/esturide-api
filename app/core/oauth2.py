@@ -52,7 +52,17 @@ def secure_decode(token: Token):
     except jwt.ExpiredSignatureError:
         raise HTTPException(
             status_code=401,
-            detail="Invalid authentication credentials",
+            detail="Invalid authentication credentials.",
+        )
+    except jwt.InvalidSignatureError:
+        raise HTTPException(
+            status_code=401,
+            detail="Signature verification failed.",
+        )
+    except jwt.DecodeError:
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid token.",
         )
 
 

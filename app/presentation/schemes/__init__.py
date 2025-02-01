@@ -1,10 +1,23 @@
 import datetime
 import enum
-from typing import List
 
+from typing import List, TypeVar, Generic
 from pydantic import BaseModel, Field, field_validator
 
-from app.core.types import UUID
+from app.core.types import UUID, Status
+
+
+T = TypeVar('T')
+
+
+class StatusResponse(BaseModel, Generic[T]):
+    data: List[T] | T
+    status: Status = Field(..., title="Status response")
+
+
+class StatusMessage(BaseModel):
+    status: Status = Field(..., title="Status response")
+    message: str = Field(..., title="Message response")
 
 
 class AccessCredential(BaseModel):
@@ -81,61 +94,18 @@ class AutomobileProfile(BaseModel):
 
 
 class TrackingRecord(BaseModel):
-    location: str = ""
-    latitude: str = "0.000000"
-    longitude: str = "0.000000"
-
-
-class ScheduleTravel(BaseModel):
-    start: TrackingRecord
-    end: TrackingRecord
-    price: int
-    max_passengers: int = 4
-
-
-class TravelResult(BaseModel):
-    uuid: UUID
-
-    price: int
-    active: bool = False
-    terminate: bool = False
-    cancel: bool = False
-    max_passengers: int = 4
-
-    driver: DriverProfile
-
-    origin: TrackingRecord
-    destination: TrackingRecord
-
+    location: float = 0
+    latitude: float = 0
+    longitude: float = 0
 
 class RideRequest(BaseModel):
     origin: TrackingRecord
     travel_uuid: UUID
 
 
-class RideStatus(BaseModel):
-    valid: bool
-    cancel: bool
-
-
-class ScheduleStatus(BaseModel):
-    active: bool = False
-    terminate: bool = False
-    cancel: bool = False
-    current_passengers: int
-
-    ride: RideStatus
-
-
-class ListRides(BaseModel):
-    rides: List[RideStatus]
-    total_passengers: int
-
-
 class AuthTravelRequest(BaseModel):
     user_id: str
     trip_id: str
-
 
 
 class RateRequest(BaseModel):
@@ -145,3 +115,16 @@ class RateRequest(BaseModel):
     punctuality: int = Field(..., ge=1, le=5)
     driving_behavior: int = Field(..., ge=1, le=5)
 
+
+class AutomobileRequest(BaseModel):
+    code: int
+    brand: str
+    year: int
+    model: str
+
+
+class AutomobileResponse(BaseModel):
+    code: int
+    brand: str
+    year: int
+    model: str

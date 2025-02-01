@@ -9,7 +9,7 @@ from app.core.types import UUID
 from app.domain.models import User
 from app.domain.services.ride import RideService
 from app.domain.services.travel import ScheduleService
-from app.presentation.schemes import RideStatus, ListRides, ScheduleStatus
+from app.presentation.schemes.status import RideStatus, ListRides, ScheduleStatus
 
 
 def send_data(model: BaseModel) -> str:
@@ -52,15 +52,15 @@ class DriverStatusCase(EventsStatus):
                 rides = await self.ride_service.get_all_rides(schedule)
 
                 yield send_data(
-                    ListRides(
-                        rides=[
+                    ListRides(**{
+                        'rides': [
                             RideStatus(
                                 valid=r.validate,
                                 cancel=r.cancel,
                             ) for r in rides
                         ],
-                        total_passengers=await schedule.current_passengers,
-                    )
+                        'totalPassengers': await schedule.current_passengers,
+                    })
                 )
 
                 await asyncio.sleep(5)
@@ -92,18 +92,37 @@ class UserStatusCase(EventsStatus):
                 ride = await self.ride_service.get(schedule, user)
 
                 yield send_data(
-                    ScheduleStatus(
-                        active=schedule.active,
-                        terminate=schedule.terminate,
-                        cancel=schedule.cancel,
-                        current_passengers=await schedule.current_passengers,
-                        ride=RideStatus(
+                    ScheduleStatus(**{
+                        'active': schedule.active,
+                        'terminate': schedule.terminate,
+                        'cancel': schedule.cancel,
+                        'currentPassengers': await schedule.current_passengers,
+                        'ride': RideStatus(
                             valid=ride.validate,
                             cancel=ride.cancel,
                         )
-                    )
+                    })
                 )
 
                 await asyncio.sleep(5)
 
         return event_generator()
+
+
+class EventsTestingCase:
+    async def echo(self, websocket: WebSocket):
+
+        while True:
+            received = await websocket.receive()
+
+            await websocket.send_text(f"Echo: {received}")
+
+    async def echo_auth(self, websocket: WebSocket):
+        received = await websocket.receive()
+
+        await websocket.send_text(f"Echo: {received}")
+
+        while True:
+            received = await websocket.receive()
+
+            await websocket.send_text(f"Echo: {received}")

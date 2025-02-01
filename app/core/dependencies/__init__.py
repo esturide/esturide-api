@@ -6,12 +6,18 @@ from neomodel.sync_.core import Database
 
 from app.application.uses_cases.auth import AuthUseCase
 from app.application.uses_cases.ride import RideCase
-from app.application.uses_cases.status import DriverStatusCase, UserStatusCase
+from app.application.uses_cases.status import DriverStatusCase, UserStatusCase, EventsTestingCase
+from app.application.uses_cases.status.socket import EventsSocket
+from app.application.uses_cases.status.socket.driver import DriverEventsSocket
+from app.application.uses_cases.status.socket.passenger import PassengerEventsSocket
 from app.application.uses_cases.travel import ScheduleCase
 from app.application.uses_cases.user import UserUseCase
 from app.core import connect_db
-from app.core.depends import get_user_case, get_auth_case, get_schedule_case, get_ride_case, get_driver_events_case, \
-    get_passenger_events_case
+from app.core.dependencies.depends import get_user_case, get_auth_case, get_schedule_case, get_ride_case, \
+    get_driver_events_case, \
+    get_passenger_events_case, get_events_testing_case, get_events_socket, get_driver_events_socket, \
+    get_passenger_events_socket, get_socket_connection_manager
+from app.core.manager import SocketConnectionManager
 from app.core.oauth2 import oauth2_scheme
 from app.core.types import Token
 from app.domain.credentials import user_credentials, validate_admin_role, \
@@ -24,6 +30,12 @@ DependScheduleCase = Annotated[ScheduleCase, Depends(get_schedule_case)]
 DependRideCase = Annotated[RideCase, Depends(get_ride_case)]
 DependDriverEventsCase = Annotated[DriverStatusCase, Depends(get_driver_events_case)]
 DependPassengerEventsCase = Annotated[UserStatusCase, Depends(get_passenger_events_case)]
+DependEventsTestingCase = Annotated[EventsTestingCase, Depends(get_events_testing_case)]
+DependEventsSocketCase = Annotated[EventsSocket, Depends(get_events_socket)]
+DependDriverEventsSocketCase = Annotated[DriverEventsSocket, Depends(get_driver_events_socket)]
+DependPassengerEventsSocketCase = Annotated[PassengerEventsSocket, Depends(get_passenger_events_socket)]
+
+DependSocketConnectionManager = Annotated[SocketConnectionManager, Depends(get_socket_connection_manager)]
 
 OAuth2Scheme = Annotated[Token, Depends(oauth2_scheme)]
 OAuth2Form = Annotated[OAuth2PasswordRequestForm, Depends()]
