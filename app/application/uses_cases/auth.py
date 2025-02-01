@@ -1,3 +1,4 @@
+from app.core.exception import UnauthorizedAccessException
 from app.core.types import Token
 from app.domain.services.user import AuthenticationCredentialsService
 from app.infrastructure.repository.user import UserRepository
@@ -20,9 +21,7 @@ class AuthUseCase:
         return token
 
     async def logout(self, token: Token):
-        return {
-            "status": "success",
-        }
+        return False
 
     async def check(self, token: Token):
         return await self.__auth_service.validate(token)
@@ -31,7 +30,7 @@ class AuthUseCase:
         status, user = await UserRepository.get_user_by_token(token)
 
         if not status:
-            return {"status": "failed"}
+            raise UnauthorizedAccessException()
 
         return UserResponse(
             code=user.code,
@@ -39,4 +38,5 @@ class AuthUseCase:
             maternal_surname=user.maternal_surname,
             paternal_surname=user.paternal_surname,
             email=user.email,
+            role=user.role_value,
         )

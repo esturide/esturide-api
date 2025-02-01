@@ -17,12 +17,12 @@ async def create_user(user: UserRequest, user_case: DependUserManagementCase):
     if status:
         return {
             "status": Status.success,
-            "message": "Validate token."
+            "message": "User created successfully."
         }
 
     return {
         "status": Status.failure,
-        "message": "Invalid token."
+        "message": "User could not be created."
     }
 
 
@@ -39,12 +39,12 @@ async def update_user(code: int, user: ProfileUpdateRequest, user_case: DependUs
     if status:
         return {
             "status": Status.success,
-            "message": "Validate token."
+            "message": "User profile updated successfully."
         }
 
     return {
         "status": Status.failure,
-        "message": "Invalid token."
+        "message": "User profile update failed."
     }
 
 
@@ -56,12 +56,12 @@ async def delete_user(code: int, user_case: DependUserManagementCase, auth_user:
     if status:
         return {
             "status": Status.success,
-            "message": "Validate token."
+            "message": "User is deleted."
         }
 
     return {
         "status": Status.failure,
-        "message": "Invalid token."
+        "message": "User is not deleted."
     }
 
 
