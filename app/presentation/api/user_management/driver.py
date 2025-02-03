@@ -1,27 +1,47 @@
-from fastapi import APIRouter, Depends
-from app.core.dependencies import DependUserManagementCase, AdminAuthenticated, AuthUserCredentials
-from app.presentation.schemes import UserRequest, ProfileUpdateRequest
-from app.application.uses_cases.driver import DriverUseCase
+from fastapi import APIRouter
+
+from app.core.dependencies import DependDriverUseCase, AdminAuthenticated, AuthUserCredentials
+from app.core.types import UserCode, Status
+from app.presentation.schemes import UserRequest, StatusMessage
 
 driver = APIRouter(
     prefix="/driver",
     tags=["Driver management"],
 )
 
-def get_driver_case() -> DriverUseCase:
-    return DriverUseCase()
-
-
-@driver.post('/')
-async def create_driver(driver_request: UserRequest, driver_case: DriverUseCase = Depends(get_driver_case)):
+@driver.post('/', response_model=StatusMessage)
+async def create_driver(driver_request: UserRequest, driver_case: DependDriverUseCase):
     response = await driver_case.create(driver_request)
     return response
 
-@driver.get('/{code}')
-async def get_driver(code: int, driver_case: DriverUseCase = Depends(get_driver_case)):
-    return await driver_case.get(code)
 
-@driver.delete('/{code}')
-async def delete_driver(code: int, uuid_user_code: int, driver_case: DriverUseCase = Depends(get_driver_case)):
+@driver.patch('/{code}', response_model=StatusMessage)
+async def set_driver(code: UserCode, driver_case: DependDriverUseCase, auth: AuthUserCredentials, is_admin: AdminAuthenticated):
+    status = await driver_case.set_user_driver(code)
+
+    if status:
+        return {
+            "status": Status.success,
+            "message": f"User Profile {code} has been updated, he is now a driver"
+        }
+
+    return {
+        "status": Status.failure,
+        "message": "Cannot change user profile."
+    }
+
+
+@driver.delete('/{code}', response_model=StatusMessage)
+async def delete_driver(code: UserCode, uuid_user_code: int, driver_case: DependDriverUseCase, is_admin: AdminAuthenticated):
     status = await driver_case.delete(code, uuid_user_code)
-    return {"status": "success" if status else "failure"}
+
+    if status:
+        return {
+            "status": Status.success,
+            "message": "Driver deleted successfully."
+        }
+
+    return {
+        "status": Status.failure,
+        "message": "Driver could not be deleted."
+    }

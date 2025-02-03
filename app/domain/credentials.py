@@ -26,7 +26,7 @@ async def user_is_authenticated(token: Annotated[Token, Depends(oauth2_scheme)])
     if user is not None:
         return user.code
 
-    raise HTTPException(status_code=401, detail="Not authenticated")
+    raise HTTPException(status_code=401, detail="Not authenticated.")
 
 
 async def get_user_is_authenticated(token: Annotated[Token, Depends(oauth2_scheme)]) -> User | None:
@@ -35,7 +35,16 @@ async def get_user_is_authenticated(token: Annotated[Token, Depends(oauth2_schem
     if result:
         return user
 
-    raise HTTPException(status_code=401, detail="Not authenticated")
+    raise HTTPException(status_code=401, detail="Not authenticated.")
+
+
+async def get_username_is_authenticated(token: Annotated[Token, Depends(oauth2_scheme)]) -> User | None:
+    result, user = await user_credentials(token)
+
+    if result:
+        return user
+
+    raise HTTPException(status_code=401, detail="Not authenticated.")
 
 
 async def validate_admin_role(token: Annotated[Token, Depends(oauth2_scheme)]) -> bool | None:
@@ -44,7 +53,7 @@ async def validate_admin_role(token: Annotated[Token, Depends(oauth2_scheme)]) -
     if user is not None:
         return user.is_admin
 
-    raise HTTPException(status_code=401, detail="Not authenticated")
+    raise HTTPException(status_code=401, detail="Not authenticated.")
 
 
 async def validate_permission_role(token: Annotated[Token, Depends(oauth2_scheme)]) -> bool | None:
@@ -53,11 +62,14 @@ async def validate_permission_role(token: Annotated[Token, Depends(oauth2_scheme
     if user is not None:
         return user.is_admin or user.is_staff
 
-    raise HTTPException(status_code=401, detail="Not authenticated")
+    raise HTTPException(status_code=401, detail="Not authenticated.")
 
 
 async def get_user_credentials_header(headers) -> Tuple[Literal[False], None] | Tuple[Literal[True], User]:
     if access_token := headers.get("access_token"):
+        return await user_credentials(access_token)
+
+    if access_token := headers.get("accessToken"):
         return await user_credentials(access_token)
 
     return False, None

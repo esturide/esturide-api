@@ -8,6 +8,7 @@ class DriverRepository:
     async def get(**kwargs) -> tuple[Literal[False] , None ] | tuple[Literal[True], User] :
         kwargs['role'] = 'D'
         user = await User.nodes.get_or_none(**kwargs)
+
         if user is None : 
             return False , None
         

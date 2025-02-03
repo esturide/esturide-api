@@ -9,25 +9,31 @@ class ResponseException(Exception):
 
 class UnauthorizedAccessException(ResponseException):
     def __init__(self):
-        super().__init__(status_code=401, detail="Unauthorized access")
+        super().__init__(status_code=401, detail="Unauthorized access.")
 
 
 class ForbiddenAccessException(ResponseException):
     def __init__(self):
-        super().__init__(status_code=403, detail="Forbidden access")
+        super().__init__(status_code=403, detail="Forbidden access.")
 
 
 class ResourceNotFoundException(ResponseException):
     def __init__(self):
-        super().__init__(status_code=404, detail="Resource not found")
+        super().__init__(status_code=404, detail="Resource not found.")
 
 
 class ValidationException(ResponseException):
-    def __init__(self, detail="Validation error"):
+    def __init__(self, detail="Validation error."):
         super().__init__(status_code=422, detail=detail)
 
 
 class DataAlreadyExistsException(ResponseException):
-    def __init__(self, detail="The data already exists"):
+    def __init__(self, detail="The data already exists."):
         super().__init__(status_code=409, detail=detail)
+        self.detail = detail
+
+
+class InvalidDataException(ResponseException):
+    def __init__(self, detail="Data is invalid."):
+        super().__init__(status_code=400, detail=detail)
         self.detail = detail

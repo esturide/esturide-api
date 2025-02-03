@@ -3,6 +3,7 @@ from app.core.types import Token
 from app.domain.services.user import AuthenticationCredentialsService
 from app.infrastructure.repository.user import UserRepository
 from app.presentation.schemes import UserResponse
+from app.core.data import get_username
 
 
 class AuthUseCase:
@@ -10,11 +11,8 @@ class AuthUseCase:
         self.__auth_service = AuthenticationCredentialsService()
 
     async def login(self, code: int | str, password: str):
-        if isinstance(code, str):
-            code = int(code)
-
         token = await self.__auth_service.authenticate(
-            code,
+            get_username(code),
             password
         )
 

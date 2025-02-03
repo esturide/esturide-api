@@ -8,7 +8,7 @@ from app.presentation.api.travel_match_network.travel import travel
 from app.presentation.api.travel_match_network.auth_travel import auth_travel
 from app.presentation.schemes import StatusMessage
 
-travels_match_network = FastAPI(title="Travel Match Network System (μ) API")
+travels_match_network = FastAPI(title="Travel Match Network (μ) API")
 travels_match_network.include_router(ride)
 travels_match_network.include_router(travel)
 travels_match_network.include_router(status)

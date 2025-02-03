@@ -17,13 +17,13 @@ class AuthenticationCredentialsService:
         if not status:
             raise HTTPException(
                 status_code=401,
-                detail="Invalid authentication credentials",
+                detail="Invalid authentication credentials.",
             )
 
         if user.password != password:
             raise HTTPException(
                 status_code=401,
-                detail="Invalid authentication credentials",
+                detail="Invalid authentication credentials.",
             )
 
         data = {
@@ -72,7 +72,7 @@ class UserService:
             user_req.curp,
             user_req.birth_date,
             user_req.email,
-            user_req.password,
+            user_req.password.get_secret_value(),
         )
 
         return status
@@ -86,7 +86,7 @@ class UserService:
             user_req.curp,
             user_req.birth_date,
             user_req.email,
-            user_req.password,
+            user_req.password.get_secret_value(),
         )
 
         return status, user

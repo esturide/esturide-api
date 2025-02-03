@@ -10,7 +10,7 @@ async def custom_http_exception_handler(request, exc):
         message=str(exc.detail)
     )
 
-    return JSONResponse(status_code=200, content=error_response.model_dump())
+    return JSONResponse(status_code=exc.status_code, content=error_response.model_dump())
 
 
 async def http_exception_handler(request, exc):
@@ -20,7 +20,7 @@ async def http_exception_handler(request, exc):
             message=str(exc.detail)
         )
 
-        return JSONResponse(status_code=200, content=error_response.model_dump())
+        return JSONResponse(status_code=exc.status_code, content=error_response.model_dump())
 
     return JSONResponse(status_code=exc.status_code, content={"detail": exc.detail})
 
@@ -31,7 +31,7 @@ async def invalid_credentials_handler(request, exc):
         message="Signature verification failed."
     )
 
-    return JSONResponse(status_code=200, content=error_response.model_dump())
+    return JSONResponse(status_code=401, content=error_response.model_dump())
 
 
 async def global_exception_handler(request, exc):
