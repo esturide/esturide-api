@@ -2,7 +2,7 @@ from fastapi import APIRouter
 
 from app.core.dependencies import DependUserUseCase, AdminAuthenticated, AuthUserCredentials, OAuth2Scheme, \
     DependAuthCase
-from app.core.types import Status
+from app.core.types import Status, UserCode
 from app.presentation.schemes import UserRequest, ProfileUpdateRequest, StatusMessage, UserResponse
 
 user = APIRouter(
@@ -28,12 +28,12 @@ async def create_user(user: UserRequest, user_case: DependUserUseCase):
 
 
 @user.get('/{code}')
-async def get_user(code: int, user_case: DependUserUseCase) -> UserResponse:
+async def get_user(code: UserCode, user_case: DependUserUseCase) -> UserResponse:
     return await user_case.get(code)
 
 
 @user.put('/{code}', response_model=StatusMessage)
-async def update_user(code: int, user: ProfileUpdateRequest, user_case: DependUserUseCase,
+async def update_user(code: UserCode, user: ProfileUpdateRequest, user_case: DependUserUseCase,
                       auth_user: AuthUserCredentials):
     status = await user_case.update(code, user, auth_user.code)
 
@@ -50,7 +50,7 @@ async def update_user(code: int, user: ProfileUpdateRequest, user_case: DependUs
 
 
 @user.delete('/{code}', response_model=StatusMessage)
-async def delete_user(code: int, user_case: DependUserUseCase, auth_user: AuthUserCredentials,
+async def delete_user(code: UserCode, user_case: DependUserUseCase, auth_user: AuthUserCredentials,
                       is_admin: AdminAuthenticated):
     status = await user_case.delete(code, auth_user.code, is_admin)
 
@@ -64,24 +64,3 @@ async def delete_user(code: int, user_case: DependUserUseCase, auth_user: AuthUs
         "status": Status.failure,
         "message": "User is not deleted."
     }
-
-
-@user.post('/check', response_model=StatusMessage)
-async def check_token(token: OAuth2Scheme, auth: DependAuthCase):
-    status = await auth.check(token)
-
-    if status:
-        return {
-            "status": Status.success,
-            "message": "Validate token."
-        }
-
-    return {
-        "status": Status.failure,
-        "message": "Invalid token."
-    }
-
-
-@user.post('/profile')
-async def get_profile(token: OAuth2Scheme, auth: DependAuthCase) -> UserResponse:
-    return await auth.get_user_profile(token)

@@ -1,7 +1,7 @@
 import datetime
 
 from typing import List, TypeVar, Generic
-from pydantic import BaseModel, Field, field_validator, SecretStr
+from pydantic import BaseModel, Field, field_validator, SecretStr, EmailStr
 
 from app.core.enum import RoleUser
 from app.core.types import UUID, Status, UserCode
@@ -25,10 +25,10 @@ class UserRequest(BaseModel):
     firstname: str
     maternal_surname: str
     paternal_surname: str
-    curp: str
-    birth_date: datetime.date
+    curp: str = Field(..., title="CURP", alias='curp')
+    birth_date: datetime.date = Field(..., title="Birth date", description="The user's birth date")
 
-    email: str
+    email: EmailStr = Field(..., title="Email", alias='email')
     password: SecretStr
 
     @field_validator('birth_date')

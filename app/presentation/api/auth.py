@@ -3,7 +3,7 @@ from passlib.context import CryptContext
 
 from app.core.dependencies import OAuth2Form, DependAuthCase, OAuth2Scheme
 from app.core.types import Status
-from app.presentation.schemes import StatusMessage
+from app.presentation.schemes import StatusMessage, StatusResponse
 from app.presentation.schemes.auth import AccessCredentialForm, AccessCredential, AccessLogin
 
 auth = APIRouter(
@@ -64,4 +64,16 @@ async def check_token(token: OAuth2Scheme, auth: DependAuthCase):
     return {
         "status": Status.failure,
         "message": "Invalid token."
+    }
+
+
+@auth.post("/refresh", response_model=StatusResponse[AccessCredential])
+async def refresh_token(token: OAuth2Scheme, auth: DependAuthCase):
+    token = await auth.refresh(token)
+
+    return {
+        "status": Status.success,
+        "data": AccessCredential(
+            token=token,
+        )
     }

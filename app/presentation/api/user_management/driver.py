@@ -1,28 +1,23 @@
 from fastapi import APIRouter
 
-from app.core.dependencies import DependDriverUseCase, AdminAuthenticated, AuthUserCredentials
+from app.core.dependencies import DependDriverUseCase, AdminAuthenticated, AuthUserCredentials, OAuth2Scheme
 from app.core.types import UserCode, Status
-from app.presentation.schemes import UserRequest, StatusMessage
+from app.presentation.schemes import StatusMessage
 
 driver = APIRouter(
     prefix="/driver",
     tags=["Driver management"],
 )
 
-@driver.post('/', response_model=StatusMessage)
-async def create_driver(driver_request: UserRequest, driver_case: DependDriverUseCase):
-    response = await driver_case.create(driver_request)
-    return response
 
-
-@driver.patch('/{code}', response_model=StatusMessage)
-async def set_driver(code: UserCode, driver_case: DependDriverUseCase, auth: AuthUserCredentials, is_admin: AdminAuthenticated):
-    status = await driver_case.set_user_driver(code)
+@driver.patch('/', response_model=StatusMessage)
+async def set_user_driver(token: OAuth2Scheme, driver_case: DependDriverUseCase):
+    status = await driver_case.set_user_driver(token)
 
     if status:
         return {
             "status": Status.success,
-            "message": f"User Profile {code} has been updated, he is now a driver"
+            "message": f"User Profile has been updated, he is now a driver."
         }
 
     return {
@@ -31,17 +26,17 @@ async def set_driver(code: UserCode, driver_case: DependDriverUseCase, auth: Aut
     }
 
 
-@driver.delete('/{code}', response_model=StatusMessage)
-async def delete_driver(code: UserCode, uuid_user_code: int, driver_case: DependDriverUseCase, is_admin: AdminAuthenticated):
-    status = await driver_case.delete(code, uuid_user_code)
+@driver.get('/{code}', response_model=StatusMessage)
+async def validate_driver(code: UserCode, driver_case: DependDriverUseCase):
+    status = await driver_case.check_user_driver(code)
 
     if status:
         return {
             "status": Status.success,
-            "message": "Driver deleted successfully."
+            "message": "User is valid to drive."
         }
 
     return {
         "status": Status.failure,
-        "message": "Driver could not be deleted."
+        "message": "User is not valid to drive."
     }

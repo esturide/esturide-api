@@ -7,7 +7,6 @@ from app.core.exception.handler import custom_http_exception_handler, http_excep
 from app.core.exception import ResponseException
 from app.presentation.api import root
 from app.presentation.api.auth import auth
-from app.presentation.api.user_credentials import user_credentials
 from app.presentation.api.user_management import user_management
 from app.presentation.api.travel_match_network import travels_match_network
 
@@ -22,6 +21,5 @@ for _app in [app, user_management, travels_match_network]:
 app.include_router(root)
 app.include_router(auth)
 
-app.mount("/user-credentials", user_credentials)
 app.mount("/user-management", user_management)
 app.mount("/travel-match-network", travels_match_network)
