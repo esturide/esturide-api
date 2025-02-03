@@ -1,7 +1,8 @@
 import contextlib
 
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.cors import CORSMiddleware
+from starlette.middleware.gzip import GZipMiddleware
 
 from app.core.conf import DefaultSettings, settings
 from app.core.db import connect_db
@@ -22,16 +23,19 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Hardcoded code, then we move it.
-origins = [
-    "localhost:80",
-    "127.0.0.1:8000"
-]
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=[
+        "localhost:80",
+        "127.0.0.1:8000"
+    ],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
+)
+
+app.add_middleware(
+    GZipMiddleware,
+    minimum_size=1000,
+    compresslevel=5
 )

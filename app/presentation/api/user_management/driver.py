@@ -1,27 +1,42 @@
-from fastapi import APIRouter, Depends
-from app.core.dependencies import DependUserManagementCase, AdminAuthenticated, AuthUserCredentials
-from app.presentation.schemes import UserRequest, ProfileUpdateRequest
-from app.application.uses_cases.driver import DriverUseCase
+from fastapi import APIRouter
+
+from app.core.dependencies import DependDriverUseCase, AdminAuthenticated, AuthUserCredentials, OAuth2Scheme
+from app.core.types import UserCode, Status
+from app.presentation.schemes import StatusMessage
 
 driver = APIRouter(
     prefix="/driver",
     tags=["Driver management"],
 )
 
-def get_driver_case() -> DriverUseCase:
-    return DriverUseCase()
+
+@driver.patch('/', response_model=StatusMessage)
+async def set_user_driver(token: OAuth2Scheme, driver_case: DependDriverUseCase):
+    status = await driver_case.set_user_driver(token)
+
+    if status:
+        return {
+            "status": Status.success,
+            "message": f"User Profile has been updated, he is now a driver."
+        }
+
+    return {
+        "status": Status.failure,
+        "message": "Cannot change user profile."
+    }
 
 
-@driver.post('/')
-async def create_driver(driver_request: UserRequest, driver_case: DriverUseCase = Depends(get_driver_case)):
-    response = await driver_case.create(driver_request)
-    return response
+@driver.get('/{code}', response_model=StatusMessage)
+async def validate_driver(code: UserCode, driver_case: DependDriverUseCase):
+    status = await driver_case.check_user_driver(code)
 
-@driver.get('/{code}')
-async def get_driver(code: int, driver_case: DriverUseCase = Depends(get_driver_case)):
-    return await driver_case.get(code)
+    if status:
+        return {
+            "status": Status.success,
+            "message": "User is valid to drive."
+        }
 
-@driver.delete('/{code}')
-async def delete_driver(code: int, uuid_user_code: int, driver_case: DriverUseCase = Depends(get_driver_case)):
-    status = await driver_case.delete(code, uuid_user_code)
-    return {"status": "success" if status else "failure"}
+    return {
+        "status": Status.failure,
+        "message": "User is not valid to drive."
+    }
