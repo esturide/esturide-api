@@ -49,7 +49,7 @@ class UserResponse(BaseModel):
     maternal_surname: str
     paternal_surname: str
 
-    email: str
+    email: EmailStr = Field(..., title="Email", alias='email')
 
     role: RoleUser = RoleUser.not_verified
 
@@ -61,7 +61,7 @@ class ProfileUpdateRequest(BaseModel):
     curp: str
     birth_date: datetime.date
 
-    email: str
+    email: EmailStr = Field(..., title="Email", alias='email')
     password: SecretStr
 
 

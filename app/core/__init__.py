@@ -5,7 +5,7 @@ from starlette.middleware.cors import CORSMiddleware
 from starlette.middleware.gzip import GZipMiddleware
 
 from app.core.conf import DefaultSettings, settings
-from app.core.db import connect_db
+from app.core.database.neo4j import connect_db
 from app.core.enum import Status
 
 DEFAULT_APP_NAME = "Esturide (μ) API"
