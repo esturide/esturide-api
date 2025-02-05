@@ -2,7 +2,8 @@ from fastapi import HTTPException
 
 from app.core.enum import RoleUser
 from app.core.types import Token, UserCode
-from app.domain.services.user import UserService, AuthenticationCredentialsService
+from app.domain.services.auth import AuthenticationCredentialsService
+from app.domain.services.user import UserService
 from app.infrastructure.repository.user import UserRepository
 from app.presentation.schemes import UserRequest, UserResponse, ProfileUpdateRequest
 

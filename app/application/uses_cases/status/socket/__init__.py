@@ -1,6 +1,6 @@
 from app.core.manager import SessionSocket
 from app.core.types import Status
-from app.domain.services.user import AuthenticationCredentialsService
+from app.domain.services.auth import AuthenticationCredentialsService
 from app.presentation.schemes.websocket import StatusMessageWebSocket
 
 
