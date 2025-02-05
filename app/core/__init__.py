@@ -14,15 +14,12 @@ DEFAULT_APP_NAME = "Esturide (μ) API"
 
 @contextlib.asynccontextmanager
 async def lifespan(_app: FastAPI):
-    # connect_db(settings)
-
     db = get_db()
     redis = get_cache()
 
     yield
 
-    redis.close()
-    await redis.wait_closed()
+    await redis.quit()
 
 
 app = FastAPI(
