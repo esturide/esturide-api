@@ -2,8 +2,8 @@ from datetime import date
 from typing import Literal
 
 from app.core.encrypt import salty_password
-from app.core.oauth2 import secure_decode
-from app.core.types import Token, UserCode, UUID
+from app.core.oauth2 import secure_decode, get_code_from_token
+from app.core.types import Token, UserCode
 from app.domain.models import User
 
 
@@ -24,9 +24,9 @@ class UserRepository:
 
     @staticmethod
     async def get_user_by_token(token: Token):
-        with secure_decode(token) as decoded:
-            if code := decoded.get("code"):
-                return await UserRepository.get_user_by_code(code)
+        return await UserRepository.get_user_by_code(
+            get_code_from_token(token)
+        )
 
     @staticmethod
     async def user_exist_by_email(email: str):

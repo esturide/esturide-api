@@ -4,7 +4,7 @@ from app.core.manager.socket import SessionSocket
 from app.core.types import UUID
 from app.domain.services.ride import RideService
 from app.domain.services.travel import ScheduleService
-from app.domain.services.user import AuthenticationCredentialsService
+from app.domain.services.auth import AuthenticationCredentialsService
 
 
 class EventsSocketNotifications:

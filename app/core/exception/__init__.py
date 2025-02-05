@@ -37,3 +37,9 @@ class InvalidDataException(ResponseException):
     def __init__(self, detail="Data is invalid."):
         super().__init__(status_code=400, detail=detail)
         self.detail = detail
+
+
+class FailureSaveDataException(ResponseException):
+    def __init__(self, detail="Could not save data."):
+        super().__init__(status_code=400, detail=detail)
+        self.detail = detail

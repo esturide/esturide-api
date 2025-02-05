@@ -6,7 +6,7 @@ from fastapi import HTTPException
 from fastapi.security import OAuth2PasswordBearer
 
 from app.core import settings
-from app.core.types import Token
+from app.core.types import Token, UserCode
 
 
 def create_oauth2_token(url="/auth/"):
@@ -64,6 +64,12 @@ def secure_decode(token: Token):
             status_code=400,
             detail="Invalid token.",
         )
+
+
+def get_code_from_token(token: Token) -> UserCode:
+    with secure_decode(token) as decoded:
+        if code := decoded.get("code"):
+            return code
 
 
 oauth2_scheme = get_oauth2_token()

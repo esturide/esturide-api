@@ -1,6 +1,5 @@
 from app.infrastructure.repository.driver import DriverRepository
-from app.presentation.schemes import UserRequest, ProfileUpdateRequest
-from fastapi import HTTPException
+from app.presentation.schemes import UserRequest
 
 
 class DriverService:

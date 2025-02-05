@@ -3,7 +3,7 @@ import typing
 from fastapi import WebSocket, HTTPException
 
 from app.domain.models import User
-from app.domain.services.user import AuthenticationCredentialsService
+from app.domain.services.auth import AuthenticationCredentialsService
 from app.presentation.schemes.websocket import CredentialsAuthenticationWebsocket
 
 C = typing.TypeVar("C")
