@@ -2,7 +2,6 @@ from typing import Annotated, Tuple, Optional
 
 from fastapi import Depends, File
 from fastapi.security import OAuth2PasswordRequestForm
-from neomodel.sync_.core import Database
 
 from app.application.uses_cases.auth import AuthUseCase
 from app.application.uses_cases.automobile import AutomobileUseCase
@@ -14,7 +13,6 @@ from app.application.uses_cases.status.socket.driver import DriverEventsSocket
 from app.application.uses_cases.status.socket.passenger import PassengerEventsSocket
 from app.application.uses_cases.travel import ScheduleCase
 from app.application.uses_cases.user import UserUseCase
-from app.core import connect_db
 from app.core.dependencies.depends import get_user_case, get_auth_case, get_schedule_case, get_ride_case, \
     get_driver_events_case, \
     get_passenger_events_case, get_events_testing_case, get_events_socket, get_driver_events_socket, \
@@ -48,7 +46,5 @@ UserCredentials = Annotated[Tuple[bool, Optional[User]], Depends(user_credential
 AuthUserCredentials = Annotated[User, Depends(get_user_is_authenticated)]
 AdminAuthenticated = Annotated[bool, Depends(validate_admin_role)]
 ManagerAuthenticated = Annotated[bool, Depends(validate_permission_role)]
-
-DataBaseDepend = Annotated[Database, Depends(connect_db)]
 
 FileRequest = Annotated[bytes | None, File()]
