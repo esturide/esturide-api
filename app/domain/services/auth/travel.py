@@ -1,4 +1,4 @@
-from app.infrastructure.repository.auth_travel import TravelRepository
+from app.infrastructure.repository.auth.travel import TravelRepository
 
 
 class AuthService:

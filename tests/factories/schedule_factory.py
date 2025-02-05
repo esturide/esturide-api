@@ -1,6 +1,8 @@
 from faker import Faker
-from app.domain.models import Schedule, Record, User
+from app.domain.models import Schedule, User
 import random
+
+from app.domain.types import LocationData
 
 fake = Faker()
 
@@ -19,11 +21,12 @@ async def create_user_factory(role="S"):
     return user
 
 async def create_record_factory():
-    record = await Record(
-        location=fake.city(),
-        latitude=str(fake.latitude()),
-        longitude=str(fake.longitude()),
-    ).save()
+    record = LocationData(
+        location=random.uniform(0, 1),
+        latitude=random.uniform(0, 1),
+        longitude=random.uniform(0, 1),
+    )
+
     return record
 
 
@@ -31,8 +34,8 @@ async def create_schedule_factory(driver=None):
     if not driver:
         driver = await create_user_factory(role="D")
 
-    origin = await create_record_factory()
-    destination = await create_record_factory()
+    start = await create_record_factory()
+    finished = await create_record_factory()
 
     schedule = await Schedule(
         max_passenger=random.randint(1, 4),
@@ -40,10 +43,10 @@ async def create_schedule_factory(driver=None):
         active=random.choice([True, False]),
         terminate=random.choice([True, False]),
         cancel=random.choice([True, False]),
+        start=start,
+        finish=finished,
     ).save()
 
-    await schedule.origin.connect(origin)
-    await schedule.destination.connect(destination)
     await driver.schedules.connect(schedule)
 
     return schedule
