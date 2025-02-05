@@ -6,6 +6,7 @@ from app.core.types import Token, Status
 
 K = TypeVar("K")
 
+
 class CredentialsAuthenticationWebsocket(BaseModel):
     access_token: Token | str = Field(..., title="Access token", alias='accessToken')
 

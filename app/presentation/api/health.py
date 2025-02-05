@@ -20,7 +20,6 @@ async def check_db_connection(db: DependDatabase):
     }
 
 
-
 @health.get('/cache', response_model=StatusMessage)
 async def check_cache_connection(cache: DependCache):
     await cache.set('test_key', 'Hello, Redis!')

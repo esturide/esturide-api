@@ -10,12 +10,14 @@ travel = APIRouter(prefix="/travel", tags=["Travels"])
 
 
 @travel.get("/search")
-async def search_travel(schedule_case: DependScheduleCase, auth_user: AuthUserCredentials, limit: int = 16) -> List[TravelResult]:
+async def search_travel(schedule_case: DependScheduleCase, auth_user: AuthUserCredentials, limit: int = 16) -> List[
+    TravelResult]:
     return await schedule_case.get_all_travels(limit)
 
 
 @travel.get("/")
-async def get_all_travels(schedule_case: DependScheduleCase, auth_user: AuthUserCredentials, limit: int = 16) -> List[TravelResult]:
+async def get_all_travels(schedule_case: DependScheduleCase, auth_user: AuthUserCredentials, limit: int = 16) -> List[
+    TravelResult]:
     return await schedule_case.get_all_travels(limit)
 
 

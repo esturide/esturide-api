@@ -1,6 +1,6 @@
 import datetime
-
 from typing import List, TypeVar, Generic
+
 from pydantic import BaseModel, Field, field_validator, SecretStr, EmailStr
 
 from app.core.enum import RoleUser
@@ -83,6 +83,7 @@ class TrackingRecord(BaseModel):
     location: float = 0
     latitude: float = 0
     longitude: float = 0
+
 
 class RideRequest(BaseModel):
     origin: TrackingRecord
