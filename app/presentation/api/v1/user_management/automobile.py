@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter
 
 from app.core.dependencies import DependAutomobileUseCase, AuthUserCredentials
 from app.presentation.schemes import AutomobileRequest, AutomobileResponse

@@ -1,7 +1,6 @@
 from fastapi import APIRouter
 
-from app.core.dependencies import DependUserUseCase, AdminAuthenticated, AuthUserCredentials, OAuth2Scheme, \
-    DependAuthCase
+from app.core.dependencies import DependUserUseCase, AdminAuthenticated, AuthUserCredentials
 from app.core.types import Status, UserCode
 from app.presentation.schemes import UserRequest, ProfileUpdateRequest, StatusMessage, UserResponse
 

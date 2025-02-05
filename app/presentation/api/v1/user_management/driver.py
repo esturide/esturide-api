@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.core.dependencies import DependDriverUseCase, AdminAuthenticated, AuthUserCredentials, OAuth2Scheme
+from app.core.dependencies import DependDriverUseCase, OAuth2Scheme
 from app.core.types import UserCode, Status
 from app.presentation.schemes import StatusMessage
 

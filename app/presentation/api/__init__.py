@@ -1,5 +1,4 @@
-
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 
 from app.core.enum import Status
 from app.presentation.schemes import StatusMessage

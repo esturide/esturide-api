@@ -1,8 +1,10 @@
 from fastapi import APIRouter, HTTPException, Depends
+
 from app.application.uses_cases.auth_travel import authenticate_trip
 from app.presentation.schemes import AuthTravelRequest
 
 auth_travel = APIRouter(prefix="/auth", tags=["Auth Travel"])
+
 
 @auth_travel.get('/')
 async def index():
@@ -12,7 +14,7 @@ async def index():
 
 
 @auth_travel.post("/authenticate_travel")
-async def authenticate_travel(request: AuthTravelRequest, auth = Depends(authenticate_trip)):
+async def authenticate_travel(request: AuthTravelRequest, auth=Depends(authenticate_trip)):
     try:
         result = await auth(user_id=request.user_id, trip_id=request.trip_id)
 
