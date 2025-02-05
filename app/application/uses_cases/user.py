@@ -1,7 +1,7 @@
 from fastapi import HTTPException
 
 from app.core.enum import RoleUser
-from app.core.types import Token
+from app.core.types import Token, UserCode
 from app.domain.services.user import UserService, AuthenticationCredentialsService
 from app.infrastructure.repository.user import UserRepository
 from app.presentation.schemes import UserRequest, UserResponse, ProfileUpdateRequest
@@ -37,7 +37,7 @@ class UserUseCase:
 
         return status
 
-    async def update(self, code: int, user_req: ProfileUpdateRequest, uuid_user_code: int):
+    async def update(self, code: UserCode, user_req: ProfileUpdateRequest, uuid_user_code: UserCode):
         if uuid_user_code == code:
             status, _ = await self.__user_service.update(code, user_req)
 
@@ -45,7 +45,7 @@ class UserUseCase:
 
         raise HTTPException(status_code=401, detail="Invalid credentials.")
 
-    async def delete(self, code: int, uuid_user_code: int, is_admin: bool):
+    async def delete(self, code: UserCode, uuid_user_code: UserCode, is_admin: bool):
         if uuid_user_code == code or is_admin:
             return await self.__user_service.delete(code)
 

@@ -106,7 +106,7 @@ class UserService:
 
         return status
 
-    async def update(self, code: int, user_req: ProfileUpdateRequest):
+    async def update(self, code: UserCode, user_req: ProfileUpdateRequest):
         status, user = await self.__user_repository.update(
             code,
             user_req.firstname,
