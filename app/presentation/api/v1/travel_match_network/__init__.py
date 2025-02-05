@@ -8,15 +8,15 @@ from app.presentation.api.v1.travel_match_network.travel import travel
 from app.presentation.api.v1.travel_match_network.auth_travel import auth_travel
 from app.presentation.schemes import StatusMessage
 
-travels_match_network = FastAPI(title="Travel Match Network (μ) API")
-travels_match_network.include_router(ride)
-travels_match_network.include_router(travel)
-travels_match_network.include_router(status)
-travels_match_network.include_router(status_socket)
-travels_match_network.include_router(auth_travel)
+travels_match_network_v1 = FastAPI(title="Travel Match Network (μ) API")
+travels_match_network_v1.include_router(ride)
+travels_match_network_v1.include_router(travel)
+travels_match_network_v1.include_router(status)
+travels_match_network_v1.include_router(status_socket)
+travels_match_network_v1.include_router(auth_travel)
 
 
-@travels_match_network.get('/', response_model=StatusMessage)
+@travels_match_network_v1.get('/', response_model=StatusMessage)
 async def index():
     return {
         'status': Status.success,
