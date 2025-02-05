@@ -86,8 +86,8 @@ class UserService:
     def __init__(self):
         self.__user_repository = UserRepository()
 
-    async def get_by_code(self, user_code: UserCode):
-        return await self.__user_repository.get_user_by_code(user_code)
+    async def get_by_code(self, code: UserCode):
+        return await self.__user_repository.get_user_by_code(code)
 
     async def get_by_token(self, token: Token):
         return await self.__user_repository.get_user_by_token(token)
@@ -123,7 +123,8 @@ class UserService:
     @contextlib.asynccontextmanager
     async def save(self, user: User):
         yield user
-        await user.save()
 
-    async def delete(self, code: int):
+        await self.__user_repository.save(user)
+
+    async def delete(self, code: UserCode):
         return await self.__user_repository.delete(code)
