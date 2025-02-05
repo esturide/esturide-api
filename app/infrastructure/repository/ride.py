@@ -1,16 +1,9 @@
-import dataclasses
 from typing import Tuple, Literal
 
 from neomodel import DoesNotExist
 
 from app.domain.models import Schedule, User, Ride
-
-
-@dataclasses.dataclass
-class RideData:
-    location: str
-    latitude: str
-    longitude: str
+from app.domain.types import RideData
 
 
 class RideRepository:
