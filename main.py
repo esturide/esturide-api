@@ -8,8 +8,8 @@ from app.core.exception import ResponseException
 from app.presentation.api import root
 from app.presentation.api.auth import auth
 from app.presentation.api.health import health
-from app.presentation.api.user_management import user_management
-from app.presentation.api.travel_match_network import travels_match_network
+from app.presentation.api.v1.user_management import user_management
+from app.presentation.api.v1.travel_match_network import travels_match_network
 
 
 for _app in [app, user_management, travels_match_network]:

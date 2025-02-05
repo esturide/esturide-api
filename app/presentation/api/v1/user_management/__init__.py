@@ -1,10 +1,10 @@
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError, HTTPException
 
-from app.presentation.api.user_management.automobile import automobile_router
-from app.presentation.api.user_management.driver import driver
-from app.presentation.api.user_management.profile import profile
-from app.presentation.api.user_management.user import user
+from app.presentation.api.v1.user_management.automobile import automobile_router
+from app.presentation.api.v1.user_management.driver import driver
+from app.presentation.api.v1.user_management.profile import profile
+from app.presentation.api.v1.user_management.user import user
 
 user_management = FastAPI(title="User Management (μ) API")
 
