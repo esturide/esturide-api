@@ -1,17 +1,13 @@
 import dataclasses
+import json
 from typing import Tuple, List, Literal
 
 from neomodel import db
 
-from app.domain.models import Schedule, Record, User, Travel
+from app.core.types import UserCode
+from app.domain.models import Schedule, User, Travel
+from app.domain.types import LocationData
 from app.infrastructure.repository.user import UserRepository
-
-
-@dataclasses.dataclass
-class LocationData:
-    location: str
-    latitude: str
-    longitude: str
 
 
 class ScheduleRepository:
@@ -80,38 +76,25 @@ class ScheduleRepository:
 
     @staticmethod
     async def create(
-            code: int,
+            code: UserCode,
             max_passengers: int,
             price: int,
             start: LocationData,
-            end: LocationData,
+            finished: LocationData,
     ):
         status, user = await UserRepository.get_user_by_code(code)
 
         if not status:
             return False, None
 
-        start_record = Record(
-            location=start.location,
-            latitude=start.latitude,
-            longitude=start.longitude,
-        )
-
-        end_record = Record(
-            location=end.location,
-            latitude=end.latitude,
-            longitude=end.longitude,
-        )
-
         schedule = await Schedule(
             max_passengers=max_passengers,
             price=price,
+            start=start.dump,
+            finished=finished.dump,
         ).save()
 
         try:
-            await schedule.origin.connect(await start_record.save())
-            await schedule.destination.connect(await end_record.save())
-
             await schedule.save()
         except Exception as e:
             raise e

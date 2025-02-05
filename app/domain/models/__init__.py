@@ -1,15 +1,22 @@
+from typing import Tuple
+
 from neomodel import AsyncStructuredNode, UniqueIdProperty, StringProperty, DateProperty, EmailProperty, \
     BooleanProperty, IntegerProperty, DateTimeProperty, AsyncStructuredRel, \
-    AsyncRelationshipTo, AsyncRelationshipFrom, AsyncOne, AsyncZeroOrOne
+    AsyncRelationshipTo, AsyncRelationshipFrom, AsyncOne, AsyncZeroOrOne, JSONProperty, ArrayProperty
 
 from app.core.encrypt import check_same_password
 from app.core.enum import RoleUser
+from app.domain.types import LocationData
 
 
-class RecordTrackingMixin:
+class TrackingMixin:
     location = StringProperty(required=True)
     latitude = StringProperty(required=True)
     longitude = StringProperty(required=True)
+
+
+class RecordTrackingMixin:
+    record = ArrayProperty(JSONProperty())
 
 
 class Ride(AsyncStructuredRel, RecordTrackingMixin):
@@ -18,7 +25,7 @@ class Ride(AsyncStructuredRel, RecordTrackingMixin):
     cancel = BooleanProperty(default=False)
 
 
-class Travel(AsyncStructuredRel):
+class Travel(AsyncStructuredRel, RecordTrackingMixin):
     time = DateTimeProperty(default_now=True)
 
 
@@ -52,8 +59,8 @@ class User(AsyncStructuredNode):
 
     cars = AsyncRelationshipTo('Automobile', 'OWNS')
 
-    rides = AsyncRelationshipTo("Schedule", 'RIDE_TO', model=Ride, cardinality=AsyncZeroOrOne)
-    schedules = AsyncRelationshipTo("Schedule", 'DRIVER_TO', model=Travel, cardinality=AsyncOne)
+    rides = AsyncRelationshipTo("Schedule", 'RIDE_TO', model=Ride)
+    schedules = AsyncRelationshipTo("Schedule", 'DRIVER_TO', model=Travel)
 
     def same_password(self, password: str):
         return check_same_password(
@@ -104,14 +111,6 @@ class Automobile(AsyncStructuredNode):
     car = AsyncRelationshipFrom('User', 'OWNS')
 
 
-class Record(AsyncStructuredNode, RecordTrackingMixin):
-    time = DateTimeProperty(default_now=True)
-
-    origin = AsyncRelationshipFrom('Schedule', 'START', cardinality=AsyncOne)
-    tracking = AsyncRelationshipTo('Schedule', 'TRACKING')
-    destination = AsyncRelationshipFrom('Schedule', 'END', cardinality=AsyncOne)
-
-
 class Schedule(AsyncStructuredNode):
     uuid = UniqueIdProperty(indexed=True)
 
@@ -122,9 +121,8 @@ class Schedule(AsyncStructuredNode):
     price = IntegerProperty(required=True)
     max_passenger = IntegerProperty(required=False, default=4)
 
-    origin = AsyncRelationshipFrom('Record', 'START', cardinality=AsyncOne)
-    tracking = AsyncRelationshipTo('Record', 'TRACKING')
-    destination = AsyncRelationshipFrom('Record', 'END', cardinality=AsyncOne)
+    start = JSONProperty()
+    finished = JSONProperty()
 
     passengers = AsyncRelationshipFrom("User", 'RIDE_TO', model=Ride, cardinality=AsyncZeroOrOne)
     driver = AsyncRelationshipFrom("User", 'DRIVER_TO', model=Travel, cardinality=AsyncOne)
@@ -143,8 +141,10 @@ class Schedule(AsyncStructuredNode):
         return await self.passengers.all()
 
     @property
-    async def path_routes(self):
-        return await self.origin.single(), await self.destination.single()
+    async def path_routes(self) -> Tuple[LocationData, LocationData]:
+        start, finished = self.start, self.finished
+
+        return LocationData(**start), LocationData(**finished)
 
     @property
     def is_valid(self):
