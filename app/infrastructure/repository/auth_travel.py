@@ -1,5 +1,6 @@
 from app.domain.models import User, Schedule
 
+
 class TravelRepository:
     async def fetch_travel_and_user(self, user_id: str, trip_id: str):
         try:

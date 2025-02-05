@@ -3,7 +3,7 @@ from typing import Literal
 
 from app.core.encrypt import salty_password
 from app.core.oauth2 import secure_decode
-from app.core.types import Token, UserCode, UUID
+from app.core.types import Token, UserCode
 from app.domain.models import User
 
 
