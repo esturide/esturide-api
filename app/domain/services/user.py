@@ -3,6 +3,7 @@ import contextlib
 from fastapi import HTTPException
 
 from app.core import settings
+from app.core.exception import FailureSaveDataException
 from app.core.oauth2 import encode, check_if_expired, secure_decode, decode
 from app.core.types import Token, UserCode
 from app.domain.models import User
@@ -124,7 +125,10 @@ class UserService:
     async def save(self, user: User):
         yield user
 
-        await self.__user_repository.save(user)
+        status = await self.__user_repository.save(user)
+
+        if not status:
+            raise FailureSaveDataException()
 
     async def delete(self, code: UserCode):
         return await self.__user_repository.delete(code)
