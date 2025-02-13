@@ -5,6 +5,7 @@ from app.presentation.api.v1.travel_match_network.auth_travel import auth_travel
 from app.presentation.api.v1.travel_match_network.ride import ride
 from app.presentation.api.v1.travel_match_network.status import status
 from app.presentation.api.v1.travel_match_network.status.socket import status_socket
+from app.presentation.api.v1.travel_match_network.status.sse import status_sse
 from app.presentation.api.v1.travel_match_network.travel import travel
 from app.presentation.schemes import StatusMessage
 
@@ -13,6 +14,7 @@ travels_match_network_v1.include_router(ride)
 travels_match_network_v1.include_router(travel)
 travels_match_network_v1.include_router(status)
 travels_match_network_v1.include_router(status_socket)
+travels_match_network_v1.include_router(status_sse)
 travels_match_network_v1.include_router(auth_travel)
 
 

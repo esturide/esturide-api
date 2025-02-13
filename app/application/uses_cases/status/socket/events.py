@@ -1,6 +1,6 @@
 import abc
 
-from app.core.manager.socket import SessionSocket
+from app.core.manager.sockets.session import SessionSocket
 from app.core.types import UUID
 from app.domain.services.ride import RideService
 from app.domain.services.travel import ScheduleService

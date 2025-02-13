@@ -17,7 +17,7 @@ from app.core.dependencies.depends import get_user_case, get_auth_case, get_sche
     get_driver_events_case, \
     get_passenger_events_case, get_events_testing_case, get_events_socket, get_driver_events_socket, \
     get_passenger_events_socket, get_socket_connection_manager, get_automobile_use_case, get_driver_case
-from app.core.manager import SocketConnectionManager
+from app.core.manager.sockets import SocketConnectionManager
 from app.core.oauth2 import oauth2_scheme
 from app.core.types import Token
 from app.domain.credentials import user_credentials, validate_admin_role, \
