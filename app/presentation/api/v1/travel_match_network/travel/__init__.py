@@ -62,3 +62,19 @@ async def cancel_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user
             "status": Status.failure,
             "message": "Travel can not be cancelled."
         }
+
+
+@travel.patch("/{uuid}", response_model=StatusMessage)
+async def finished_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: AuthUserCredentials):
+    status = await schedule_case.terminate(uuid, auth_user)
+
+    if status:
+        return {
+            "status": Status.success,
+            "message": "Travel is finished."
+        }
+    else:
+        return {
+            "status": Status.failure,
+            "message": "Travel can not be finished."
+        }

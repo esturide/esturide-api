@@ -75,7 +75,7 @@ class ScheduleRepository:
     async def get_active_travel(code: UserCode, limit: int = 3) -> Schedule:
         query = f"""
         MATCH (p: User)-[r: DRIVER_TO]->(c: Schedule) 
-            WHERE p.code = {code} AND c.active = true
+            WHERE p.code = {code} AND c.active = true AND c.terminate = false
             RETURN c
             ORDER BY r.time 
             DESC LIMIT {limit}

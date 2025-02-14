@@ -98,3 +98,19 @@ class ScheduleCase:
         await self.__schedule_service.update(uuid, cancel=True)
 
         return status
+
+
+    async def terminate(self, uuid: UUID, auth_user: User):
+        status, schedule = await self.__schedule_service.get(uuid)
+
+        if not status:
+            raise HTTPException(status_code=404, detail="Not Found")
+
+        driver = await schedule.designated_driver
+
+        if not driver.code == auth_user.code:
+            raise HTTPException(status_code=401, detail="Invalid code")
+
+        await self.__schedule_service.update(uuid, terminate=True, active=False)
+
+        return status
