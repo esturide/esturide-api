@@ -16,8 +16,10 @@ from app.application.uses_cases.user import UserUseCase
 from app.core.dependencies.depends import get_user_case, get_auth_case, get_schedule_case, get_ride_case, \
     get_driver_events_case, \
     get_passenger_events_case, get_events_testing_case, get_events_socket, get_driver_events_socket, \
-    get_passenger_events_socket, get_socket_connection_manager, get_automobile_use_case, get_driver_case
-from app.core.manager import SocketConnectionManager
+    get_passenger_events_socket, get_socket_connection_manager, get_automobile_use_case, get_driver_case, \
+    get_see_connection_manager
+from app.core.manager.sockets import SocketConnectionManager
+from app.core.manager.sse import SSEConnectionManager
 from app.core.oauth2 import oauth2_scheme
 from app.core.types import Token
 from app.domain.credentials import user_credentials, validate_admin_role, \
@@ -39,6 +41,7 @@ DependDriverEventsSocketCase = Annotated[DriverEventsSocket, Depends(get_driver_
 DependPassengerEventsSocketCase = Annotated[PassengerEventsSocket, Depends(get_passenger_events_socket)]
 
 DependSocketConnectionManager = Annotated[SocketConnectionManager, Depends(get_socket_connection_manager)]
+DependSEEConnectionManager = Annotated[SSEConnectionManager, Depends(get_see_connection_manager)]
 
 OAuth2Scheme = Annotated[Token, Depends(oauth2_scheme)]
 OAuth2Form = Annotated[OAuth2PasswordRequestForm, Depends()]

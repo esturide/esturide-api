@@ -10,7 +10,8 @@ from app.application.uses_cases.status.socket.driver import DriverEventsSocket
 from app.application.uses_cases.status.socket.passenger import PassengerEventsSocket
 from app.application.uses_cases.travel import ScheduleCase
 from app.application.uses_cases.user import UserUseCase
-from app.core.manager import SocketConnectionManager
+from app.core.manager.sockets import SocketConnectionManager
+from app.core.manager.sse import SSEConnectionManager
 
 
 @lru_cache
@@ -76,3 +77,8 @@ def get_automobile_use_case() -> AutomobileUseCase:
 @lru_cache
 def get_driver_case() -> DriverUseCase:
     return DriverUseCase()
+
+
+@lru_cache
+def get_see_connection_manager() -> SSEConnectionManager:
+    return SSEConnectionManager()

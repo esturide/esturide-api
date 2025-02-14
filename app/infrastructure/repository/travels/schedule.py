@@ -1,7 +1,6 @@
-import dataclasses
-import json
 from typing import Tuple, List, Literal
 
+from fastapi import HTTPException
 from neomodel import db
 
 from app.core.types import UserCode
@@ -60,7 +59,7 @@ class ScheduleRepository:
         ) for row in results]
 
     @staticmethod
-    async def filter_last_travels_by_driver(code: int, limit: int = 16) -> List[Schedule]:
+    async def filter_last_travels_by_driver(code: UserCode, limit: int = 16) -> List[Schedule]:
         query = f"""
         MATCH (p: User)-[r: DRIVER_TO]->(c: Schedule) 
             WHERE p.code = {code} 
@@ -70,9 +69,25 @@ class ScheduleRepository:
         """
         results, meta = db.cypher_query(query)
 
-        return [
-            Schedule.inflate(row[0])
-            for row in results]
+        return [Schedule.inflate(row[0]) for row in results]
+
+    @staticmethod
+    async def get_active_travel(code: UserCode, limit: int = 3) -> Schedule:
+        query = f"""
+        MATCH (p: User)-[r: DRIVER_TO]->(c: Schedule) 
+            WHERE p.code = {code} AND c.active = true AND c.terminate = false
+            RETURN c
+            ORDER BY r.time 
+            DESC LIMIT {limit}
+        """
+        results, meta = db.cypher_query(query)
+
+        schedules = [Schedule.inflate(row[0]) for row in results]
+
+        if len(schedules) <= 0:
+            raise HTTPException(status_code=404, detail="No active travels found.")
+
+        return schedules[0]
 
     @staticmethod
     async def create(
@@ -105,7 +120,7 @@ class ScheduleRepository:
 
     @staticmethod
     async def tracking_user(
-            code: int,
+            code: UserCode,
             tracking: LocationData
     ):
         ...

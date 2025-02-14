@@ -1,7 +1,7 @@
 import asyncio
 
 from app.application.uses_cases.status.socket.events import EventsSocketNotifications
-from app.core.manager.socket import SessionSocket
+from app.core.manager.sockets.session import SessionSocket
 from app.core.types import Status, UUID
 from app.presentation.schemes.status import RidesStatus, PassengerRideStatus, PassengerProfile
 from app.presentation.schemes.websocket import StatusResponseWebSocket, StatusMessageWebSocket

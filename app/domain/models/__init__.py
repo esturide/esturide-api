@@ -9,12 +9,6 @@ from app.core.enum import RoleUser
 from app.domain.types import LocationData
 
 
-class TrackingMixin:
-    location = StringProperty(required=True)
-    latitude = StringProperty(required=True)
-    longitude = StringProperty(required=True)
-
-
 class RecordTrackingMixin:
     record = ArrayProperty(JSONProperty())
 

@@ -87,7 +87,7 @@ class TrackingRecord(BaseModel):
 
 class RideRequest(BaseModel):
     origin: TrackingRecord
-    travel_uuid: UUID
+    travel_uuid: UUID = Field(..., alias='UUID')
 
 
 class AuthTravelRequest(BaseModel):

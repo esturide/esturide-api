@@ -1,5 +1,5 @@
 from app.application.uses_cases.status.socket.events import EventsSocketNotifications
-from app.core.manager.socket import SessionSocket
+from app.core.manager.sockets.session import SessionSocket
 from app.core.types import UUID
 
 

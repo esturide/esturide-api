@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.core.dependencies.database import DependCache, DependDatabase
+from app.core.dependencies.database import DependCacheSession, DependDatabaseSession
 from app.core.types import Status
 from app.presentation.schemes import StatusMessage
 
@@ -11,7 +11,7 @@ health = APIRouter(
 
 
 @health.get('/db', response_model=StatusMessage)
-async def check_db_connection(db: DependDatabase):
+async def check_db_connection(db: DependDatabaseSession):
     db.cypher_query("RETURN 'Hello World' as message")
 
     return {
@@ -21,7 +21,7 @@ async def check_db_connection(db: DependDatabase):
 
 
 @health.get('/cache', response_model=StatusMessage)
-async def check_cache_connection(cache: DependCache):
+async def check_cache_connection(cache: DependCacheSession):
     await cache.set('test_key', 'Hello, Redis!')
     await cache.get('test_key')
 
