@@ -27,6 +27,24 @@ services:
     networks:
       - net
 
+  cache:
+    container_name: esturide-cache
+    hostname: esturide-cache
+    image: redis:latest
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - /path/to/local/dаta:/root/redis
+      - /path/to/local/redis.conf:/usr/local/etc/redis/redis.conf
+    environment:
+      - REDIS_PASSWORD=${CACHE_PASSWORD}
+      - REDIS_PORT=${CACHE_PORT}
+      - REDIS_HOST=${CACHE_HOST}
+      - REDIS_DATABASES=${CACHE_DATABASES}
+    networks:
+      - net
+
   api:
     build: .
     container_name: esturide-api
@@ -40,6 +58,7 @@ services:
       - .:/docs
     depends_on:
       - db
+      - cache
     networks:
       - net
 

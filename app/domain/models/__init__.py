@@ -1,14 +1,16 @@
+from typing import Tuple
+
 from neomodel import AsyncStructuredNode, UniqueIdProperty, StringProperty, DateProperty, EmailProperty, \
     BooleanProperty, IntegerProperty, DateTimeProperty, AsyncStructuredRel, \
-    AsyncRelationshipTo, AsyncRelationshipFrom, AsyncOne, AsyncZeroOrOne
+    AsyncRelationshipTo, AsyncRelationshipFrom, AsyncOne, AsyncZeroOrOne, JSONProperty, ArrayProperty
 
+from app.core.encrypt import check_same_password
 from app.core.enum import RoleUser
+from app.domain.types import LocationData
 
 
 class RecordTrackingMixin:
-    location = StringProperty(required=True)
-    latitude = StringProperty(required=True)
-    longitude = StringProperty(required=True)
+    record = ArrayProperty(JSONProperty())
 
 
 class Ride(AsyncStructuredRel, RecordTrackingMixin):
@@ -17,7 +19,7 @@ class Ride(AsyncStructuredRel, RecordTrackingMixin):
     cancel = BooleanProperty(default=False)
 
 
-class Travel(AsyncStructuredRel):
+class Travel(AsyncStructuredRel, RecordTrackingMixin):
     time = DateTimeProperty(default_now=True)
 
 
@@ -26,41 +28,55 @@ class User(AsyncStructuredNode):
         'P': 'passenger',
         'D': 'driver',
         'N': 'not-verified',
-        'F': 'staff',
+        'S': 'staff',
         'A': 'admin'
     }
 
-    code = IntegerProperty(indexed=True, unique_index=True)
+    code = IntegerProperty(required=True, unique_index=True)
+    hashed_password = StringProperty(required=True)
+    salt = StringProperty(required=True)
 
+    """General information"""
     firstname = StringProperty(required=True)
     maternal_surname = StringProperty(required=True)
     paternal_surname = StringProperty(required=True)
-    curp = StringProperty(required=True)
-
     birth_date = DateProperty(required=True)
 
+    """Sensitive data"""
     email = EmailProperty(required=True, unique_index=True)
-    password = StringProperty(required=True)
+    curp = StringProperty(required=True)
+    phone_number = StringProperty()
 
     valid_user = BooleanProperty(required=False, default=False)
 
     role = StringProperty(choices=ROLES, default='N')
 
     cars = AsyncRelationshipTo('Automobile', 'OWNS')
-    rides = AsyncRelationshipTo("Schedule", 'RIDE_TO', model=Ride, cardinality=AsyncZeroOrOne)
-    schedules = AsyncRelationshipTo("Schedule", 'DRIVER_TO', model=Travel, cardinality=AsyncOne)
+
+    rides = AsyncRelationshipTo("Schedule", 'RIDE_TO', model=Ride)
+    schedules = AsyncRelationshipTo("Schedule", 'DRIVER_TO', model=Travel)
+
+    def same_password(self, password: str):
+        return check_same_password(
+            password,
+            self.hashed_password
+        )
 
     @property
     def is_admin(self):
-        return False
+        return self.role == 'A'
 
     @property
     def is_staff(self):
-        return False
+        return self.role == 'S'
 
     @property
     def is_driver(self):
         return self.role == 'D'
+
+    @property
+    def is_passenger(self):
+        return self.role == 'P'
 
     @property
     def is_validate(self):
@@ -72,6 +88,10 @@ class User(AsyncStructuredNode):
             return RoleUser[User.ROLES[self.role]]
         except KeyError:
             return RoleUser.not_verified
+
+    @role_value.setter
+    def role_value(self, role: RoleUser):
+        self.role = role.value.upper()[0]
 
 
 class Automobile(AsyncStructuredNode):
@@ -85,14 +105,6 @@ class Automobile(AsyncStructuredNode):
     car = AsyncRelationshipFrom('User', 'OWNS')
 
 
-class Record(AsyncStructuredNode, RecordTrackingMixin):
-    time = DateTimeProperty(default_now=True)
-
-    origin = AsyncRelationshipFrom('Schedule', 'START', cardinality=AsyncOne)
-    tracking = AsyncRelationshipTo('Schedule', 'TRACKING')
-    destination = AsyncRelationshipFrom('Schedule', 'END', cardinality=AsyncOne)
-
-
 class Schedule(AsyncStructuredNode):
     uuid = UniqueIdProperty(indexed=True)
 
@@ -103,9 +115,8 @@ class Schedule(AsyncStructuredNode):
     price = IntegerProperty(required=True)
     max_passenger = IntegerProperty(required=False, default=4)
 
-    origin = AsyncRelationshipFrom('Record', 'START', cardinality=AsyncOne)
-    tracking = AsyncRelationshipTo('Record', 'TRACKING')
-    destination = AsyncRelationshipFrom('Record', 'END', cardinality=AsyncOne)
+    start = JSONProperty()
+    finished = JSONProperty()
 
     passengers = AsyncRelationshipFrom("User", 'RIDE_TO', model=Ride, cardinality=AsyncZeroOrOne)
     driver = AsyncRelationshipFrom("User", 'DRIVER_TO', model=Travel, cardinality=AsyncOne)
@@ -124,8 +135,10 @@ class Schedule(AsyncStructuredNode):
         return await self.passengers.all()
 
     @property
-    async def path_routes(self):
-        return await self.origin.single(), await self.destination.single()
+    async def path_routes(self) -> Tuple[LocationData, LocationData]:
+        start, finished = self.start, self.finished
+
+        return LocationData(**start), LocationData(**finished)
 
     @property
     def is_valid(self):

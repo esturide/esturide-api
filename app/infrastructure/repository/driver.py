@@ -3,30 +3,32 @@ from typing import Literal
 
 from app.domain.models import User
 
+
 class DriverRepository:
     @staticmethod
-    async def get(**kwargs) -> tuple[Literal[False] , None ] | tuple[Literal[True], User] :
+    async def get(**kwargs) -> tuple[Literal[False], None] | tuple[Literal[True], User]:
         kwargs['role'] = 'D'
         user = await User.nodes.get_or_none(**kwargs)
-        if user is None : 
-            return False , None
-        
-        return True , user
-    
+
+        if user is None:
+            return False, None
+
+        return True, user
+
     @staticmethod
     async def get_driver_by_code(code: int):
         return await DriverRepository.get(code=code)
-    
+
     @staticmethod
     async def create_or_update(
-        code: int,
-        firstname: str,
-        maternal_surname: str,
-        paternal_surname: str,
-        curp: str,
-        birth_date: date,
-        email: str,
-        password: str,
+            code: int,
+            firstname: str,
+            maternal_surname: str,
+            paternal_surname: str,
+            curp: str,
+            birth_date: date,
+            email: str,
+            password: str,
     ):
         user = await User.nodes.get_or_none(code=code)
 

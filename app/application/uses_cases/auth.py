@@ -1,18 +1,16 @@
 from app.core.exception import UnauthorizedAccessException
-from app.core.types import Token
-from app.domain.services.user import AuthenticationCredentialsService
+from app.core.types import Token, UserCode
+from app.domain.services.auth import AuthenticationCredentialsService
 from app.infrastructure.repository.user import UserRepository
 from app.presentation.schemes import UserResponse
+from app.core.data import get_username
 
 
 class AuthUseCase:
     def __init__(self):
         self.__auth_service = AuthenticationCredentialsService()
 
-    async def login(self, code: int | str, password: str):
-        if isinstance(code, str):
-            code = int(code)
-
+    async def login(self, code: UserCode, password: str):
         token = await self.__auth_service.authenticate(
             code,
             password
@@ -40,3 +38,6 @@ class AuthUseCase:
             email=user.email,
             role=user.role_value,
         )
+
+    async def refresh(self, token: Token):
+        return await self.__auth_service.refresh(token)

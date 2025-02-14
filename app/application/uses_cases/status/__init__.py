@@ -12,7 +12,7 @@ from app.domain.services.travel import ScheduleService
 from app.presentation.schemes.status import RideStatus, ListRides, ScheduleStatus
 
 
-def send_data(model: BaseModel) -> str:
+def send_data_dump(model: BaseModel) -> str:
     return str(model.model_dump())
 
 
@@ -25,7 +25,10 @@ class EventsStatus:
     async def notify_ws(self, uuid: UUID, websocket: WebSocket, user: User) -> bool: ...
 
     @abc.abstractmethod
-    async def notify_events(self, uuid: UUID, user: User): ...
+    async def notify_sse(self, uuid: UUID, user: User): ...
+
+    @abc.abstractmethod
+    async def notify_http(self, uuid: UUID, user: User): ...
 
 
 class DriverStatusCase(EventsStatus):
@@ -41,7 +44,7 @@ class DriverStatusCase(EventsStatus):
             await websocket.send_text(f"Notify to driver: {user}")
             await asyncio.sleep(1)
 
-    async def notify_events(self, uuid: UUID, user: User):
+    async def notify_sse(self, uuid: UUID, user: User):
         async def event_generator():
             status, schedule = await self.schedule_service.get(uuid)
 
@@ -51,7 +54,7 @@ class DriverStatusCase(EventsStatus):
             while True:
                 rides = await self.ride_service.get_all_rides(schedule)
 
-                yield send_data(
+                yield send_data_dump(
                     ListRides(**{
                         'rides': [
                             RideStatus(
@@ -67,13 +70,31 @@ class DriverStatusCase(EventsStatus):
 
         return event_generator()
 
+    async def notify_http(self, uuid: UUID, user: User):
+        status, schedule = await self.schedule_service.get(uuid)
+
+        if not status:
+            raise HTTPException(status_code=404, detail="Travel schedule not found.")
+
+        rides = await self.ride_service.get_all_rides(schedule)
+
+        return ListRides(**{
+            'rides': [
+                RideStatus(
+                    valid=r.validate,
+                    cancel=r.cancel,
+                ) for r in rides
+            ],
+            'totalPassengers': await schedule.current_passengers,
+        })
+
 
 class UserStatusCase(EventsStatus):
     async def notify_ws(self, uuid: UUID, websocket: WebSocket, user: User):
         status, schedule = await self.schedule_service.get(uuid)
 
         if not status:
-            raise HTTPException(status_code=404, detail="Not Found")
+            raise HTTPException(status_code=404, detail="Not Found.")
 
         await websocket.accept()
 
@@ -81,17 +102,17 @@ class UserStatusCase(EventsStatus):
             await websocket.send_text(f"Notify to driver: {user}")
             await asyncio.sleep(1)
 
-    async def notify_events(self, uuid: UUID, user: User):
+    async def notify_sse(self, uuid: UUID, user: User):
         async def event_generator():
             status, schedule = await self.schedule_service.get(uuid)
 
             if not status:
-                raise HTTPException(status_code=404, detail="Travel schedule not found")
+                raise HTTPException(status_code=404, detail="Travel schedule not found.")
 
             while True:
                 ride = await self.ride_service.get(schedule, user)
 
-                yield send_data(
+                yield send_data_dump(
                     ScheduleStatus(**{
                         'active': schedule.active,
                         'terminate': schedule.terminate,
@@ -107,6 +128,25 @@ class UserStatusCase(EventsStatus):
                 await asyncio.sleep(5)
 
         return event_generator()
+
+    async def notify_http(self, uuid: UUID, user: User):
+        status, schedule = await self.schedule_service.get(uuid)
+
+        if not status:
+            raise HTTPException(status_code=404, detail="Travel schedule not found.")
+
+        ride = await self.ride_service.get(schedule, user)
+
+        return ScheduleStatus(**{
+            'active': schedule.active,
+            'terminate': schedule.terminate,
+            'cancel': schedule.cancel,
+            'currentPassengers': await schedule.current_passengers,
+            'ride': RideStatus(
+                valid=ride.validate,
+                cancel=ride.cancel,
+            )
+        })
 
 
 class EventsTestingCase:

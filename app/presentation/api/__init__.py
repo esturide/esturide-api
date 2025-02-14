@@ -1,5 +1,4 @@
-
-from fastapi import APIRouter, HTTPException
+from fastapi import APIRouter
 
 from app.core.enum import Status
 from app.presentation.schemes import StatusMessage
@@ -15,11 +14,3 @@ async def index():
         'status': Status.success,
         'message': "Everything works correctly."
     }
-
-
-@root.get('/error', response_model=StatusMessage)
-async def index():
-    raise HTTPException(
-        status_code=400,
-        detail="Error message"
-    )

@@ -11,4 +11,5 @@ class RoleUser(str, Enum):
     driver = 'driver'
     passenger = 'passenger'
     staff = 'staff'
+    admin = 'admin'
 
