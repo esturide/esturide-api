@@ -66,9 +66,9 @@ async def notify_user_status(uuid: UUID, websocket: WebSocket, events: DependPas
 
 @status.get("/events/driver/{uuid}", response_model=ListRides)
 async def events_notify_driver(uuid: UUID, events: DependDriverEventsCase, auth_user: AuthUserCredentials):
-    return EventSourceResponse(await events.notify_events(uuid, auth_user))
+    return EventSourceResponse(await events.notify_sse(uuid, auth_user))
 
 
 @status.get("/events/passenger/{uuid}", response_model=ScheduleStatus)
 async def events_notify_passenger(uuid: UUID, events: DependPassengerEventsCase, auth_user: AuthUserCredentials):
-    return EventSourceResponse(await events.notify_events(uuid, auth_user))
+    return EventSourceResponse(await events.notify_sse(uuid, auth_user))

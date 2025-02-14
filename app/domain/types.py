@@ -18,6 +18,6 @@ class LocationData:
 
 @dataclasses.dataclass
 class RideData:
-    location: str
-    latitude: str
-    longitude: str
+    location: float
+    latitude: float
+    longitude: float

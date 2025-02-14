@@ -48,7 +48,7 @@ async def get_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: A
     return await schedule_case.get(uuid, auth_user)
 
 
-@travel.delete("/cancel/{uuid}", response_model=StatusMessage)
+@travel.delete("/{uuid}", response_model=StatusMessage)
 async def cancel_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: AuthUserCredentials):
     status = await schedule_case.cancel(uuid, auth_user)
 
