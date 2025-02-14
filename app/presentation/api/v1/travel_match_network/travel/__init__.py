@@ -7,7 +7,7 @@ from app.core.types import UUID, Status
 from app.presentation.schemes import StatusMessage
 from app.presentation.schemes.travels import ScheduleTravel, TravelResult
 
-travel = APIRouter(prefix="/travel", tags=["Travels"])
+travel = APIRouter(prefix="/schedule", tags=["Schedule travels"])
 
 
 @travel.get("/search", response_model=List[TravelResult])
@@ -15,9 +15,9 @@ async def search_travel(schedule_case: DependScheduleCase, auth_user: AuthUserCr
     return await schedule_case.get_all_travels(limit)
 
 
-@travel.get("/", response_model=List[TravelResult])
-async def get_all_travels(schedule_case: DependScheduleCase, auth_user: AuthUserCredentials, limit: int = 16):
-    return await schedule_case.get_all_travels(limit)
+@travel.get("/", response_model=TravelResult)
+async def get_current_schedule(schedule_case: DependScheduleCase, auth_user: AuthUserCredentials):
+    return await schedule_case.get_current_travel(auth_user.code)
 
 
 @travel.post("/", response_model=StatusMessage)

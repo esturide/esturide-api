@@ -5,7 +5,7 @@ from app.core.types import UUID, Status
 from app.presentation.schemes import RideRequest, StatusResponse, StatusMessage
 from app.presentation.schemes.status import ScheduleStatus
 
-ride = APIRouter(prefix="/ride", tags=["Rides"])
+ride = APIRouter(prefix="/ride", tags=["Request rides"])
 
 
 @ride.post("/", response_model=StatusMessage)

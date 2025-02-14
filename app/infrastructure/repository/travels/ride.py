@@ -26,7 +26,7 @@ class RideRepository:
     async def get_active_ride(code: UserCode, limit: int = 16) -> Ride:
         query = f"""
         MATCH (p: User)-[r: RIDE_TO]->(c: Schedule) 
-            WHERE p.code = {code} AND c.active = true AND r.cancel = false
+            WHERE p.code = {code} AND c.active = true AND r.cancel = false AND r.terminate = false
             RETURN c
             ORDER BY r.time 
             DESC LIMIT {limit}

@@ -72,10 +72,10 @@ class ScheduleRepository:
         return [Schedule.inflate(row[0]) for row in results]
 
     @staticmethod
-    async def get_active_travel(code: UserCode, limit: int = 16) -> Schedule:
+    async def get_active_travel(code: UserCode, limit: int = 3) -> Schedule:
         query = f"""
         MATCH (p: User)-[r: DRIVER_TO]->(c: Schedule) 
-            WHERE p.code = {code} AND c.active = true 
+            WHERE p.code = {code} AND c.active = true
             RETURN c
             ORDER BY r.time 
             DESC LIMIT {limit}
