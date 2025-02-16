@@ -18,6 +18,7 @@ class Ride(AsyncStructuredRel, RecordTrackingMixin):
     time = DateTimeProperty(default_now=True)
     validate = BooleanProperty(default=False)
     cancel = BooleanProperty(default=False)
+    on_board = BooleanProperty(default=False)
 
 
 class Travel(AsyncStructuredRel, RecordTrackingMixin):
