@@ -5,7 +5,7 @@ from fastapi import APIRouter, HTTPException
 from app.core.dependencies import DependScheduleCase, AuthUserCredentials
 from app.core.types import UUID, Status
 from app.presentation.schemes import StatusMessage
-from app.presentation.schemes.travels import ScheduleTravel, TravelScheduleResponse
+from app.presentation.schemes.travels import ScheduleTravelRequest, TravelScheduleResponse
 
 travel = APIRouter(prefix="/schedule", tags=["Schedule travels"])
 
@@ -21,7 +21,7 @@ async def get_current_schedule(schedule_case: DependScheduleCase, auth_user: Aut
 
 
 @travel.post("/", response_model=StatusMessage)
-async def schedule_new_travel(schedule: ScheduleTravel, schedule_case: DependScheduleCase,
+async def schedule_new_travel(schedule: ScheduleTravelRequest, schedule_case: DependScheduleCase,
                               auth_user: AuthUserCredentials):
     status = await schedule_case.create(schedule, auth_user)
 

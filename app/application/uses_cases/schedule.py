@@ -4,7 +4,7 @@ from app.core.types import UUID, UserCode
 from app.core.utils.scheme_json import create_travel_scheme
 from app.domain.models import User
 from app.domain.services.schedule import ScheduleService
-from app.presentation.schemes.travels import ScheduleTravel
+from app.presentation.schemes.travels import ScheduleTravelRequest
 
 
 
@@ -12,7 +12,7 @@ class ScheduleCase:
     def __init__(self):
         self.__schedule_service = ScheduleService()
 
-    async def create(self, schedule: ScheduleTravel, driver: User):
+    async def create(self, schedule: ScheduleTravelRequest, driver: User):
         if not driver.is_driver:
             raise HTTPException(status_code=400, detail="You need become driver.")
 

@@ -3,7 +3,7 @@ from fastapi import HTTPException
 from app.core.types import UUID, UserCode
 from app.domain.models import User, Schedule
 from app.infrastructure.repository.travels.schedule import ScheduleRepository, LocationData
-from app.presentation.schemes.travels import ScheduleTravel
+from app.presentation.schemes.travels import ScheduleTravelRequest
 
 
 class ScheduleService:
@@ -21,7 +21,7 @@ class ScheduleService:
     async def get_current_travel(self, code: UserCode) -> Schedule:
         return await ScheduleRepository.get_active_travel(code)
 
-    async def create(self, schedule: ScheduleTravel, driver: User):
+    async def create(self, schedule: ScheduleTravelRequest, driver: User):
         start = schedule.start
         end = schedule.end
 
