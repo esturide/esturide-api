@@ -5,17 +5,17 @@ from fastapi import APIRouter, HTTPException
 from app.core.dependencies import DependScheduleCase, AuthUserCredentials
 from app.core.types import UUID, Status
 from app.presentation.schemes import StatusMessage
-from app.presentation.schemes.travels import ScheduleTravel, TravelResult
+from app.presentation.schemes.travels import ScheduleTravel, TravelScheduleRequest
 
 travel = APIRouter(prefix="/schedule", tags=["Schedule travels"])
 
 
-@travel.get("/search", response_model=List[TravelResult])
+@travel.get("/search", response_model=List[TravelScheduleRequest])
 async def search_travel(schedule_case: DependScheduleCase, auth_user: AuthUserCredentials, limit: int = 16):
     return await schedule_case.get_all_travels(limit)
 
 
-@travel.get("/current", response_model=TravelResult)
+@travel.get("/current", response_model=TravelScheduleRequest)
 async def get_current_schedule(schedule_case: DependScheduleCase, auth_user: AuthUserCredentials):
     return await schedule_case.get_current_travel(auth_user.code)
 
@@ -43,7 +43,7 @@ async def edit_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: 
     }
 
 
-@travel.get("/{uuid}", response_model=TravelResult)
+@travel.get("/{uuid}", response_model=TravelScheduleRequest)
 async def get_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: AuthUserCredentials):
     return await schedule_case.get(uuid, auth_user)
 
