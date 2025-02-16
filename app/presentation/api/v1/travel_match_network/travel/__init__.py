@@ -15,7 +15,7 @@ async def search_travel(schedule_case: DependScheduleCase, auth_user: AuthUserCr
     return await schedule_case.get_all_travels(limit)
 
 
-@travel.get("/", response_model=TravelResult)
+@travel.get("/current", response_model=TravelResult)
 async def get_current_schedule(schedule_case: DependScheduleCase, auth_user: AuthUserCredentials):
     return await schedule_case.get_current_travel(auth_user.code)
 

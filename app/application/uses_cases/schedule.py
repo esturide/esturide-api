@@ -1,48 +1,16 @@
 from fastapi import HTTPException
 
 from app.core.types import UUID, UserCode
-from app.domain.models import User, Schedule
+from app.core.utils.scheme_json import create_travel_scheme
+from app.domain.models import User
 from app.domain.services.schedule import ScheduleService
-from app.domain.types import LocationData
-from app.presentation.schemes import DriverProfile, TrackingRecord
-from app.presentation.schemes.travels import TravelResult, ScheduleTravel
+from app.presentation.schemes.travels import ScheduleTravel
 
 
 
 class ScheduleCase:
     def __init__(self):
         self.__schedule_service = ScheduleService()
-
-    @staticmethod
-    def create_travel_scheme(schedule: Schedule, driver: User, origin: LocationData, destination: LocationData):
-        return TravelResult(
-            uuid=schedule.uuid,
-
-            price=schedule.price,
-            active=schedule.active,
-            terminate=schedule.terminate,
-            cancel=schedule.cancel,
-            max_passengers=schedule.max_passenger,
-
-            driver=DriverProfile(
-                code=driver.code,
-                firstname=driver.firstname,
-                maternal_surname=driver.maternal_surname,
-                paternal_surname=driver.paternal_surname,
-            ),
-
-            origin=TrackingRecord(
-                location=origin.location,
-                latitude=origin.latitude,
-                longitude=origin.longitude,
-            ),
-
-            destination=TrackingRecord(
-                location=destination.location,
-                latitude=destination.latitude,
-                longitude=destination.longitude,
-            ),
-        )
 
     async def create(self, schedule: ScheduleTravel, driver: User):
         if not driver.is_driver:
@@ -55,7 +23,7 @@ class ScheduleCase:
         driver = await schedule.designated_driver
         origin, destination = await schedule.path_routes
 
-        return self.create_travel_scheme(schedule, driver, origin, destination)
+        return create_travel_scheme(schedule, driver, origin, destination)
 
     async def get(self, uuid: UUID, auth_user: User):
         status, schedule = await self.__schedule_service.get(uuid)
@@ -69,7 +37,7 @@ class ScheduleCase:
         if not auth_user.code == driver.code:
             raise HTTPException(status_code=401, detail="Invalid code.")
 
-        return self.create_travel_scheme(schedule, driver, origin, destination)
+        return create_travel_scheme(schedule, driver, origin, destination)
 
     async def get_all_travels(self, limit: int):
         schedules = []
@@ -79,7 +47,7 @@ class ScheduleCase:
             origin, destination = await schedule.path_routes
 
             schedules.append(
-                self.create_travel_scheme(schedule, driver, origin, destination)
+                create_travel_scheme(schedule, driver, origin, destination)
             )
 
         return schedules
