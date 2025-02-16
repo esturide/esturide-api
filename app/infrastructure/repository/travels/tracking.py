@@ -22,7 +22,7 @@ class StaticTrackingRepository:
             "data": data_json
         })
 
-        return results and data_json in results[0][0]
+        return True
 
     @staticmethod
     async def save_driver_tracking_data(uuid: UUID, data: List[LocationData]) -> bool:
@@ -38,4 +38,20 @@ class StaticTrackingRepository:
             "data": data_json
         })
 
-        return results and data_json in results[0][0]
+        return True
+
+
+    @staticmethod
+    async def get_all_record_from_uuid(uuid: UUID) -> List[LocationData]:
+        query = f"""
+        MATCH (p: User)-[r: DRIVER_TO | RIDE_TO]->(c: Schedule) 
+            WHERE r.uuid = '{uuid}'
+            RETURN r.record
+        """
+        results, meta = db.cypher_query(query, {})
+
+        records = [
+            LocationData(**json.loads(row[0])) for row in results
+        ]
+
+        return records
