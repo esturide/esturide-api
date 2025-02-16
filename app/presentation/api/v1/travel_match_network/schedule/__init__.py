@@ -25,12 +25,15 @@ async def schedule_new_travel(schedule: ScheduleTravelRequest, schedule_case: De
                               auth_user: AuthUserCredentials):
     status = await schedule_case.create(schedule, auth_user)
 
-    if not status:
-        raise HTTPException(status_code=400)
+    if status:
+        return {
+            "status": Status.success,
+            "message": "New schedule traveled successfully.",
+        }
 
     return {
-        "status": Status.success,
-        "message": "New schedule traveled successfully.",
+        "status": Status.failure,
+        "message": "Cannot schedule new travel.",
     }
 
 
