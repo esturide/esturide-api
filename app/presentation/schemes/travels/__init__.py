@@ -31,7 +31,7 @@ class ScheduleTravel(BaseModel):
     max_passengers: int = 4
 
 
-class TravelScheduleRequest(BaseModel):
+class TravelScheduleResponse(BaseModel):
     uuid: UUID
 
     driver: DriverUser
