@@ -24,4 +24,4 @@ app.include_router(auth)
 app.include_router(health)
 
 app.mount("/v1/user-management", user_management_v1)
-app.mount("/v1/schedule-match-network", travels_match_network_v1)
+app.mount("/v1/travel-match-network", travels_match_network_v1)
