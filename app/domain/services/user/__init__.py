@@ -1,6 +1,6 @@
 import contextlib
 
-from app.core.exception import FailureSaveDataException
+from app.core.exception import FailureSaveDataException, NotFoundException
 from app.core.types import Token, UserCode
 from app.domain.models import User
 from app.infrastructure.repository.user import UserRepository
@@ -11,11 +11,21 @@ class UserService:
     def __init__(self):
         self.__user_repository = UserRepository()
 
-    async def get_by_code(self, code: UserCode):
-        return await self.__user_repository.get_user_by_code(code)
+    async def get_by_code(self, code: UserCode) -> User:
+        status, user = await self.__user_repository.get_user_by_code(code)
 
-    async def get_by_token(self, token: Token):
-        return await self.__user_repository.get_user_by_token(token)
+        if not status:
+            raise NotFoundException(detail="User not found.")
+
+        return user
+
+    async def get_by_token(self, token: Token) -> User:
+        status, user = await self.__user_repository.get_user_by_token(token)
+
+        if not status:
+            raise NotFoundException(detail="User not found.")
+
+        return user
 
     async def create(self, user_req: UserRequest):
         status, user = await self.__user_repository.create(

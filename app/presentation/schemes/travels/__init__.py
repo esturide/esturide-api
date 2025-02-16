@@ -24,3 +24,8 @@ class TravelResult(BaseModel):
 
     origin: TrackingRecord
     destination: TrackingRecord
+
+
+class Tracking(BaseModel):
+    uuid: UUID
+    record: TrackingRecord

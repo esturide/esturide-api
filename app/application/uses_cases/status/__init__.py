@@ -8,7 +8,7 @@ from starlette.websockets import WebSocket
 from app.core.types import UUID
 from app.domain.models import User
 from app.domain.services.ride import RideService
-from app.domain.services.travel import ScheduleService
+from app.domain.services.schedule import ScheduleService
 from app.presentation.schemes.status import RideStatus, ListRides, ScheduleStatus
 
 

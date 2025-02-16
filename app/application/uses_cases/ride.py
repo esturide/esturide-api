@@ -1,16 +1,31 @@
+import asyncio
+
 from fastapi import HTTPException
 
 from app.core.types import UUID, UserCode
-from app.domain.models import User
 from app.domain.services.ride import RideService
-from app.domain.services.travel import ScheduleService
+from app.domain.services.schedule import ScheduleService
+from app.domain.services.user import UserService
+from app.domain.types import LocationData
 from app.presentation.schemes import RideRequest
+from app.presentation.schemes.travels import Tracking
 
 
 class RideCase:
     def __init__(self):
+        self.__user_service = UserService()
         self.__ride_service = RideService()
         self.__schedule_service = ScheduleService()
+
+    async def set_tracking(self, tracking: Tracking, waiting_seconds: int = 5):
+        uuid = tracking.uuid
+        record = LocationData(**dict(tracking.record))
+
+        await asyncio.sleep(waiting_seconds)
+
+        status = await self.__ride_service.set_tracking(uuid, record)
+
+        return status
 
     async def check_valid_ride(self, uuid: UUID, code: UserCode):
         status, schedule = await self.__schedule_service.get(uuid)
@@ -39,9 +54,12 @@ class RideCase:
     async def create(self, ride: RideRequest, code: UserCode):
         uuid, status, schedule, driver = await self.check_valid_ride(ride.travel_uuid, code)
 
-        await self.__ride_service.create(schedule, ride, code)
+        if status:
+            user = await self.__user_service.get_by_code(code)
 
-        return True
+            await self.__ride_service.create(schedule, user)
+
+        return status
 
     async def get_current_ride(self, code: UserCode) -> UUID:
         ride = await self.__ride_service.get_current_ride(code)

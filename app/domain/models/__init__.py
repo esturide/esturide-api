@@ -10,6 +10,7 @@ from app.domain.types import LocationData
 
 
 class RecordTrackingMixin:
+    uuid = UniqueIdProperty(indexed=True)
     record = ArrayProperty(JSONProperty())
 
 

@@ -8,7 +8,7 @@ from app.application.uses_cases.status import DriverStatusCase, UserStatusCase, 
 from app.application.uses_cases.status.socket import EventsSocket
 from app.application.uses_cases.status.socket.driver import DriverEventsSocket
 from app.application.uses_cases.status.socket.passenger import PassengerEventsSocket
-from app.application.uses_cases.travel import ScheduleCase
+from app.application.uses_cases.schedule import ScheduleCase
 from app.application.uses_cases.user import UserUseCase
 from app.core.manager.sockets import SocketConnectionManager
 from app.core.manager.sse import SSEConnectionManager

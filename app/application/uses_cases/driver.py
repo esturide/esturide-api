@@ -10,17 +10,14 @@ class DriverUseCase:
         self.__user_service = UserService()
 
     async def set_user_driver(self, token: Token) -> bool:
-        status, user = await self.__user_service.get_by_token(token)
+        user = await self.__user_service.get_by_token(token)
 
         async with self.__user_service.save(user) as node:
             node.role_value = RoleUser.driver
 
-        return status
+        return True
 
     async def check_user_driver(self, code: UserCode) -> bool:
-        status, user = await self.__user_service.get_by_code(code)
+        user = await self.__user_service.get_by_code(code)
 
-        if status:
-            return user.role_value == RoleUser.driver
-
-        return False
+        return user.role_value == RoleUser.driver

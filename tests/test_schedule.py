@@ -1,5 +1,5 @@
 import pytest
-from app.application.uses_cases.travel import ScheduleCase
+from app.application.uses_cases.schedule import ScheduleCase
 from tests.factories.schedule_factory import create_schedule_factory, create_user_factory
 from app.core.types import UUID
 from app.domain.models import Schedule

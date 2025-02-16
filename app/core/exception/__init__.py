@@ -43,3 +43,9 @@ class FailureSaveDataException(ResponseException):
     def __init__(self, detail="Could not save data."):
         super().__init__(status_code=400, detail=detail)
         self.detail = detail
+
+
+class NotFoundException(ResponseException):
+    def __init__(self, detail="Data not found."):
+        super().__init__(status_code=401, detail=detail)
+        self.detail = detail

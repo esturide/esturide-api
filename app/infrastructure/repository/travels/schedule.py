@@ -107,6 +107,7 @@ class ScheduleRepository:
             price=price,
             start=start.dump,
             finished=finished.dump,
+            active=True,
         ).save()
 
         try:

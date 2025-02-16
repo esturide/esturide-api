@@ -1,14 +1,32 @@
+import json
 from typing import Tuple, Literal
 
 from fastapi import HTTPException
 from neomodel import DoesNotExist, db
 
-from app.core.types import UserCode
+from app.core.exception import NotFoundException
+from app.core.types import UserCode, UUID
 from app.domain.models import Schedule, User, Ride
-from app.domain.types import RideData
+from app.domain.types import LocationData
 
 
 class RideRepository:
+    @staticmethod
+    async def update_tracking(uuid: UUID, tracking: LocationData):
+        data_json = json.dumps(tracking.__dict__)
+
+        query = f"""
+        MATCH (p: User)-[r: RIDE_TO]->(c: Schedule) 
+            WHERE r.uuid = '{uuid}'
+            SET r.record = coalesce(r.record, []) + [$data]
+            RETURN r.record AS record
+        """
+        results, meta = db.cypher_query(query, {
+            "data": data_json
+        })
+
+        return results and data_json in results[0][0]
+
     @staticmethod
     async def get(schedule: Schedule, passenger: User) -> Tuple[Literal[False], None] | Tuple[Literal[True], Ride]:
         try:
@@ -23,10 +41,26 @@ class RideRepository:
             return True, ride
 
     @staticmethod
-    async def get_active_ride(code: UserCode, limit: int = 16) -> Ride:
+    async def get_by_uuid(uuid: UUID) -> Ride:
         query = f"""
         MATCH (p: User)-[r: RIDE_TO]->(c: Schedule) 
-            WHERE p.code = {code} AND c.active = true AND r.cancel = false AND r.terminate = false
+            WHERE r.uuid = '{uuid}'
+            RETURN r
+        """
+        results, meta = db.cypher_query(query)
+
+        rides = [Ride.inflate(row[0]) for row in results]
+
+        if len(rides) <= 0:
+            raise NotFoundException(detail="Ride not found.")
+
+        return rides[0]
+
+    @staticmethod
+    async def get_active_ride(code: UserCode, limit: int = 1) -> Ride:
+        query = f"""
+        MATCH (p: User)-[r: RIDE_TO]->(c: Schedule) 
+            WHERE p.code = {code} AND c.active = true AND r.cancel = false
             RETURN c
             ORDER BY r.time 
             DESC LIMIT {limit}
@@ -36,7 +70,7 @@ class RideRepository:
         schedules = [Schedule.inflate(row[0]) for row in results]
 
         if len(schedules) <= 0:
-            raise HTTPException(status_code=404, detail="No active rides found.")
+            raise NotFoundException(detail="No active rides found.")
 
         return schedules[0]
 
@@ -53,11 +87,7 @@ class RideRepository:
         return rides
 
     @staticmethod
-    async def create(schedule: Schedule, ride_data: RideData, user: User) -> bool:
-        await user.rides.connect(schedule, {
-            "location": ride_data.location,
-            "latitude": ride_data.latitude,
-            "longitude": ride_data.longitude,
-        })
+    async def create(schedule: Schedule, user: User) -> bool:
+        await user.rides.connect(schedule, {})
 
         return True

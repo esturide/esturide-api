@@ -2,7 +2,7 @@ from fastapi import HTTPException
 
 from app.core.types import UUID, UserCode
 from app.domain.models import User, Schedule
-from app.domain.services.travel import ScheduleService
+from app.domain.services.schedule import ScheduleService
 from app.domain.types import LocationData
 from app.presentation.schemes import DriverProfile, TrackingRecord
 from app.presentation.schemes.travels import TravelResult, ScheduleTravel
@@ -46,7 +46,7 @@ class ScheduleCase:
 
     async def create(self, schedule: ScheduleTravel, driver: User):
         if not driver.is_driver:
-            raise HTTPException(status_code=400, detail="You need become driver")
+            raise HTTPException(status_code=400, detail="You need become driver.")
 
         return await self.__schedule_service.create(schedule, driver)
 
@@ -61,13 +61,13 @@ class ScheduleCase:
         status, schedule = await self.__schedule_service.get(uuid)
 
         if not status:
-            raise HTTPException(status_code=404, detail="Not Found")
+            raise HTTPException(status_code=404, detail="Not Found.")
 
         driver = await schedule.driver.single()
         origin, destination = await schedule.path_routes
 
         if not auth_user.code == driver.code:
-            raise HTTPException(status_code=401, detail="Invalid code")
+            raise HTTPException(status_code=401, detail="Invalid code.")
 
         return self.create_travel_scheme(schedule, driver, origin, destination)
 
@@ -88,12 +88,12 @@ class ScheduleCase:
         status, schedule = await self.__schedule_service.get(uuid)
 
         if not status:
-            raise HTTPException(status_code=404, detail="Not Found")
+            raise HTTPException(status_code=404, detail="Not Found.")
 
         driver = await schedule.designated_driver
 
         if not driver.code == auth_user.code:
-            raise HTTPException(status_code=401, detail="Invalid code")
+            raise HTTPException(status_code=401, detail="Invalid code.")
 
         await self.__schedule_service.update(uuid, cancel=True)
 
@@ -104,12 +104,12 @@ class ScheduleCase:
         status, schedule = await self.__schedule_service.get(uuid)
 
         if not status:
-            raise HTTPException(status_code=404, detail="Not Found")
+            raise HTTPException(status_code=404, detail="Not Found.")
 
         driver = await schedule.designated_driver
 
         if not driver.code == auth_user.code:
-            raise HTTPException(status_code=401, detail="Invalid code")
+            raise HTTPException(status_code=401, detail="Invalid code.")
 
         await self.__schedule_service.update(uuid, terminate=True, active=False)
 
