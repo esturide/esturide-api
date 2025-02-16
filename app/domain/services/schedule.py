@@ -30,7 +30,7 @@ class ScheduleService:
         if not all([schedule.terminate or schedule.cancel for schedule in last_schedule]):
             raise HTTPException(
                 status_code=400,
-                detail="You can schedule a new travel, if you do not cancel or finish the last travel."
+                detail="You can schedule a new schedule, if you do not cancel or finish the last schedule."
             )
 
         status, _ = await ScheduleRepository.create(

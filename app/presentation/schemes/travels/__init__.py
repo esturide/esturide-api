@@ -25,8 +25,8 @@ class PassengerUser(BaseModel):
 
 
 class ScheduleTravelRequest(BaseModel):
-    start: TrackingRecord = Field(TrackingRecord(), title="Location where the travel begins", alias='start')
-    end: TrackingRecord = Field(TrackingRecord(), title="Location where the travel ends", alias='end')
+    start: TrackingRecord = Field(TrackingRecord(), title="Location where the schedule begins", alias='start')
+    end: TrackingRecord = Field(TrackingRecord(), title="Location where the schedule ends", alias='end')
     price: int = Field(5, title="Max passengers", alias='maxPassengers')
     max_passengers: int = Field(4, title="Max passengers", alias='maxPassengers')
 

@@ -39,10 +39,10 @@ class RideCase:
             raise HTTPException(status_code=400, detail="The driver cannot request the same trip that he had planned.")
 
         if not schedule.is_valid:
-            raise HTTPException(status_code=400, detail="The travel is not valid.")
+            raise HTTPException(status_code=400, detail="The schedule is not valid.")
 
         if await schedule.current_passengers >= schedule.max_passenger:
-            raise HTTPException(status_code=400, detail="The travel has reached the maximum number of occupants.")
+            raise HTTPException(status_code=400, detail="The schedule has reached the maximum number of occupants.")
 
         if any([
             code == passenger.code for passenger in await schedule.users
@@ -78,7 +78,7 @@ class RideCase:
             raise HTTPException(status_code=400, detail="The driver cannot request the same trip that he had planned.")
 
         if not schedule.is_valid:
-            raise HTTPException(status_code=400, detail="The travel is not valid.")
+            raise HTTPException(status_code=400, detail="The schedule is not valid.")
 
         return await self.__ride_service.cancel(schedule, code)
 
