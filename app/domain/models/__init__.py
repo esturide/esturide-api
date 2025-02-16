@@ -57,7 +57,7 @@ class User(AsyncStructuredNode):
     rides = AsyncRelationshipTo("Schedule", 'RIDE_TO', model=Ride)
     schedules = AsyncRelationshipTo("Schedule", 'DRIVER_TO', model=Travel)
 
-    def same_password(self, password: str):
+    def same_password(self, password: str) -> bool:
         return check_same_password(
             password,
             self.hashed_password

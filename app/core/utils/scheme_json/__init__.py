@@ -1,11 +1,11 @@
 from app.domain.models import Schedule, User
 from app.domain.types import LocationData
-from app.presentation.schemes import DriverProfile, TrackingRecord
-from app.presentation.schemes.travels import TravelResult
+from app.presentation.schemes import TrackingRecord
+from app.presentation.schemes.travels import TravelScheduleRequest, DriverUser
 
 
-def create_travel_scheme(schedule: Schedule, driver: User, origin: LocationData, destination: LocationData):
-    return TravelResult(
+def create_travel_scheme(schedule: Schedule, driver: User, origin: LocationData, destination: LocationData) -> TravelScheduleRequest:
+    return TravelScheduleRequest(
         uuid=schedule.uuid,
 
         price=schedule.price,
@@ -14,11 +14,11 @@ def create_travel_scheme(schedule: Schedule, driver: User, origin: LocationData,
         cancel=schedule.cancel,
         max_passengers=schedule.max_passenger,
 
-        driver=DriverProfile(
+        driver=DriverUser(
             code=driver.code,
             firstname=driver.firstname,
-            maternal_surname=driver.maternal_surname,
-            paternal_surname=driver.paternal_surname,
+            maternalSurname=driver.maternal_surname,
+            paternalSurname=driver.paternal_surname,
         ),
 
         origin=TrackingRecord(

@@ -1,7 +1,27 @@
+from typing import List
+
 from pydantic import BaseModel, Field
 
-from app.core.types import UUID
-from app.presentation.schemes import DriverProfile, TrackingRecord
+from app.core.types import UUID, UserCode
+from app.presentation.schemes import TrackingRecord
+
+
+class DriverUser(BaseModel):
+    code: UserCode
+
+    firstname: str
+    maternal_surname: str = Field(..., title="Maternal surname", alias='maternalSurname')
+    paternal_surname: str = Field(..., title="Paternal surname", alias='paternalSurname')
+    position: TrackingRecord = Field(TrackingRecord(), title="Current position", alias='position')
+
+
+class PassengerUser(BaseModel):
+    code: UserCode
+
+    firstname: str
+    maternal_surname: str = Field(..., title="Maternal surname", alias='maternalSurname')
+    paternal_surname: str = Field(..., title="Paternal surname", alias='paternalSurname')
+    position: TrackingRecord = Field(TrackingRecord(), title="Current position", alias='position')
 
 
 class ScheduleTravel(BaseModel):
@@ -11,8 +31,10 @@ class ScheduleTravel(BaseModel):
     max_passengers: int = 4
 
 
-class TravelResult(BaseModel):
+class TravelScheduleRequest(BaseModel):
     uuid: UUID
+
+    driver: DriverUser
 
     price: int
     active: bool = False
@@ -20,7 +42,7 @@ class TravelResult(BaseModel):
     cancel: bool = False
     max_passengers: int = Field(4, alias='maxPassengers')
 
-    driver: DriverProfile
+    passengers: List[PassengerUser] = Field([], title="Passengers", alias='passengers')
 
     origin: TrackingRecord
     destination: TrackingRecord
