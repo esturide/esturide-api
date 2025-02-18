@@ -40,7 +40,7 @@ class AuthenticationCredentialsService:
             return False
 
         with secure_decode(token) as decoded:
-            if code := decoded.get("code"):
+            if code := decoded.get_by_uuid("code"):
                 status, user = await self.__user_repository.get_user_by_code(code)
 
                 return status
@@ -72,7 +72,7 @@ class AuthenticationCredentialsService:
             return False, None
 
         with secure_decode(token) as decoded:
-            if code := decoded.get("code"):
+            if code := decoded.get_by_uuid("code"):
                 return await self.__user_repository.get_user_by_code(code)
 
         return False, None

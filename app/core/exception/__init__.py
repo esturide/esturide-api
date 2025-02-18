@@ -49,3 +49,9 @@ class NotFoundException(ResponseException):
     def __init__(self, detail="Data not found."):
         super().__init__(status_code=401, detail=detail)
         self.detail = detail
+
+
+class InvalidRequestException(ResponseException):
+    def __init__(self, detail="Invalid request."):
+        super().__init__(status_code=401, detail=detail)
+        self.detail = detail

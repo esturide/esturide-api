@@ -23,7 +23,7 @@ async def check_db_connection(db: DependDatabaseSession):
 @health.get('/cache', response_model=StatusMessage)
 async def check_cache_connection(cache: DependCacheSession):
     await cache.set('test_key', 'Hello, Redis!')
-    await cache.get('test_key')
+    await cache.get_by_uuid('test_key')
 
     return {
         "status": Status.success,

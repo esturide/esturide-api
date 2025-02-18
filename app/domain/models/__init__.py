@@ -151,6 +151,10 @@ class Schedule(AsyncStructuredNode):
     async def current_passengers(self):
         return len(await self.passengers.all())
 
+    @property
+    def valid_for_ride(self):
+        return all((not self.terminate, not self.cancel, not self.active))
+
 
 class Rating(AsyncStructuredNode):
     overall = IntegerProperty(required=True, choices=range(1,6))

@@ -1,5 +1,6 @@
 from fastapi import HTTPException
 
+from app.core.exception import NotFoundException
 from app.core.types import UUID, UserCode
 from app.domain.models import User, Schedule
 from app.infrastructure.repository.travels.schedule import ScheduleRepository, LocationData
@@ -15,8 +16,13 @@ class ScheduleService:
             schedule for schedule, travel, user in await ScheduleRepository.filter_ordered_time(limit)
         ]
 
-    async def get(self, uuid: UUID):
-        return await ScheduleRepository.get(uuid=uuid)
+    async def get_by_uuid(self, uuid: UUID) -> Schedule:
+        status, schedule = await ScheduleRepository.get(uuid=uuid)
+
+        if not status:
+            raise NotFoundException(detail="Schedule travel not found.")
+
+        return schedule
 
     async def get_current_travel(self, code: UserCode) -> Schedule:
         return await ScheduleRepository.get_active_travel(code)
@@ -49,14 +55,11 @@ class ScheduleService:
             )
         )
 
-        return True
+        return status
 
-    async def update(self, uuid: UUID, active: bool | None = None, terminate: bool | None = None,
-                     cancel: bool | None = None):
-        status, schedule = await self.get(uuid)
-
-        if not status:
-            return False
+    async def set_status(self, uuid: UUID, active: bool | None = None, terminate: bool | None = None,
+                         cancel: bool | None = None) -> bool:
+        schedule = await self.get_by_uuid(uuid)
 
         schedule.active = active if active is not None else schedule.active
         schedule.terminate = terminate if terminate is not None else schedule.terminate
@@ -64,4 +67,4 @@ class ScheduleService:
 
         await schedule.save()
 
-        return status
+        return True

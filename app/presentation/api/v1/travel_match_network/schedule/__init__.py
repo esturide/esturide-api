@@ -23,7 +23,7 @@ async def get_current_schedule(schedule_case: DependScheduleCase, auth_user: Aut
 @schedule_travel.post("/", response_model=StatusMessage)
 async def schedule_new_travel(schedule: ScheduleTravelRequest, schedule_case: DependScheduleCase,
                               auth_user: AuthUserCredentials):
-    status = await schedule_case.create(schedule, auth_user)
+    status = await schedule_case.create(schedule, auth_user.code)
 
     if status:
         return {
@@ -48,28 +48,28 @@ async def edit_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: 
 
 @schedule_travel.get("/{uuid}", response_model=TravelScheduleResponse)
 async def get_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: AuthUserCredentials):
-    return await schedule_case.get(uuid, auth_user)
+    return await schedule_case.get_by_uuid(uuid, auth_user)
 
 
-@schedule_travel.delete("/{uuid}", response_model=StatusMessage)
-async def cancel_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: AuthUserCredentials):
-    status = await schedule_case.cancel(uuid, auth_user)
+@schedule_travel.patch("/start/{uuid}", response_model=StatusMessage)
+async def start_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: AuthUserCredentials):
+    status = await schedule_case.start(uuid, auth_user.code)
 
     if status:
         return {
             "status": Status.success,
-            "message": "Travel be cancelled."
+            "message": "Travel is start."
         }
     else:
         return {
             "status": Status.failure,
-            "message": "Travel can not be cancelled."
+            "message": "Travel can not be started."
         }
 
 
-@schedule_travel.patch("/{uuid}", response_model=StatusMessage)
+@schedule_travel.patch("/finished/{uuid}", response_model=StatusMessage)
 async def finished_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: AuthUserCredentials):
-    status = await schedule_case.terminate(uuid, auth_user)
+    status = await schedule_case.finished(uuid, auth_user.code)
 
     if status:
         return {
@@ -80,4 +80,20 @@ async def finished_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_us
         return {
             "status": Status.failure,
             "message": "Travel can not be finished."
+        }
+
+
+@schedule_travel.patch("/cancel/{uuid}", response_model=StatusMessage)
+async def cancel_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: AuthUserCredentials):
+    status = await schedule_case.cancel(uuid, auth_user.code)
+
+    if status:
+        return {
+            "status": Status.success,
+            "message": "Travel is cancel."
+        }
+    else:
+        return {
+            "status": Status.failure,
+            "message": "Travel can not be cancelled."
         }

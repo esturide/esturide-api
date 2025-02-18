@@ -28,13 +28,13 @@ async def create_user(user: UserRequest, user_case: DependUserUseCase):
 
 @user.get('/{code}')
 async def get_user(code: UserCode, user_case: DependUserUseCase) -> UserResponse:
-    return await user_case.get(code)
+    return await user_case.get_by_uuid(code)
 
 
 @user.put('/{code}', response_model=StatusMessage)
 async def update_user(code: UserCode, user: ProfileUpdateRequest, user_case: DependUserUseCase,
                       auth_user: AuthUserCredentials):
-    status = await user_case.update(code, user, auth_user.code)
+    status = await user_case.set_status(code, user, auth_user.code)
 
     if status:
         return {

@@ -28,10 +28,7 @@ class RideCase:
         return status
 
     async def check_valid_ride(self, uuid: UUID, code: UserCode):
-        status, schedule = await self.__schedule_service.get(uuid)
-
-        if not status:
-            raise HTTPException(status_code=404, detail="Travel schedule not found.")
+        schedule = await self.__schedule_service.get_by_uuid(uuid)
 
         driver = await schedule.designated_driver
 
@@ -49,10 +46,11 @@ class RideCase:
         ]):
             raise HTTPException(status_code=409, detail="The ride was previously requested.")
 
-        return uuid, status, schedule, driver
+        return uuid, schedule, driver
 
     async def create(self, ride: RideRequest, code: UserCode):
-        uuid, status, schedule, driver = await self.check_valid_ride(ride.travel_uuid, code)
+        uuid, schedule, driver = await self.check_valid_ride(ride.travel_uuid, code)
+        status = schedule.valid_for_ride
 
         if status:
             user = await self.__user_service.get_by_code(code)
@@ -67,10 +65,7 @@ class RideCase:
         return ride.uuid
 
     async def cancel(self, uuid: UUID, code: UserCode):
-        status, schedule = await self.__schedule_service.get(uuid)
-
-        if not status:
-            raise HTTPException(status_code=404, detail="Travel schedule not found.")
+        schedule = await self.__schedule_service.get_by_uuid(uuid)
 
         driver = await schedule.designated_driver
 
@@ -83,9 +78,6 @@ class RideCase:
         return await self.__ride_service.cancel(schedule, code)
 
     async def get(self, uuid: UUID, code: UserCode):
-        status, schedule = await self.__schedule_service.get(uuid)
-
-        if not status:
-            raise HTTPException(status_code=404, detail="Travel schedule not found.")
+        schedule = await self.__schedule_service.get_by_uuid(uuid)
 
         await self.__ride_service.get(schedule, code)
