@@ -1,5 +1,5 @@
 import json
-from typing import Tuple, Literal
+from typing import Tuple, Literal, List
 
 from fastapi import HTTPException
 from neomodel import DoesNotExist, db
@@ -26,6 +26,19 @@ class RideRepository:
         })
 
         return results and data_json in results[0][0]
+
+    @staticmethod
+    async def get_last_tracking_position(uuid: UUID) -> LocationData:
+        query = f"""
+        MATCH (p: User)-[r: RIDE_TO]->(c: Schedule) 
+            WHERE r.uuid = '{uuid}'
+            RETURN r.record AS record
+        """
+        results, meta = db.cypher_query(query)
+
+        return LocationData(
+            **json.loads(results[0][0][-1])
+        )
 
     @staticmethod
     async def get(schedule: Schedule, passenger: User) -> Tuple[Literal[False], None] | Tuple[Literal[True], Ride]:
@@ -61,21 +74,21 @@ class RideRepository:
         query = f"""
         MATCH (p: User)-[r: RIDE_TO]->(c: Schedule) 
             WHERE p.code = {code} AND c.active = true AND r.cancel = false
-            RETURN c
+            RETURN r
             ORDER BY r.time 
             DESC LIMIT {limit}
         """
         results, meta = db.cypher_query(query)
 
-        schedules = [Schedule.inflate(row[0]) for row in results]
+        rides = [Ride.inflate(row[0]) for row in results]
 
-        if len(schedules) <= 0:
+        if len(rides) <= 0:
             raise NotFoundException(detail="No active rides found.")
 
-        return schedules[0]
+        return rides[0]
 
     @staticmethod
-    async def get_all(schedule: Schedule):
+    async def get_all(schedule: Schedule) -> List[Ride]:
         passengers = await schedule.passengers.all()
 
         rides = []
@@ -85,6 +98,18 @@ class RideRepository:
             rides.append(ride)
 
         return rides
+
+    @staticmethod
+    async def get_current_rides(schedule: Schedule) -> List[Tuple[User, Ride]]:
+        async def get_rides():
+            passengers = await schedule.passengers.all()
+
+            for passenger in passengers:
+                _, ride = await RideRepository.get(schedule, passenger)
+
+                yield passenger, ride
+
+        return [(passenger, ride) async for passenger, ride in get_rides()]
 
     @staticmethod
     async def create(schedule: Schedule, user: User) -> bool:

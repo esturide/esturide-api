@@ -51,3 +51,12 @@ class TravelScheduleResponse(BaseModel):
 class Tracking(BaseModel):
     uuid: UUID
     record: TrackingRecord
+
+
+class RideStatusRequest(BaseModel):
+    code: UserCode
+    validate: bool = True
+
+
+class RideStatusResponse(PassengerUser):
+    validate: bool = True

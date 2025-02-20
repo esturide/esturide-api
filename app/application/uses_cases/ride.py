@@ -75,7 +75,7 @@ class RideCase:
         if not schedule.is_valid:
             raise HTTPException(status_code=400, detail="The schedule is not valid.")
 
-        return await self.__ride_service.cancel(schedule, code)
+        return await self.__ride_service.set_cancel(schedule, code, True)
 
     async def get(self, uuid: UUID, code: UserCode):
         schedule = await self.__schedule_service.get_by_uuid(uuid)

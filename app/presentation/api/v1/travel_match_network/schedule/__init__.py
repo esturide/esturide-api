@@ -5,7 +5,8 @@ from fastapi import APIRouter, HTTPException
 from app.core.dependencies import DependScheduleCase, AuthUserCredentials
 from app.core.types import UUID, Status
 from app.presentation.schemes import StatusMessage
-from app.presentation.schemes.travels import ScheduleTravelRequest, TravelScheduleResponse
+from app.presentation.schemes.travels import ScheduleTravelRequest, TravelScheduleResponse, RideStatusResponse, \
+    RideStatusRequest
 
 schedule_travel = APIRouter(prefix="/schedule", tags=["Schedule travels"])
 
@@ -48,7 +49,7 @@ async def edit_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: 
 
 @schedule_travel.get("/{uuid}", response_model=TravelScheduleResponse)
 async def get_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: AuthUserCredentials):
-    return await schedule_case.get_by_uuid(uuid, auth_user)
+    return await schedule_case.get(uuid, auth_user)
 
 
 @schedule_travel.patch("/start/{uuid}", response_model=StatusMessage)
@@ -96,4 +97,25 @@ async def cancel_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user
         return {
             "status": Status.failure,
             "message": "Travel can not be cancelled."
+        }
+
+
+@schedule_travel.get("/passengers/{uuid}")
+async def get_passengers_status(uuid: UUID, schedule_case: DependScheduleCase, auth_user: AuthUserCredentials) -> List[RideStatusResponse]:
+    return await schedule_case.get_all_current_passengers(uuid)
+
+
+@schedule_travel.patch("/passengers/{uuid}", response_model=StatusMessage)
+async def set_passengers_status(uuid: UUID, ride: RideStatusRequest, schedule_case: DependScheduleCase, auth_user: AuthUserCredentials):
+    status = await schedule_case.valid_passenger(uuid, ride)
+
+    if status:
+        return {
+            "status": Status.success,
+            "message": "Changes to the ride have been accepted."
+        }
+    else:
+        return {
+            "status": Status.failure,
+            "message": "Passengers can not be changed."
         }

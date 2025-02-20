@@ -6,15 +6,19 @@ from app.core.exception import InvalidRequestException
 from app.core.types import UUID, UserCode
 from app.core.utils.scheme_json import create_travel_scheme
 from app.domain.models import User
+from app.domain.services.ride import RideService
 from app.domain.services.schedule import ScheduleService
 from app.domain.services.user import UserService
-from app.presentation.schemes.travels import ScheduleTravelRequest, TravelScheduleResponse
+from app.presentation.schemes import TrackingRecord
+from app.presentation.schemes.travels import ScheduleTravelRequest, TravelScheduleResponse, RideStatusRequest, \
+    RideStatusResponse
 
 
 class ScheduleCase:
     def __init__(self):
         self.__user_service = UserService()
         self.__schedule_service = ScheduleService()
+        self.__ride_service = RideService()
 
     async def create(self, schedule: ScheduleTravelRequest, driver: UserCode) -> bool:
         driver = await self.__user_service.get_by_code(driver)
@@ -32,10 +36,7 @@ class ScheduleCase:
         return create_travel_scheme(schedule, driver, origin, destination)
 
     async def get(self, uuid: UUID, auth_user: User) -> TravelScheduleResponse:
-        status, schedule = await self.__schedule_service.get_by_uuid(uuid)
-
-        if not status:
-            raise HTTPException(status_code=404, detail="Not Found.")
+        schedule = await self.__schedule_service.get_by_uuid(uuid)
 
         driver = await schedule.driver.single()
         origin, destination = await schedule.path_routes
@@ -103,3 +104,38 @@ class ScheduleCase:
             await self.__schedule_service.set_status(uuid, cancel=True)
 
         return can_finished
+
+    async def valid_passenger(self, uuid: UUID, ride_status: RideStatusRequest) -> bool:
+        schedule = await self.__schedule_service.get_by_uuid(uuid)
+        ride = await self.__ride_service.get_current_ride(ride_status.code)
+
+        if not ride.validate:
+            return await self.__ride_service.set_validate(schedule, ride_status.code, ride_status.validate)
+
+        return False
+
+    async def get_all_current_passengers(self, uuid: UUID) -> List[RideStatusResponse]:
+        ride_status_responses = []
+        schedule = await self.__schedule_service.get_by_uuid(uuid)
+
+        for passenger, ride in await self.__ride_service.get_current_rides(schedule):
+            position = await self.__ride_service.get_last_tracking_position(ride.uuid)
+
+            print(position)
+
+            ride_status_responses.append(
+                RideStatusResponse(
+                    code=passenger.code,
+                    firstname=passenger.firstname,
+                    maternalSurname=passenger.maternal_surname,
+                    paternalSurname=passenger.paternal_surname,
+                    validate=ride.validate,
+                    position=TrackingRecord(
+                        location=position.location,
+                        latitude=position.latitude,
+                        longitude=position.longitude,
+                    )
+                )
+            )
+
+        return ride_status_responses
