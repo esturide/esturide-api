@@ -46,8 +46,8 @@ class UserResponse(BaseModel):
     code: UserCode
 
     firstname: str
-    maternal_surname: str
-    paternal_surname: str
+    maternal_surname: str = Field(..., title="Maternal surname", alias='maternalSurname')
+    paternal_surname: str = Field(..., title="Paternal surname", alias='paternalSurname')
 
     email: EmailStr = Field(..., title="Email", alias='email')
 
@@ -56,21 +56,13 @@ class UserResponse(BaseModel):
 
 class ProfileUpdateRequest(BaseModel):
     firstname: str
-    maternal_surname: str
-    paternal_surname: str
+    maternal_surname: str = Field(..., title="Maternal surname", alias='maternalSurname')
+    paternal_surname: str = Field(..., title="Paternal surname", alias='paternalSurname')
     curp: str
-    birth_date: datetime.date
+    birth_date: datetime.date = Field(..., title="Birth date", alias='birthDate')
 
     email: EmailStr = Field(..., title="Email", alias='email')
     password: SecretStr
-
-
-class DriverProfile(BaseModel):
-    code: UserCode
-
-    firstname: str
-    maternal_surname: str
-    paternal_surname: str
 
 
 class AutomobileProfile(BaseModel):

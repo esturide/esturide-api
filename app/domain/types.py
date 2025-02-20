@@ -14,10 +14,3 @@ class LocationData:
             'latitude': self.latitude,
             'longitude': self.longitude,
         }
-
-
-@dataclasses.dataclass
-class RideData:
-    location: float
-    latitude: float
-    longitude: float

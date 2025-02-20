@@ -10,7 +10,7 @@ from app.presentation.schemes.websocket import StatusResponseWebSocket, StatusMe
 class DriverEventsSocket(EventsSocketNotifications):
     async def ride_status(self, session: SessionSocket, uuid: UUID):
         while True:
-            status, schedule = await self.schedule_service.get(uuid)
+            status, schedule = await self.schedule_service.get_by_uuid(uuid)
             rides = await self.ride_service.get_all_rides(schedule)
             passengers = await schedule.passengers.all()
 

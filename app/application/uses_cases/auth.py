@@ -33,8 +33,8 @@ class AuthUseCase:
         return UserResponse(
             code=user.code,
             firstname=user.firstname,
-            maternal_surname=user.maternal_surname,
-            paternal_surname=user.paternal_surname,
+            maternalSurname=user.maternal_surname,
+            paternalSurname=user.paternal_surname,
             email=user.email,
             role=user.role_value,
         )

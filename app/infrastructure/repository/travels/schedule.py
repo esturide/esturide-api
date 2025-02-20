@@ -46,16 +46,14 @@ class ScheduleRepository:
         query = f"""
         MATCH (p: User)-[r: DRIVER_TO]->(c: Schedule) 
             WHERE r.active = true 
-            RETURN c, r, p 
+            RETURN c
             ORDER BY r.time DESC 
             LIMIT {limit}
         """
         results, meta = db.cypher_query(query)
 
         return [(
-            Schedule.inflate(row[0]),
-            Travel.inflate(row[1]),
-            User.inflate(row[2])
+            Schedule.inflate(row[0])
         ) for row in results]
 
     @staticmethod
@@ -75,7 +73,7 @@ class ScheduleRepository:
     async def get_active_travel(code: UserCode, limit: int = 3) -> Schedule:
         query = f"""
         MATCH (p: User)-[r: DRIVER_TO]->(c: Schedule) 
-            WHERE p.code = {code} AND c.active = true AND c.terminate = false
+            WHERE p.code = {code} AND c.cancel = false AND c.terminate = false OR c.active = true
             RETURN c
             ORDER BY r.time 
             DESC LIMIT {limit}
