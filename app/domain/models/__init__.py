@@ -10,6 +10,7 @@ from app.domain.types import LocationData
 
 
 class RecordTrackingMixin:
+    uuid = UniqueIdProperty(indexed=True)
     record = ArrayProperty(JSONProperty())
 
 
@@ -56,7 +57,7 @@ class User(AsyncStructuredNode):
     rides = AsyncRelationshipTo("Schedule", 'RIDE_TO', model=Ride)
     schedules = AsyncRelationshipTo("Schedule", 'DRIVER_TO', model=Travel)
 
-    def same_password(self, password: str):
+    def same_password(self, password: str) -> bool:
         return check_same_password(
             password,
             self.hashed_password
@@ -149,6 +150,10 @@ class Schedule(AsyncStructuredNode):
     @property
     async def current_passengers(self):
         return len(await self.passengers.all())
+
+    @property
+    def valid_for_ride(self):
+        return all((not self.terminate, not self.cancel, not self.active))
 
 
 class Rating(AsyncStructuredNode):

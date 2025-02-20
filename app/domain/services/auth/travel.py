@@ -12,6 +12,6 @@ class AuthService:
             return False
 
         if user in await trip.passengers or user == await trip.designated_driver:
-            return trip.is_valid and not trip.cancel and not trip.terminate
+            return trip.is_valid and not trip.cancel and not trip.finished
 
         return False

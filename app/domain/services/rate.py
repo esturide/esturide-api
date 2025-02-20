@@ -14,7 +14,7 @@ class RatingService:
         if user not in await schedule.passengers.all():
             raise ValueError("User did not participate in this trip")
 
-        if not schedule.terminate:
+        if not schedule.finished:
             raise ValueError("Trip is not completed")
 
         await self.repository.save_rating(user, schedule, overall, punctuality, driving_behavior)

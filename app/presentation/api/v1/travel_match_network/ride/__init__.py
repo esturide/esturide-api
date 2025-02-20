@@ -4,6 +4,7 @@ from app.core.dependencies import AuthUserCredentials, DependRideCase, DependPas
 from app.core.types import UUID, Status
 from app.presentation.schemes import RideRequest, StatusResponse, StatusMessage
 from app.presentation.schemes.status import ScheduleStatus
+from app.presentation.schemes.travels import Tracking
 
 ride = APIRouter(prefix="/ride", tags=["Request rides"])
 
@@ -60,4 +61,20 @@ async def cancel_ride(ride_case: DependRideCase, auth_user: AuthUserCredentials)
         return {
             "status": Status.failure,
             "message": "Ride cannot be cancel."
+        }
+
+
+@ride.post("/tracking", response_model=StatusMessage)
+async def update_tracking(ride_case: DependRideCase, tracking: Tracking, auth_user: AuthUserCredentials):
+    status = await ride_case.set_tracking(tracking)
+
+    if status:
+        return {
+            "status": Status.success,
+            "message": "GPS position updated."
+        }
+    else:
+        return {
+            "status": Status.failure,
+            "message": "Failed to update GPS position."
         }
