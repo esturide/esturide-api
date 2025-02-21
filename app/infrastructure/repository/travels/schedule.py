@@ -76,7 +76,7 @@ class ScheduleRepository:
         return [Schedule.inflate(row[0]) for row in results]
 
     @staticmethod
-    async def get_active_travel(code: UserCode, limit: int = 3) -> Schedule:
+    async def get_active_travel(code: UserCode, limit: int = 5) -> Schedule:
         query = f"""
         MATCH (p: User)-[r: DRIVER_TO]->(c: Schedule) 
             WHERE p.code = {code}
@@ -87,11 +87,13 @@ class ScheduleRepository:
         results, meta = db.cypher_query(query)
 
         schedules = [Schedule.inflate(row[0]) for row in results]
+        schedules = [*filter(lambda schedule: not schedule.terminate, schedules)]
+        schedules = [*filter(lambda schedule: not schedule.cancel, schedules)]
 
         if len(schedules) <= 0:
-            raise NotFoundException(detail="No active travels found.")
+            raise NotFoundException(detail="Current travels not found.")
 
-        return [*filter(lambda schedule: schedule.active, schedules)][0]
+        return schedules[0]
 
     @staticmethod
     async def create(
