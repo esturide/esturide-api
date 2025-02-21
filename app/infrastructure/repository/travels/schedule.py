@@ -1,8 +1,8 @@
 from typing import Tuple, List, Literal
 
-from fastapi import HTTPException
 from neomodel import db
 
+from app.core.exception import NotFoundException
 from app.core.types import UserCode
 from app.domain.models import Schedule, User, Travel
 from app.domain.types import LocationData
@@ -42,7 +42,7 @@ class ScheduleRepository:
         ) for row in results]
 
     @staticmethod
-    async def filter_actives(limit: int = 16) -> List[Tuple[Schedule, Travel, User]]:
+    async def _filter_actives(limit: int = 16) -> List[Tuple[Schedule, Travel, User]]:
         query = f"""
         MATCH (p: User)-[r: DRIVER_TO]->(c: Schedule) 
             WHERE r.active = true 
@@ -55,6 +55,12 @@ class ScheduleRepository:
         return [(
             Schedule.inflate(row[0])
         ) for row in results]
+
+    @staticmethod
+    async def filter_actives(limit: int = 16) -> List[Tuple[Schedule, Travel, User]]:
+        schedules = await ScheduleRepository.filter_ordered_time(limit=limit)
+
+        return [*filter(lambda schedule: schedule.active, schedules)]
 
     @staticmethod
     async def filter_last_travels_by_driver(code: UserCode, limit: int = 16) -> List[Schedule]:
@@ -73,7 +79,7 @@ class ScheduleRepository:
     async def get_active_travel(code: UserCode, limit: int = 3) -> Schedule:
         query = f"""
         MATCH (p: User)-[r: DRIVER_TO]->(c: Schedule) 
-            WHERE p.code = {code} AND c.cancel = false AND c.terminate = false OR c.active = true
+            WHERE p.code = {code}
             RETURN c
             ORDER BY r.time 
             DESC LIMIT {limit}
@@ -83,9 +89,9 @@ class ScheduleRepository:
         schedules = [Schedule.inflate(row[0]) for row in results]
 
         if len(schedules) <= 0:
-            raise HTTPException(status_code=404, detail="No active travels found.")
+            raise NotFoundException(detail="No active travels found.")
 
-        return schedules[0]
+        return [*filter(lambda schedule: schedule.active, schedules)][0]
 
     @staticmethod
     async def create(
