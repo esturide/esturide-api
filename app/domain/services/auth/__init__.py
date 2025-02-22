@@ -1,6 +1,5 @@
-from fastapi import HTTPException
-
 from app.core import settings
+from app.core.exception import UnauthorizedAccessException
 from app.core.oauth2 import encode, check_if_expired, secure_decode, decode
 from app.core.types import Token, UserCode
 from app.infrastructure.repository.user import UserRepository
@@ -14,15 +13,13 @@ class AuthenticationCredentialsService:
         status, user = await self.__user_repository.get_user_by_code(code)
 
         if not status:
-            raise HTTPException(
-                status_code=401,
+            raise UnauthorizedAccessException(
                 detail="Invalid authentication credentials.",
             )
 
         if not user.same_password(password):
-            raise HTTPException(
-                status_code=401,
-                detail="Invalid authentication credentials.",
+            raise UnauthorizedAccessException(
+                detail="Invalid Password.",
             )
 
         data = {
@@ -40,7 +37,7 @@ class AuthenticationCredentialsService:
             return False
 
         with secure_decode(token) as decoded:
-            if code := decoded.get_by_uuid("code"):
+            if code := decoded.get("code"):
                 status, user = await self.__user_repository.get_user_by_code(code)
 
                 return status
@@ -52,8 +49,7 @@ class AuthenticationCredentialsService:
         status, user = await self.__user_repository.get_user_by_code(decode_data.get("code"))
 
         if not status:
-            raise HTTPException(
-                status_code=401,
+            raise UnauthorizedAccessException(
                 detail="Invalid authentication credentials.",
             )
 
@@ -72,7 +68,7 @@ class AuthenticationCredentialsService:
             return False, None
 
         with secure_decode(token) as decoded:
-            if code := decoded.get_by_uuid("code"):
+            if code := decoded.get("code"):
                 return await self.__user_repository.get_user_by_code(code)
 
         return False, None
