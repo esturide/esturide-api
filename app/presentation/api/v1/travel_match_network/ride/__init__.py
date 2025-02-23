@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
 from app.core.dependencies import AuthUserCredentials, DependRideCase, DependPassengerEventsCase
+from app.core.dependencies.database import DependCacheSession, DependDatabaseSession
 from app.core.types import UUID, Status
 from app.presentation.schemes import RideRequest, StatusResponse, StatusMessage
 from app.presentation.schemes.status import ScheduleStatus
@@ -65,7 +66,10 @@ async def cancel_ride(ride_case: DependRideCase, auth_user: AuthUserCredentials)
 
 
 @ride.post("/tracking", response_model=StatusMessage)
-async def update_tracking(ride_case: DependRideCase, tracking: Tracking, auth_user: AuthUserCredentials):
+async def update_tracking(ride_case: DependRideCase, tracking: Tracking, auth_user: AuthUserCredentials , cache : DependCacheSession):
+    redis_key = f"ride:{auth_user.code}:tracking"
+    await cache.set(redis_key, tracking.json())
+    await cache.publish("ride_updates", tracking.json())
     status = await ride_case.set_tracking(tracking)
 
     if status:

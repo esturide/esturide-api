@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 from jwt import InvalidSignatureError
-
+from fastapi.middleware.cors import CORSMiddleware
 from app.core import app
 from app.core.exception.handler import custom_http_exception_handler, http_exception_handler, global_exception_handler, \
     invalid_credentials_handler
@@ -22,6 +22,14 @@ for _app in [app, user_management_v1, travels_match_network_v1]:
 app.include_router(root)
 app.include_router(auth)
 app.include_router(health)
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],  
+    allow_credentials=True,
+    allow_methods=["*"],  
+    allow_headers=["*"],  
+)
 
 app.mount("/v1/user-management", user_management_v1)
 app.mount("/v1/travel-match-network", travels_match_network_v1)
