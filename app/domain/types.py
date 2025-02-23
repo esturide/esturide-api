@@ -22,3 +22,7 @@ class TrackingRecordData:
     latitude: float
     longitude: float
     time_record: datetime
+
+    @property
+    def dump(self):
+        return self.__dict__
