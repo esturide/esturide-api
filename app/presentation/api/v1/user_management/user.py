@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.core.dependencies import DependUserUseCase, AdminAuthenticated, AuthUserCredentials
+from app.core.dependencies import DependUserUseCase, AdminAuthenticated, UserCodeCredentials
 from app.core.types import Status, UserCode
 from app.presentation.schemes import UserRequest, ProfileUpdateRequest, StatusMessage, UserResponse
 
@@ -33,8 +33,8 @@ async def get_user(code: UserCode, user_case: DependUserUseCase) -> UserResponse
 
 @user.put('/{code}', response_model=StatusMessage)
 async def update_user(code: UserCode, user: ProfileUpdateRequest, user_case: DependUserUseCase,
-                      auth_user: AuthUserCredentials):
-    status = await user_case.set_status(code, user, auth_user.code)
+                      user_code: UserCodeCredentials):
+    status = await user_case.set_status(code, user, user_code)
 
     if status:
         return {
@@ -49,9 +49,9 @@ async def update_user(code: UserCode, user: ProfileUpdateRequest, user_case: Dep
 
 
 @user.delete('/{code}', response_model=StatusMessage)
-async def delete_user(code: UserCode, user_case: DependUserUseCase, auth_user: AuthUserCredentials,
+async def delete_user(code: UserCode, user_case: DependUserUseCase, user_code: UserCodeCredentials,
                       is_admin: AdminAuthenticated):
-    status = await user_case.delete(code, auth_user.code, is_admin)
+    status = await user_case.delete(code, user_code, is_admin)
 
     if status:
         return {

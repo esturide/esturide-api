@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.core.dependencies import AuthUserCredentials, DependRideCase, DependPassengerEventsCase
+from app.core.dependencies import UserCodeCredentials, DependRideCase, DependPassengerEventsCase
 from app.core.types import UUID, Status
 from app.presentation.schemes import RideRequest, StatusResponse, StatusMessage
 from app.presentation.schemes.status import ScheduleStatus
@@ -10,7 +10,7 @@ ride = APIRouter(prefix="/ride", tags=["Request rides"])
 
 
 @ride.post("/", response_model=StatusMessage)
-async def request_new_ride(ride_req: RideRequest, ride_case: DependRideCase, auth_user: AuthUserCredentials):
+async def request_new_ride(ride_req: RideRequest, ride_case: DependRideCase, auth_user: UserCodeCredentials):
     status = await ride_case.create(ride_req, auth_user.code)
 
     if status:
@@ -26,14 +26,14 @@ async def request_new_ride(ride_req: RideRequest, ride_case: DependRideCase, aut
 
 
 @ride.get("/current", response_model=ScheduleStatus)
-async def get_current_ride_status(ride_case: DependRideCase, events: DependPassengerEventsCase, auth_user: AuthUserCredentials):
+async def get_current_ride_status(ride_case: DependRideCase, events: DependPassengerEventsCase, auth_user: UserCodeCredentials):
     uuid = await ride_case.get_current_ride(auth_user.code)
 
     return await events.notify_http(uuid, auth_user.code)
 
 
 @ride.get("/", response_model=StatusResponse)
-async def get_current_ride_by_user(ride_case: DependRideCase, auth_user: AuthUserCredentials):
+async def get_current_ride_by_user(ride_case: DependRideCase, auth_user: UserCodeCredentials):
     uuid = await ride_case.get_current_ride(auth_user.code)
 
     return {
@@ -43,12 +43,12 @@ async def get_current_ride_by_user(ride_case: DependRideCase, auth_user: AuthUse
 
 
 @ride.get("/{uuid}", response_model=ScheduleStatus)
-async def get_status_ride(uuid: UUID, events: DependPassengerEventsCase, auth_user: AuthUserCredentials):
+async def get_status_ride(uuid: UUID, events: DependPassengerEventsCase, auth_user: UserCodeCredentials):
     return await events.notify_http(uuid, auth_user.code)
 
 
 @ride.delete("/", response_model=StatusMessage)
-async def cancel_ride(ride_case: DependRideCase, auth_user: AuthUserCredentials):
+async def cancel_ride(ride_case: DependRideCase, auth_user: UserCodeCredentials):
     uuid = await ride_case.get_current_ride(auth_user.code)
     status = await ride_case.cancel(uuid, auth_user.code)
 
@@ -65,7 +65,7 @@ async def cancel_ride(ride_case: DependRideCase, auth_user: AuthUserCredentials)
 
 
 @ride.post("/tracking", response_model=StatusMessage)
-async def update_tracking(ride_case: DependRideCase, tracking: Tracking, auth_user: AuthUserCredentials):
+async def update_tracking(ride_case: DependRideCase, tracking: Tracking, auth_user: UserCodeCredentials):
     status = await ride_case.set_tracking(tracking)
 
     if status:

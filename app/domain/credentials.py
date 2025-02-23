@@ -30,16 +30,16 @@ async def user_code_credentials(token: Annotated[Token, Depends(oauth2_scheme)])
             return True, code
 
 
-async def user_is_authenticated(token: Annotated[Token, Depends(oauth2_scheme)]) -> int | None:
-    result, user = await user_credentials(token)
+async def get_user_code_is_authenticated(token: Annotated[Token, Depends(oauth2_scheme)]) -> UserCode:
+    result, user = await user_code_credentials(token)
 
-    if user is not None:
-        return user.code
+    if result:
+        return user
 
     raise UnauthorizedAccessException(detail="Not authenticated.")
 
 
-async def get_user_is_authenticated(token: Annotated[Token, Depends(oauth2_scheme)]) -> User | None:
+async def get_user_is_authenticated(token: Annotated[Token, Depends(oauth2_scheme)]) -> User:
     result, user = await user_credentials(token)
 
     if result:
