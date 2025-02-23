@@ -1,4 +1,4 @@
-from typing import Tuple, List, Literal
+from typing import Tuple, List
 
 from neomodel import db
 
@@ -11,13 +11,19 @@ from app.infrastructure.repository.user import UserRepository
 
 class ScheduleRepository:
     @staticmethod
-    async def get(**kwargs) -> Tuple[Literal[False], None] | Tuple[Literal[True], Schedule]:
-        node = await Schedule.nodes.get_or_none(**kwargs)
+    async def get(**kwargs) -> Schedule:
+        schedule = await Schedule.nodes.get_or_none(**kwargs)
 
-        if node is None:
-            return False, None
+        if schedule is None:
+            raise NotFoundException(detail='Schedule not found.')
 
-        return True, node
+        return schedule
+
+    @staticmethod
+    async def search(**kwargs) -> bool:
+        schedule = await Schedule.nodes.get_or_none(**kwargs)
+
+        return schedule is None
 
     @staticmethod
     async def get_all(limit: int = 16, **kwargs) -> List[Schedule]:
@@ -39,21 +45,6 @@ class ScheduleRepository:
             Schedule.inflate(row[0]),
             Travel.inflate(row[1]),
             User.inflate(row[2])
-        ) for row in results]
-
-    @staticmethod
-    async def _filter_actives(limit: int = 16) -> List[Tuple[Schedule, Travel, User]]:
-        query = f"""
-        MATCH (p: User)-[r: DRIVER_TO]->(c: Schedule) 
-            WHERE r.active = true 
-            RETURN c
-            ORDER BY r.time DESC 
-            LIMIT {limit}
-        """
-        results, meta = db.cypher_query(query)
-
-        return [(
-            Schedule.inflate(row[0])
         ) for row in results]
 
     @staticmethod

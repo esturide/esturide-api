@@ -17,10 +17,7 @@ class ScheduleService:
         ]
 
     async def get_by_uuid(self, uuid: UUID) -> Schedule:
-        status, schedule = await ScheduleRepository.get(uuid=uuid)
-
-        if not status:
-            raise NotFoundException(detail="Schedule travel not found.")
+        schedule = await ScheduleRepository.get(uuid=uuid)
 
         return schedule
 
