@@ -8,18 +8,18 @@ class ResponseException(Exception):
 
 
 class UnauthorizedAccessException(ResponseException):
-    def __init__(self):
-        super().__init__(status_code=401, detail="Unauthorized access.")
+    def __init__(self, detail="Unauthorized access."):
+        super().__init__(status_code=401, detail=detail)
 
 
 class ForbiddenAccessException(ResponseException):
-    def __init__(self):
-        super().__init__(status_code=403, detail="Forbidden access.")
+    def __init__(self, detail="Forbidden access."):
+        super().__init__(status_code=403, detail=detail)
 
 
 class ResourceNotFoundException(ResponseException):
-    def __init__(self):
-        super().__init__(status_code=404, detail="Resource not found.")
+    def __init__(self, detail="Resource not found."):
+        super().__init__(status_code=404, detail=detail)
 
 
 class ValidationException(ResponseException):

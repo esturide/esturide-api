@@ -21,9 +21,9 @@ from app.core.dependencies.depends import get_user_case, get_auth_case, get_sche
 from app.core.manager.sockets import SocketConnectionManager
 from app.core.manager.sse import SSEConnectionManager
 from app.core.oauth2 import oauth2_scheme
-from app.core.types import Token
+from app.core.types import Token, UserCode
 from app.domain.credentials import user_credentials, validate_admin_role, \
-    validate_permission_role, get_user_is_authenticated
+    validate_permission_role, get_user_is_authenticated, user_code_credentials
 from app.domain.models import User
 
 DependUserUseCase = Annotated[UserUseCase, Depends(get_user_case)]
@@ -46,6 +46,7 @@ DependSEEConnectionManager = Annotated[SSEConnectionManager, Depends(get_see_con
 OAuth2Scheme = Annotated[Token, Depends(oauth2_scheme)]
 OAuth2Form = Annotated[OAuth2PasswordRequestForm, Depends()]
 UserCredentials = Annotated[Tuple[bool, Optional[User]], Depends(user_credentials)]
+UserCodeCredentials = Annotated[Tuple[bool, UserCode], Depends(user_code_credentials)]
 AuthUserCredentials = Annotated[User, Depends(get_user_is_authenticated)]
 AdminAuthenticated = Annotated[bool, Depends(validate_admin_role)]
 ManagerAuthenticated = Annotated[bool, Depends(validate_permission_role)]
