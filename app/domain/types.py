@@ -1,9 +1,10 @@
 import dataclasses
+from datetime import datetime
 
 
 @dataclasses.dataclass
 class LocationData:
-    location: float
+    location: float # Remove!
     latitude: float
     longitude: float
 
@@ -14,3 +15,10 @@ class LocationData:
             'latitude': self.latitude,
             'longitude': self.longitude,
         }
+
+
+@dataclasses.dataclass
+class TrackingRecordData:
+    latitude: float
+    longitude: float
+    time_record: datetime

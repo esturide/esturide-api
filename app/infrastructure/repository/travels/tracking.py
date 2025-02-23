@@ -4,12 +4,12 @@ from typing import List
 from neomodel import db
 
 from app.core.types import UUID
-from app.domain.types import LocationData
+from app.domain.types import TrackingRecordData
 
 
 class StaticTrackingRepository:
     @staticmethod
-    async def save_passenger_tracking_data(uuid: UUID, data: List[LocationData]) -> bool:
+    async def save_passenger_tracking_data(uuid: UUID, data: List[TrackingRecordData]) -> bool:
         data_json = str([json.dumps(tracking.__dict__) for tracking in data])
 
         query = f"""
@@ -25,7 +25,7 @@ class StaticTrackingRepository:
         return True
 
     @staticmethod
-    async def save_driver_tracking_data(uuid: UUID, data: List[LocationData]) -> bool:
+    async def save_driver_tracking_data(uuid: UUID, data: List[TrackingRecordData]) -> bool:
         data_json = str([json.dumps(tracking.__dict__) for tracking in data])
 
         query = f"""
@@ -42,7 +42,7 @@ class StaticTrackingRepository:
 
 
     @staticmethod
-    async def get_all_record_from_uuid(uuid: UUID) -> List[LocationData]:
+    async def get_all_record_from_uuid(uuid: UUID) -> List[TrackingRecordData]:
         query = f"""
         MATCH (p: User)-[r: DRIVER_TO | RIDE_TO]->(c: Schedule) 
             WHERE r.uuid = '{uuid}'
@@ -51,7 +51,7 @@ class StaticTrackingRepository:
         results, meta = db.cypher_query(query, {})
 
         records = [
-            LocationData(**json.loads(row[0])) for row in results
+            TrackingRecordData(**json.loads(row[0])) for row in results
         ]
 
         return records
