@@ -14,6 +14,8 @@ UserCode = typing.TypeVar("UserCode", bound=int)
 
 StatusQuery = typing.Tuple[bool, typing.LiteralString]
 
+T = typing.TypeVar('T')
+CallableAsyncGenerator = typing.Callable[..., typing.AsyncIterable[T]]
 
 class Status(str, Enum):
     success = 'success'

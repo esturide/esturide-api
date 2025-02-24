@@ -1,6 +1,8 @@
+
 from sse_starlette.sse import EventSourceResponse
 
 from app.core.manager.sse.session import StreamSSE
+from app.core.types import CallableAsyncGenerator
 
 
 class SSEConnectionManager:
@@ -8,14 +10,15 @@ class SSEConnectionManager:
         self.__loop = None
         self.__session = StreamSSE()
 
-    def pipeline(self, func):
-        async def wrapper():
-            async for msg in func():
-                yield self.__session.send(msg)
+    def pipeline(self, func: CallableAsyncGenerator) -> CallableAsyncGenerator:
+        async def wrapper_func(*args, **kwargs):
+            _session = StreamSSE()
 
-        self.__loop = wrapper
+            async for msg in func(*args, **kwargs):
+                print(msg)
+                yield _session.send(msg)
 
-        return func
+        return wrapper_func
 
     async def session(self):
         if self.__loop is not None:
