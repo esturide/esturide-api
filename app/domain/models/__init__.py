@@ -116,6 +116,7 @@ class Schedule(AsyncStructuredNode):
 
     price = IntegerProperty(required=True)
     max_passenger = IntegerProperty(required=False, default=4)
+    seats = StringProperty("")
 
     start = JSONProperty(required=True)
     finished = JSONProperty(required=True)
@@ -126,6 +127,10 @@ class Schedule(AsyncStructuredNode):
     passengers = AsyncRelationshipFrom("User", 'RIDE_TO', model=Ride, cardinality=AsyncZeroOrOne)
     driver = AsyncRelationshipFrom("User", 'DRIVER_TO', model=Travel, cardinality=AsyncOne)
     car = AsyncRelationshipFrom('Automobile', 'DRIVE')
+
+    @property
+    def all_seats(self) -> list[str]:
+        return str(self.seats).split("")
 
     @property
     async def designated_driver(self):
