@@ -28,12 +28,12 @@ class PassengerUser(BaseModel):
 class ScheduleTravelRequest(BaseModel):
     start: TrackingRecord = Field(TrackingRecord(), title="Location where the schedule begins", alias='start')
     end: TrackingRecord = Field(TrackingRecord(), title="Location where the schedule ends", alias='end')
-    price: int = Field(5, title="Max passengers", alias='maxPassengers')
-    max_passengers: int = Field(4, title="Max passengers", alias='maxPassengers')
+    price: int = Field(5, title="Price of travel", alias='price')
 
     starting: datetime = Field(..., title="Time starting", alias='starting')
     finished: datetime = Field(..., title="Time finished", alias='finished')
 
+    max_passengers: int = Field(4, title="Max passengers", alias='maxPassengers')
     seats: List[str] = Field(['A', 'B', 'C'], title="All seats", alias='seats')
 
 
@@ -46,13 +46,12 @@ class TravelScheduleResponse(BaseModel):
     active: bool = False
     terminate: bool = False
     cancel: bool = False
-    max_passengers: int = Field(4, alias='maxPassengers')
 
     starting: datetime = Field(..., title="Time starting", alias='starting')
     finished: datetime = Field(..., title="Time finished", alias='finished')
 
+    max_passengers: int = Field(4, alias='maxPassengers')
     seats: List[str] = Field(['A', 'B', 'C'], title="All seats", alias='seats')
-
     passengers: List[PassengerUser] = Field([], title="Passengers", alias='passengers')
 
     origin: TrackingRecord
