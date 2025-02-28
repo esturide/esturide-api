@@ -4,7 +4,14 @@ from app.presentation.schemes import TrackingRecord
 from app.presentation.schemes.travels import TravelScheduleResponse, DriverUser
 
 
-def create_travel_scheme(schedule: Schedule, driver: User, origin: LocationData, destination: LocationData) -> TravelScheduleResponse:
+def create_travel_scheme(
+        schedule: Schedule,
+        driver: User, origin:
+        LocationData, destination:
+        LocationData
+) -> TravelScheduleResponse:
+    print(schedule)
+
     return TravelScheduleResponse(
         uuid=schedule.uuid,
 
@@ -13,6 +20,9 @@ def create_travel_scheme(schedule: Schedule, driver: User, origin: LocationData,
         terminate=schedule.terminate,
         cancel=schedule.cancel,
         max_passengers=schedule.max_passenger,
+
+        starting=schedule.start_time,
+        finished=schedule.end_time,
 
         driver=DriverUser(
             code=driver.code,

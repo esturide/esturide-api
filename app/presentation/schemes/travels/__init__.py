@@ -1,6 +1,7 @@
+from datetime import datetime, timedelta
 from typing import List
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 from app.core.types import UUID, UserCode
 from app.presentation.schemes import TrackingRecord
@@ -30,6 +31,9 @@ class ScheduleTravelRequest(BaseModel):
     price: int = Field(5, title="Max passengers", alias='maxPassengers')
     max_passengers: int = Field(4, title="Max passengers", alias='maxPassengers')
 
+    starting: datetime = Field(..., title="Time starting", alias='starting')
+    finished: datetime = Field(..., title="Time finished", alias='finished')
+
 
 class TravelScheduleResponse(BaseModel):
     uuid: UUID
@@ -41,6 +45,9 @@ class TravelScheduleResponse(BaseModel):
     terminate: bool = False
     cancel: bool = False
     max_passengers: int = Field(4, alias='maxPassengers')
+
+    starting: datetime = Field(..., title="Time starting", alias='starting')
+    finished: datetime = Field(..., title="Time finished", alias='finished')
 
     passengers: List[PassengerUser] = Field([], title="Passengers", alias='passengers')
 
