@@ -36,8 +36,13 @@ class RideRepository:
         """
         results, meta = db.cypher_query(query)
 
+        result = results[0][0]
+
+        if result is None:
+            return LocationData(0, 0, 0)
+
         return LocationData(
-            **json.loads(results[0][0][-1])
+            **json.loads(results[-1])
         )
 
     @staticmethod
