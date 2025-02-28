@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Tuple
 
 from neomodel import AsyncStructuredNode, UniqueIdProperty, StringProperty, DateProperty, EmailProperty, \
@@ -118,6 +119,9 @@ class Schedule(AsyncStructuredNode):
 
     start = JSONProperty()
     finished = JSONProperty()
+
+    start_time = DateTimeProperty(default=lambda: datetime.now())
+    end_time = DateTimeProperty(default=lambda: datetime.now())
 
     passengers = AsyncRelationshipFrom("User", 'RIDE_TO', model=Ride, cardinality=AsyncZeroOrOne)
     driver = AsyncRelationshipFrom("User", 'DRIVER_TO', model=Travel, cardinality=AsyncOne)

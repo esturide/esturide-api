@@ -14,6 +14,9 @@ def create_travel_scheme(schedule: Schedule, driver: User, origin: LocationData,
         cancel=schedule.cancel,
         max_passengers=schedule.max_passenger,
 
+        start_time=schedule.start_time,
+        end_time=schedule.end_time,
+
         driver=DriverUser(
             code=driver.code,
             firstname=driver.firstname,
