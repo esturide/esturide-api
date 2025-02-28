@@ -36,6 +36,8 @@ class ScheduleService:
                 detail="You can schedule a new schedule, if you do not cancel or finish the last schedule."
             )
 
+        print(schedule)
+
         status, _ = await ScheduleRepository.create(
             driver.code,
             schedule.max_passengers,
@@ -49,7 +51,9 @@ class ScheduleService:
                 end.location,
                 end.latitude,
                 end.longitude,
-            )
+            ),
+            schedule.starting,
+            schedule.finished,
         )
 
         return status

@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import Tuple, List
 
 from neomodel import db
@@ -93,6 +94,8 @@ class ScheduleRepository:
             price: int,
             start: LocationData,
             finished: LocationData,
+            star_time: datetime,
+            end_time: datetime,
     ):
         status, user = await UserRepository.get_user_by_code(code)
 
@@ -104,6 +107,8 @@ class ScheduleRepository:
             price=price,
             start=start.dump,
             finished=finished.dump,
+            start_time=star_time,
+            end_time=end_time,
         ).save()
 
         try:

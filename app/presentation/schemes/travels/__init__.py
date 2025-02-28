@@ -31,32 +31,8 @@ class ScheduleTravelRequest(BaseModel):
     price: int = Field(5, title="Max passengers", alias='maxPassengers')
     max_passengers: int = Field(4, title="Max passengers", alias='maxPassengers')
 
-    start_time: datetime = Field(default_factory=lambda: datetime.now(), title="Time starting", alias='startTime')
-    end_time: datetime = Field(default_factory=lambda: datetime.now() + timedelta(minutes=30), title="Time finished", alias='endTime')
-
-    @field_validator("start_time")
-    def validate_start(cls, start):
-        now = datetime.now()
-
-        if start < now:
-            raise ValueError("The start time must be equal to or later than the current time.")
-
-        return start
-
-    @field_validator("end_time")
-    def validate_end(cls, end, values):
-        start = values.get("startTime")
-
-        if start is None:
-            raise ValueError("No valid start time was provided for comparison.")
-
-        if end <= start:
-            raise ValueError("The end time must be after the start time.")
-
-        if end - start < timedelta(minutes=30):
-            raise ValueError("The difference between start and end must be greater than 30 minutes.")
-
-        return end
+    starting: datetime = Field(..., title="Time starting", alias='starting')
+    finished: datetime = Field(..., title="Time finished", alias='finished')
 
 
 class TravelScheduleResponse(BaseModel):
@@ -70,32 +46,8 @@ class TravelScheduleResponse(BaseModel):
     cancel: bool = False
     max_passengers: int = Field(4, alias='maxPassengers')
 
-    starting: datetime = Field(default_factory=lambda: datetime.now(), title="Time starting", alias='starting')
-    finished: datetime = Field(default_factory=lambda: datetime.now() + timedelta(minutes=30), title="Time finished", alias='finished')
-
-    @field_validator("starting")
-    def validate_start(cls, start):
-        now = datetime.now()
-
-        if start < now:
-            raise ValueError("The start time must be equal to or later than the current time.")
-
-        return start
-
-    @field_validator("finished")
-    def validate_end(cls, end, values):
-        start = values.get("start")
-
-        if start is None:
-            raise ValueError("No valid start time was provided for comparison.")
-
-        if end <= start:
-            raise ValueError("The end time must be after the start time.")
-
-        if end - start < timedelta(minutes=30):
-            raise ValueError("The difference between start and end must be greater than 30 minutes.")
-
-        return end
+    starting: datetime = Field(..., title="Time starting", alias='starting')
+    finished: datetime = Field(..., title="Time finished", alias='finished')
 
     passengers: List[PassengerUser] = Field([], title="Passengers", alias='passengers')
 
