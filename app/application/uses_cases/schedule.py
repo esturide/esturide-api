@@ -26,6 +26,9 @@ class ScheduleCase:
         if not driver.is_driver:
             raise HTTPException(status_code=400, detail="You need become driver.")
 
+        if len(schedule.seats) > schedule.max_seats:
+            raise HTTPException(status_code=400, detail="Seats exceed.")
+
         return await self.__schedule_service.create(schedule, driver)
 
     async def get_current_travel(self, user_code: UserCode) -> TravelScheduleResponse:

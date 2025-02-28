@@ -52,6 +52,7 @@ class ScheduleService:
             ),
             schedule.starting,
             schedule.finished,
+            schedule.seats
         )
 
         return status

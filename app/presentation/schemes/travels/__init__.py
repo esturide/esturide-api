@@ -34,7 +34,7 @@ class ScheduleTravelRequest(BaseModel):
     starting: datetime = Field(..., title="Time starting", alias='starting')
     finished: datetime = Field(..., title="Time finished", alias='finished')
 
-    seats: List[chr] = Field(['A', 'B', 'C'], title="All seats", alias='seats')
+    seats: List[str] = Field(['A', 'B', 'C'], title="All seats", alias='seats')
 
 
 class TravelScheduleResponse(BaseModel):
@@ -51,7 +51,7 @@ class TravelScheduleResponse(BaseModel):
     starting: datetime = Field(..., title="Time starting", alias='starting')
     finished: datetime = Field(..., title="Time finished", alias='finished')
 
-    seats: List[chr] = Field(['A', 'B', 'C'], title="All seats", alias='seats')
+    seats: List[str] = Field(['A', 'B', 'C'], title="All seats", alias='seats')
 
     passengers: List[PassengerUser] = Field([], title="Passengers", alias='passengers')
 

@@ -96,6 +96,7 @@ class ScheduleRepository:
             finished: LocationData,
             star_time: datetime,
             end_time: datetime,
+            seats: list[chr]
     ):
         status, user = await UserRepository.get_user_by_code(code)
 
@@ -109,6 +110,7 @@ class ScheduleRepository:
             finished=finished.dump,
             start_time=star_time,
             end_time=end_time,
+            seats=seats,
         ).save()
 
         try:

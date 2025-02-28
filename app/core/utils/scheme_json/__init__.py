@@ -10,8 +10,6 @@ def create_travel_scheme(
         LocationData, destination:
         LocationData
 ) -> TravelScheduleResponse:
-    print(schedule)
-
     return TravelScheduleResponse(
         uuid=schedule.uuid,
 
@@ -23,6 +21,8 @@ def create_travel_scheme(
 
         starting=schedule.start_time,
         finished=schedule.end_time,
+
+        seats=schedule.seats,
 
         driver=DriverUser(
             code=driver.code,
