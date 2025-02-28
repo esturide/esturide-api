@@ -116,6 +116,7 @@ class Schedule(AsyncStructuredNode):
 
     price = IntegerProperty(required=True)
     max_passenger = IntegerProperty(required=False, default=4)
+    seats = ArrayProperty()
 
     start = JSONProperty(required=True)
     finished = JSONProperty(required=True)
