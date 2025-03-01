@@ -46,7 +46,7 @@ class ScheduleCase:
         driver = await schedule.designated_driver
         origin, destination = await schedule.path_routes
 
-        return create_travel_scheme(schedule, driver, origin, destination, [(user, tracking) async for user, tracking in self.get_ride_tracking()])
+        return create_travel_scheme(schedule, driver, origin, destination, [(user, tracking) async for user, tracking in self.get_ride_tracking(user_code)])
 
     async def get(self, uuid: UUID, auth_user: User) -> TravelScheduleResponse:
         schedule = await self.__schedule_service.get_by_uuid(uuid)
@@ -57,7 +57,7 @@ class ScheduleCase:
         if not auth_user.code == driver.code:
             raise HTTPException(status_code=401, detail="Invalid code.")
 
-        return create_travel_scheme(schedule, driver, origin, destination, await schedule.users)
+        return create_travel_scheme(schedule, driver, origin, destination, [(user, tracking) async for user, tracking in self.get_ride_tracking(driver.code)])
 
     async def get_all_travels(self, limit: int) -> List[TravelScheduleResponse]:
         schedules = []
@@ -70,7 +70,7 @@ class ScheduleCase:
             origin, destination = await schedule.path_routes
 
             schedules.append(
-                create_travel_scheme(schedule, driver, origin, destination)
+                create_travel_scheme(schedule, driver, origin, destination, [(user, tracking) async for user, tracking in self.get_ride_tracking(driver.code)])
             )
 
         return schedules
