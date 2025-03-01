@@ -46,7 +46,10 @@ class RideService:
     async def get_last_tracking_position(self, uuid: UUID):
         return await RideRepository.get_last_tracking_position(uuid)
 
-    async def get_current_ride(self, code: UserCode):
+    async def get_current_ride(self, code: UserCode, *args, **kwargs):
+        return await RideRepository.get_ride_by_code(code, *args, **kwargs)
+
+    async def get_active_ride(self, code: UserCode):
         return await RideRepository.get_active_ride(code)
 
     async def set_cancel(self, schedule: Schedule, code: UserCode, cancel: bool):

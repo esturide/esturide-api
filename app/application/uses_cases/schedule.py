@@ -120,7 +120,7 @@ class ScheduleCase:
 
     async def valid_passenger(self, uuid: UUID, ride_status: RideStatusRequest) -> bool:
         schedule = await self.__schedule_service.get_by_uuid(uuid)
-        ride = await self.__ride_service.get_current_ride(ride_status.code)
+        ride = await self.__ride_service.get_active_ride(ride_status.code)
 
         if not ride.validate:
             return await self.__ride_service.set_validate(schedule, ride_status.code, ride_status.validate)

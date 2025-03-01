@@ -59,8 +59,13 @@ class RideCase:
 
         return status
 
-    async def get_current_ride(self, code: UserCode) -> UUID:
-        ride = await self.__ride_service.get_current_ride(code)
+    async def get_current_ride(self, code: UserCode, *args, **kwargs):
+        ride = await self.__ride_service.get_current_ride(code, *args, **kwargs)
+
+        return ride.uuid
+
+    async def get_active_ride(self, code: UserCode) -> UUID:
+        ride = await self.__ride_service.get_active_ride(code)
 
         return ride.uuid
 

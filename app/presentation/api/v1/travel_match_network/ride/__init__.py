@@ -27,14 +27,14 @@ async def request_new_ride(ride_req: RideRequest, ride_case: DependRideCase, aut
 
 @ride.get("/current", response_model=ScheduleStatus)
 async def get_current_ride_status(ride_case: DependRideCase, events: DependPassengerEventsCase, auth_user: AuthUserCredentials):
-    uuid = await ride_case.get_current_ride(auth_user.code)
+    uuid = await ride_case.get_active_ride(auth_user.code)
 
     return await events.notify_http(uuid, auth_user.code)
 
 
 @ride.get("/", response_model=StatusResponse)
 async def get_current_ride_by_user(ride_case: DependRideCase, auth_user: AuthUserCredentials):
-    uuid = await ride_case.get_current_ride(auth_user.code)
+    uuid = await ride_case.get_active_ride(auth_user.code)
 
     return {
         "status": Status.success,
@@ -49,7 +49,7 @@ async def get_status_ride(uuid: UUID, events: DependPassengerEventsCase, auth_us
 
 @ride.delete("/", response_model=StatusMessage)
 async def cancel_ride(ride_case: DependRideCase, auth_user: AuthUserCredentials):
-    uuid = await ride_case.get_current_ride(auth_user.code)
+    uuid = await ride_case.get_active_ride(auth_user.code)
     status = await ride_case.cancel(uuid, auth_user.code)
 
     if status:
