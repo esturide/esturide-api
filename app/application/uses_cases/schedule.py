@@ -26,26 +26,27 @@ class ScheduleCase:
         if not driver.is_driver:
             raise HTTPException(status_code=400, detail="You need become driver.")
 
-        if len(schedule.seats) > schedule.max_seats:
+        if len(schedule.seats) > schedule.max_passengers:
             raise HTTPException(status_code=400, detail="Seats exceed.")
 
         return await self.__schedule_service.create(schedule, driver)
 
-    async def get_current_travel(self, user_code: UserCode) -> TravelScheduleResponse:
+    async def get_ride_tracking(self, user_code: UserCode):
         schedule = await self.__schedule_service.get_current_travel(user_code)
-        driver = await schedule.designated_driver
-        origin, destination = await schedule.path_routes
-
-        users_rides = []
         users = await schedule.users
 
         for user in users:
             ride = await self.__ride_service.get(schedule, user.code)
             tracking = await self.__ride_service.get_last_tracking_position(ride.uuid)
 
-            users_rides.append((user, tracking))
+            yield user, tracking
 
-        return create_travel_scheme(schedule, driver, origin, destination, users_rides)
+    async def get_current_travel(self, user_code: UserCode) -> TravelScheduleResponse:
+        schedule = await self.__schedule_service.get_current_travel(user_code)
+        driver = await schedule.designated_driver
+        origin, destination = await schedule.path_routes
+
+        return create_travel_scheme(schedule, driver, origin, destination, [(user, tracking) async for user, tracking in self.get_ride_tracking()])
 
     async def get(self, uuid: UUID, auth_user: User) -> TravelScheduleResponse:
         schedule = await self.__schedule_service.get_by_uuid(uuid)
