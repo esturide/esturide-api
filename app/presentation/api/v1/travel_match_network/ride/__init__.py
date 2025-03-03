@@ -32,7 +32,7 @@ async def get_current_ride_status(ride_case: DependRideCase, events: DependPasse
     return await events.notify_http(uuid, auth_user.code)
 
 
-@ride.get("/", response_model=StatusResponse)
+@ride.get("/", response_model=StatusResponse[UUID])
 async def get_current_ride_by_user(ride_case: DependRideCase, auth_user: AuthUserCredentials):
     uuid = await ride_case.get_active_ride(auth_user.code)
 
