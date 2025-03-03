@@ -11,7 +11,7 @@ from app.infrastructure.repository.user import UserRepository
 class RideService:
     async def set_tracking(self, uuid: UUID, tracking: LocationData) -> bool:
         ride = await RideRepository.get_by_uuid(uuid)
-        status_ride = not ride.cancel and ride.validate
+        status_ride = not ride.cancel
 
         if status_ride:
             await RideRepository.update_tracking(uuid, tracking)
