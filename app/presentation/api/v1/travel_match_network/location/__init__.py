@@ -4,7 +4,7 @@ from fastapi import APIRouter
 
 from app.core.dependencies import NominatimDepend
 from app.core.exception import NotFoundException
-from app.presentation.schemes.AddressLocation import FoundLocation
+from app.presentation.schemes.location import FoundLocation
 
 location = APIRouter(prefix="/location", tags=["Location"])
 
