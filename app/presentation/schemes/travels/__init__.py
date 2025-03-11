@@ -4,6 +4,7 @@ from pydantic import BaseModel, Field
 
 from app.core.types import UUID, UserCode
 from app.presentation.schemes import TrackingRecord
+from app.presentation.schemes.location import DataAddressLocation
 
 
 class DriverUser(BaseModel):
@@ -25,8 +26,8 @@ class PassengerUser(BaseModel):
 
 
 class ScheduleTravelRequest(BaseModel):
-    start: TrackingRecord = Field(TrackingRecord(), title="Location where the schedule begins", alias='start')
-    end: TrackingRecord = Field(TrackingRecord(), title="Location where the schedule ends", alias='end')
+    start: DataAddressLocation = Field(..., title="Location where the schedule begins", alias='start')
+    end: DataAddressLocation = Field(..., title="Location where the schedule ends", alias='end')
     price: int = Field(5, title="Max passengers", alias='maxPassengers')
     max_passengers: int = Field(4, title="Max passengers", alias='maxPassengers')
 
@@ -44,8 +45,8 @@ class TravelScheduleResponse(BaseModel):
 
     passengers: List[PassengerUser] = Field([], title="Passengers", alias='passengers')
 
-    origin: TrackingRecord
-    destination: TrackingRecord
+    origin: DataAddressLocation
+    destination: DataAddressLocation
 
 
 class Tracking(BaseModel):

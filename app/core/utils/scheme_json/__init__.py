@@ -1,6 +1,7 @@
 from app.domain.models import Schedule, User
 from app.domain.types import LocationData
 from app.presentation.schemes import TrackingRecord
+from app.presentation.schemes.location import DataAddressLocation
 from app.presentation.schemes.travels import TravelScheduleResponse, DriverUser
 
 
@@ -22,14 +23,14 @@ def create_travel_scheme(schedule: Schedule, driver: User, origin: LocationData,
             paternalSurname=driver.paternal_surname,
         ),
 
-        origin=TrackingRecord(
-            location=origin.location,
+        origin=DataAddressLocation(
+            address="",
             latitude=origin.latitude,
             longitude=origin.longitude,
         ),
 
-        destination=TrackingRecord(
-            location=destination.location,
+        destination=DataAddressLocation(
+            address="",
             latitude=destination.latitude,
             longitude=destination.longitude,
         ),
