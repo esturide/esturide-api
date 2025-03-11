@@ -3,7 +3,7 @@ from typing import List
 from fastapi import HTTPException
 
 from app.core.exception import InvalidRequestException
-from app.core.types import UUID, UserCode
+from app.core.types import UUID, UserCode, StatusTravel
 from app.core.utils.scheme_json import create_travel_scheme
 from app.domain.models import User
 from app.domain.services.ride import RideService
@@ -75,9 +75,41 @@ class ScheduleCase:
 
         return schedules
 
+    async def set_status(self, uuid: UUID, user_code: UserCode, status: StatusTravel):
+        async def match_status(status: StatusTravel):
+            all_status = {
+                StatusTravel.start: not (schedule.cancel or schedule.terminate),
+                StatusTravel.cancel: schedule.active or (not schedule.cancel and not schedule.terminate),
+                StatusTravel.terminate: schedule.active or not schedule.cancel
+            }
+
+            match status:
+                case StatusTravel.start:
+                    if not (schedule.cancel or schedule.terminate):
+                        await self.__schedule_service.set_active(uuid)
+                case StatusTravel.cancel:
+                    if schedule.active or (not schedule.cancel and not schedule.terminate):
+                        await self.__schedule_service.set_cancel(uuid)
+                case StatusTravel.terminate:
+                    if schedule.active or not schedule.cancel:
+                        await self.__schedule_service.set_terminate(uuid)
+
+            for status_type, cond in all_status.items():
+                if status_type == status and cond:
+                    return True
+
+            return False
+
+        schedule = await self.__schedule_service.get_by_uuid(uuid)
+        driver = await schedule.designated_driver
+
+        if not driver.code == user_code:
+            raise InvalidRequestException(detail="Invalid user code.")
+
+        return await match_status(status)
+
     async def start(self, uuid: UUID, user_code: UserCode):
         schedule = await self.__schedule_service.get_by_uuid(uuid)
-
         driver = await schedule.designated_driver
 
         if not driver.code == user_code:
@@ -86,7 +118,7 @@ class ScheduleCase:
         can_start = not (schedule.cancel or schedule.terminate)
 
         if can_start:
-            await self.__schedule_service.set_status(uuid, active=True)
+            await self.__schedule_service.set_active(uuid)
 
         return can_start
 
@@ -100,7 +132,7 @@ class ScheduleCase:
         can_finished = schedule.active or not schedule.cancel
 
         if can_finished:
-            await self.__schedule_service.set_status(uuid, terminate=True)
+            await self.__schedule_service.set_terminate(uuid)
 
         return can_finished
 
@@ -114,7 +146,7 @@ class ScheduleCase:
         can_finished = schedule.active or (not schedule.cancel and not schedule.terminate)
 
         if can_finished:
-            await self.__schedule_service.set_status(uuid, cancel=True)
+            await self.__schedule_service.set_cancel(uuid)
 
         return can_finished
 

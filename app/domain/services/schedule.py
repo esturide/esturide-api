@@ -68,3 +68,27 @@ class ScheduleService:
         await schedule.save()
 
         return True
+
+    async def set_cancel(self, uuid: UUID):
+        schedule = await self.get_by_uuid(uuid)
+        schedule.cancel = True
+
+        await schedule.save()
+
+        return True
+
+    async def set_active(self, uuid: UUID):
+        schedule = await self.get_by_uuid(uuid)
+        schedule.active = True
+
+        await schedule.save()
+
+        return True
+
+    async def set_terminate(self, uuid: UUID):
+        schedule = await self.get_by_uuid(uuid)
+        schedule.terminate = True
+
+        await schedule.save()
+
+        return True
