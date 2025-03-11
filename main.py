@@ -9,7 +9,7 @@ from app.core.exception.handler import (
     global_exception_handler,
     invalid_credentials_handler
 )
-from app.core.exception import ResponseException
+from app.core.exception import ResponseException, NotFoundException
 from app.presentation.api import root
 from app.presentation.api.auth import auth
 from app.presentation.api.health import health
@@ -36,30 +36,3 @@ app.add_middleware(
 
 app.mount("/v1/user-management", user_management_v1)
 app.mount("/v1/travel-match-network", travels_match_network_v1)
-
-def buscar_direcciones(nombre_direccion: str):
-    geolocator = Nominatim(user_agent="mi_app_geocoder")
-    ubicaciones = geolocator.geocode(nombre_direccion, exactly_one=False)
-    return ubicaciones
-
-@app.get("/location")
-def get_location(query: str):
-    """
-    Busca la dirección indicada en el parámetro 'query' y retorna
-    una lista de posibles ubicaciones con su dirección completa y coordenadas.
-    """
-    resultados = buscar_direcciones(query)
-    if not resultados:
-        raise HTTPException(
-            status_code=404, 
-            detail="No se encontraron resultados para la dirección especificada"
-        )
-    
-    lista_resultados = []
-    for ubicacion in resultados:
-        lista_resultados.append({
-            "address": ubicacion.address,
-            "latitude": ubicacion.latitude,
-            "longitude": ubicacion.longitude
-        })
-    return lista_resultados
