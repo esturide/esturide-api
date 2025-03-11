@@ -4,7 +4,8 @@ from app.presentation.schemes import TrackingRecord
 from app.presentation.schemes.travels import TravelScheduleResponse, DriverUser
 
 
-def create_travel_scheme(schedule: Schedule, driver: User, origin: LocationData, destination: LocationData) -> TravelScheduleResponse:
+def create_travel_scheme(schedule: Schedule, driver: User, origin: LocationData,
+                         destination: LocationData) -> TravelScheduleResponse:
     return TravelScheduleResponse(
         uuid=schedule.uuid,
 

@@ -9,7 +9,8 @@ from app.presentation.schemes.AddressLocation import FoundLocation
 
 location = APIRouter(prefix="/location", tags=["Location"])
 
-@location.get("/location", response_model=List[FoundLocation])
+
+@location.get("/search", response_model=List[FoundLocation])
 async def search_location(query: str, geolocator: NominatimDepend):
     def search_direction(direction: str):
         return geolocator.geocode(direction, exactly_one=False)
