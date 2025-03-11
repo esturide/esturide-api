@@ -23,13 +23,11 @@ def create_travel_scheme(schedule: Schedule, driver: User, origin: LocationData,
         ),
 
         origin=TrackingRecord(
-            location=origin.location,
             latitude=origin.latitude,
             longitude=origin.longitude,
         ),
 
         destination=TrackingRecord(
-            location=destination.location,
             latitude=destination.latitude,
             longitude=destination.longitude,
         ),

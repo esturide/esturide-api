@@ -72,7 +72,6 @@ class AutomobileProfile(BaseModel):
 
 
 class TrackingRecord(BaseModel):
-    location: float = 0
     latitude: float = 0
     longitude: float = 0
 
