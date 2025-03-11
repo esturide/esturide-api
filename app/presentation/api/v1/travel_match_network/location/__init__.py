@@ -1,7 +1,6 @@
 from typing import List
 
 from fastapi import APIRouter
-from geopy import Nominatim
 
 from app.core.dependencies import NominatimDepend
 from app.core.exception import NotFoundException
