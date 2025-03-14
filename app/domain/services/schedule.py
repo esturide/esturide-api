@@ -21,6 +21,9 @@ class ScheduleService:
 
         return schedule
 
+    async def get_by_uuid_ride(self, uuid: UUID) -> Schedule:
+        return await ScheduleRepository.get_from_uuid_ride(uuid)
+
     async def get_current_travel(self, code: UserCode) -> Schedule:
         return await ScheduleRepository.get_active_travel(code)
 

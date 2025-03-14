@@ -8,6 +8,7 @@ from app.domain.services.schedule import ScheduleService
 from app.domain.services.user import UserService
 from app.domain.types import LocationData
 from app.presentation.schemes import RideRequest
+from app.presentation.schemes.status import RideStatus, ScheduleStatus
 from app.presentation.schemes.travels import Tracking
 
 
@@ -68,6 +69,25 @@ class RideCase:
         ride = await self.__ride_service.get_active_ride(code)
 
         return ride.uuid
+
+    async def get_current_ride_from_user(self, code: UserCode):
+        ride = await self.__ride_service.get_active_ride(code)
+        schedule = await self.__schedule_service.get_by_uuid_ride(ride.uuid)
+
+        return ScheduleStatus(**{
+            'rideID': ride.uuid,
+            'scheduleID': schedule.uuid,
+
+            'active': schedule.active,
+            'terminate': schedule.terminate,
+            'cancel': schedule.cancel,
+
+            'currentPassengers': await schedule.current_passengers,
+            'ride': RideStatus(
+                valid=ride.validate,
+                cancel=ride.cancel,
+            )
+        })
 
     async def cancel(self, uuid: UUID, code: UserCode):
         schedule = await self.__schedule_service.get_by_uuid(uuid)
