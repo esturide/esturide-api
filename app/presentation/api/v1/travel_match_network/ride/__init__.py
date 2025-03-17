@@ -1,6 +1,7 @@
 from fastapi import APIRouter
 
-from app.core.dependencies import AuthUserCredentials, DependRideCase, DependPassengerEventsCase
+from app.core.dependencies import AuthUserCredentials, DependRideCase, DependPassengerEventsCase, \
+    AuthUserCodeCredentials
 from app.core.types import UUID, Status
 from app.presentation.schemes import RideRequest, StatusResponse, StatusMessage
 from app.presentation.schemes.status import ScheduleStatus
@@ -10,8 +11,8 @@ ride = APIRouter(prefix="/ride", tags=["Request rides"])
 
 
 @ride.post("/", response_model=StatusMessage)
-async def request_new_ride(ride_req: RideRequest, ride_case: DependRideCase, auth_user: AuthUserCredentials):
-    status = await ride_case.create(ride_req, auth_user.code)
+async def request_new_ride(ride_req: RideRequest, ride_case: DependRideCase, auth_user: AuthUserCodeCredentials):
+    status = await ride_case.create(ride_req, auth_user)
 
     if status:
         return {
