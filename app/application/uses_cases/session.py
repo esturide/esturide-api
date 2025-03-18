@@ -1,11 +1,8 @@
-from fastapi import HTTPException
-
-from app.core.enum import RoleUser
-from app.core.types import Token, UserCode
+from app.core.dataclass import DataDriverCurrentSession, DataPassengerCurrentSession
+from app.core.enum import CurrentRuleUser
+from app.core.types import Token
 from app.domain.services.auth import AuthenticationCredentialsService
 from app.domain.services.user import UserService
-from app.infrastructure.repository.user import UserRepository
-from app.presentation.schemes import UserRequest, UserResponse, ProfileUpdateRequest
 from app.presentation.schemes.session import SessionResponse
 
 
@@ -16,7 +13,28 @@ class SessionUseCase:
 
     async def get_current_user_session(self, token: Token) -> SessionResponse:
         user = await self.__user_service.get_by_token(token)
+        session = user.session
 
-        return SessionResponse(
-
-        )
+        if isinstance(session, DataDriverCurrentSession):
+            return SessionResponse(
+                code=user.code,
+                current_role=CurrentRuleUser.driver,
+                current={
+                    "schedule": session.schedule,
+                    "driverTo": session.driver_to,
+                }
+            )
+        elif isinstance(session, DataPassengerCurrentSession):
+            return SessionResponse(
+                code=user.code,
+                current_role=CurrentRuleUser.passenger,
+                current={
+                    "schedule": session.schedule,
+                    "rideTo": session.ride_to,
+                }
+            )
+        else:
+            return SessionResponse(
+                code=user.code,
+                current_role=CurrentRuleUser.no_session,
+            )

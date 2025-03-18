@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from typing import Tuple
 
@@ -5,8 +6,10 @@ from neomodel import AsyncStructuredNode, UniqueIdProperty, StringProperty, Date
     BooleanProperty, IntegerProperty, DateTimeProperty, AsyncStructuredRel, \
     AsyncRelationshipTo, AsyncRelationshipFrom, AsyncOne, AsyncZeroOrOne, JSONProperty, ArrayProperty
 
+from app.core.dataclass import DataSession, DataDriverCurrentSession, DataPassengerCurrentSession
 from app.core.encrypt import check_same_password
 from app.core.enum import RoleUser
+from app.core.exception import NotFoundException
 from app.domain.types import LocationData
 
 
@@ -57,6 +60,30 @@ class User(AsyncStructuredNode):
 
     rides = AsyncRelationshipTo("Schedule", 'RIDE_TO', model=Ride)
     schedules = AsyncRelationshipTo("Schedule", 'DRIVER_TO', model=Travel)
+
+    """Session data"""
+    all_sessions = ArrayProperty(default=[])
+
+    @property
+    def session(self) -> DataSession:
+        session = self.all_sessions if isinstance(self.all_sessions, list) else []
+
+        if len(session) == 0:
+            raise NotFoundException("Last session not found.")
+
+        last_session = json.loads(session[0])
+
+        if last_session.get("driver_to"):
+            return DataDriverCurrentSession(**last_session)
+        else:
+            return DataPassengerCurrentSession(**last_session)
+
+    @session.setter
+    def session(self, session: DataSession):
+        if isinstance(self.all_sessions, list):
+            self.all_sessions.append(json.dumps(session.__dict__))
+
+        raise NotFoundException("No session was found.")
 
     def same_password(self, password: str) -> bool:
         return check_same_password(

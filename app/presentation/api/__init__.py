@@ -3,7 +3,7 @@ from fastapi import APIRouter
 from app.core.dependencies import OAuth2Scheme, DependAuthCase, DependSessionCase
 from app.core.enum import Status
 from app.presentation.schemes import StatusMessage
-from app.presentation.schemes.session import SessionResponse
+from app.presentation.schemes.session import SessionResponse, SessionType
 
 root = APIRouter(
     tags=["Root"]
@@ -19,8 +19,5 @@ async def index():
 
 
 @root.get('/session', response_model=SessionResponse)
-async def backup_session(token: OAuth2Scheme, session: DependSessionCase):
-
-    return {
-
-    }
+async def backup_user_session(token: OAuth2Scheme, session: DependSessionCase):
+    return await session.get_current_user_session(token)
