@@ -27,7 +27,7 @@ class SessionUseCase:
         elif isinstance(session, DataPassengerCurrentSession):
             return SessionResponse(
                 code=user.code,
-                current_role=CurrentRuleUser.passenger,
+                currentRole=CurrentRuleUser.passenger,
                 current={
                     "schedule": session.schedule,
                     "rideTo": session.ride_to,
@@ -36,5 +36,5 @@ class SessionUseCase:
         else:
             return SessionResponse(
                 code=user.code,
-                current_role=CurrentRuleUser.no_session,
+                currentRole=CurrentRuleUser.no_session,
             )

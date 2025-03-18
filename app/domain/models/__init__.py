@@ -10,6 +10,7 @@ from app.core.dataclass import DataSession, DataDriverCurrentSession, DataPassen
 from app.core.encrypt import check_same_password
 from app.core.enum import RoleUser
 from app.core.exception import NotFoundException
+from app.core.types import UserCode
 from app.domain.types import LocationData
 
 
@@ -82,8 +83,8 @@ class User(AsyncStructuredNode):
     def session(self, session: DataSession):
         if isinstance(self.all_sessions, list):
             self.all_sessions.append(json.dumps(session.__dict__))
-
-        raise NotFoundException("No session was found.")
+        else:
+            raise NotFoundException("No session was found.")
 
     def same_password(self, password: str) -> bool:
         return check_same_password(
