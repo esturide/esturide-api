@@ -4,7 +4,7 @@ from typing import Tuple
 
 from neomodel import AsyncStructuredNode, UniqueIdProperty, StringProperty, DateProperty, EmailProperty, \
     BooleanProperty, IntegerProperty, DateTimeProperty, AsyncStructuredRel, \
-    AsyncRelationshipTo, AsyncRelationshipFrom, AsyncOne, AsyncZeroOrOne, JSONProperty, ArrayProperty
+    AsyncRelationshipTo, AsyncRelationshipFrom, AsyncOne, AsyncZeroOrOne, JSONProperty, ArrayProperty, AsyncZeroOrMore
 
 from app.core.dataclass import DataSession, DataDriverCurrentSession, DataPassengerCurrentSession
 from app.core.encrypt import check_same_password
@@ -71,7 +71,7 @@ class User(AsyncStructuredNode):
         if len(session) == 0:
             raise NotFoundException("Last session not found.")
 
-        last_session = json.loads(session[0])
+        last_session = json.loads(session[-1])
 
         if last_session.get("driver_to"):
             return DataDriverCurrentSession(**last_session)
@@ -151,7 +151,7 @@ class Schedule(AsyncStructuredNode):
     start_time = DateTimeProperty(required=True)
     end_time = DateTimeProperty(required=True)
 
-    passengers = AsyncRelationshipFrom("User", 'RIDE_TO', model=Ride, cardinality=AsyncZeroOrOne)
+    passengers = AsyncRelationshipFrom("User", 'RIDE_TO', model=Ride, cardinality=AsyncZeroOrMore)
     driver = AsyncRelationshipFrom("User", 'DRIVER_TO', model=Travel, cardinality=AsyncOne)
     car = AsyncRelationshipFrom('Automobile', 'DRIVE')
 
