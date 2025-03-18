@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Tuple, List
 
-from neomodel import db, DoesNotExist
+from neomodel import db
 
 from app.core.exception import NotFoundException
 from app.core.types import UserCode, UUID
@@ -11,19 +11,6 @@ from app.infrastructure.repository.user import UserRepository
 
 
 class ScheduleRepository:
-    @staticmethod
-    async def get_driver(schedule: Schedule, driver: User):
-        try:
-            driver_to = await driver.schedules.relationship(schedule)
-
-            if driver_to is None:
-                return False, None
-
-        except DoesNotExist:
-            return False, None
-        else:
-            return True, driver_to
-
     @staticmethod
     async def get(**kwargs) -> Schedule:
         schedule = await Schedule.nodes.get_or_none(**kwargs)

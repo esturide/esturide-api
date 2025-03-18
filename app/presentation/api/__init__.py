@@ -18,6 +18,6 @@ async def index():
     }
 
 
-@root.get('/session', response_model=SessionResponse)
-async def backup_user_session(token: OAuth2Scheme, session: DependSessionCase):
+@root.get('/session')
+async def backup_user_session(token: OAuth2Scheme, session: DependSessionCase) -> SessionResponse:
     return await session.get_current_user_session(token)

@@ -10,7 +10,6 @@ from app.core.dataclass import DataSession, DataDriverCurrentSession, DataPassen
 from app.core.encrypt import check_same_password
 from app.core.enum import RoleUser
 from app.core.exception import NotFoundException
-from app.core.types import UserCode
 from app.domain.types import LocationData
 
 
