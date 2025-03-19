@@ -60,7 +60,7 @@ class RideCase:
                 ride = await self.ride_service.get(schedule, code)
 
                 async with self.user_service.save(user) as user:
-                    user.session = DataPassengerCurrentSession(schedule=schedule.uuid, ride_to=ride.uuid)
+                    user.push_session(DataPassengerCurrentSession(schedule=schedule.uuid, ride_to=ride.uuid))
 
                 return True
 

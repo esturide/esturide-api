@@ -65,7 +65,7 @@ class User(AsyncStructuredNode):
     all_sessions = ArrayProperty(default=[])
 
     @property
-    def session(self) -> DataSession:
+    def last_session(self) -> DataSession:
         session = self.all_sessions if isinstance(self.all_sessions, list) else []
 
         if len(session) == 0:
@@ -78,8 +78,7 @@ class User(AsyncStructuredNode):
         else:
             return DataPassengerCurrentSession(**last_session)
 
-    @session.setter
-    def session(self, session: DataSession):
+    def push_session(self, session: DataSession):
         if isinstance(self.all_sessions, list):
             self.all_sessions.append(json.dumps(session.__dict__))
         else:

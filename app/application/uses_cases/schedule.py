@@ -2,12 +2,14 @@ from typing import List
 
 from fastapi import HTTPException
 
-from app.core.exception import InvalidRequestException
+from app.core.dataclass import DataDriverCurrentSession
+from app.core.exception import InvalidRequestException, NotFoundException, BadRequestException
 from app.core.types import UUID, UserCode, StatusTravel
 from app.core.utils.scheme_json import create_travel_scheme
 from app.domain.models import User
 from app.domain.services.ride import RideService
 from app.domain.services.schedule import ScheduleService
+from app.domain.services.travel import TravelService
 from app.domain.services.user import UserService
 from app.presentation.schemes import TrackingRecord
 from app.presentation.schemes.travels import ScheduleTravelRequest, TravelScheduleResponse, RideStatusRequest, \
@@ -19,17 +21,30 @@ class ScheduleCase:
         self.user_service = UserService()
         self.schedule_service = ScheduleService()
         self.ride_service = RideService()
+        self.travel_service = TravelService()
 
     async def create(self, schedule: ScheduleTravelRequest, driver: UserCode) -> bool:
         driver = await self.user_service.get_by_code(driver)
 
         if not driver.is_driver:
-            raise HTTPException(status_code=400, detail="You need become driver.")
+            raise NotFoundException(detail="You need become driver.")
 
         if len(schedule.seats) > schedule.max_passengers:
-            raise HTTPException(status_code=400, detail="Seats exceed.")
+            raise BadRequestException(detail="Seats exceed.")
 
-        return await self.schedule_service.create(schedule, driver)
+        status = await self.schedule_service.create(schedule, driver)
+
+        if status:
+            schedule = await self.schedule_service.get_current_travel(driver.code)
+            travel = await self.travel_service.get(schedule, driver.code)
+
+            async with self.user_service.save(driver) as user:
+                user.push_session(DataDriverCurrentSession(
+                    schedule=schedule.uuid,
+                    driver_to=travel.uuid
+                ))
+
+        return status
 
     async def get_ride_tracking(self, user_code: UserCode):
         schedule = await self.schedule_service.get_current_travel(user_code)

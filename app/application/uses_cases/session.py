@@ -13,12 +13,12 @@ class SessionUseCase:
 
     async def get_current_user_session(self, token: Token) -> SessionResponse:
         user = await self.__user_service.get_by_token(token)
-        session = user.session
+        session = user.last_session
 
         if isinstance(session, DataDriverCurrentSession):
             return SessionResponse(
                 code=user.code,
-                current_role=CurrentRuleUser.driver,
+                currentRole=CurrentRuleUser.driver,
                 current={
                     "schedule": session.schedule,
                     "driverTo": session.driver_to,
