@@ -26,9 +26,7 @@ class Travel(AsyncStructuredRel, RecordTrackingMixin):
 
 class User(AsyncStructuredNode):
     ROLES = {
-        'P': 'passenger',
-        'D': 'driver',
-        'N': 'not-verified',
+        'U': 'user',
         'S': 'staff',
         'A': 'admin'
     }
@@ -48,7 +46,10 @@ class User(AsyncStructuredNode):
     curp = StringProperty(required=True)
     phone_number = StringProperty()
 
+    """Validate user"""
     valid_user = BooleanProperty(required=False, default=False)
+    valid_passenger = BooleanProperty(required=False, default=False)
+    valid_driver = BooleanProperty(required=False, default=False)
 
     role = StringProperty(choices=ROLES, default='N')
 
@@ -73,7 +74,7 @@ class User(AsyncStructuredNode):
 
     @property
     def is_driver(self):
-        return self.role == 'D'
+        return self.valid_driver
 
     @property
     def is_passenger(self):

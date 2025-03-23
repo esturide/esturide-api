@@ -7,9 +7,7 @@ class Status(str, Enum):
 
 
 class RoleUser(str, Enum):
-    not_verified = 'not-verified'
-    driver = 'driver'
-    passenger = 'passenger'
+    user = 'user'
     staff = 'staff'
     admin = 'admin'
 
