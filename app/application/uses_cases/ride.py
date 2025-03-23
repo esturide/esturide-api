@@ -2,7 +2,6 @@ import asyncio
 
 from fastapi import HTTPException
 
-from app.core.dataclass import DataDriverCurrentSession, DataPassengerCurrentSession
 from app.core.types import UUID, UserCode
 from app.domain.services.ride import RideService
 from app.domain.services.schedule import ScheduleService
@@ -58,10 +57,10 @@ class RideCase:
 
             if await self.ride_service.create(schedule, user):
                 ride = await self.ride_service.get(schedule, code)
-
+                """
                 async with self.user_service.save(user) as user:
                     user.push_session(DataPassengerCurrentSession(schedule=schedule.uuid, ride_to=ride.uuid))
-
+                """
                 return True
 
         return False

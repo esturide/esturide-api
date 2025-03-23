@@ -1,17 +1,14 @@
 import dataclasses
+import datetime
 
 from app.core.types import UUID
 
 @dataclasses.dataclass
-class DataDriverCurrentSession:
+class DataSession:
     schedule: UUID
-    driver_to: UUID
+    connection: UUID
 
+    active: bool
+    finished: bool
 
-@dataclasses.dataclass
-class DataPassengerCurrentSession:
-    schedule: UUID
-    ride_to: UUID
-
-
-DataSession = DataDriverCurrentSession | DataPassengerCurrentSession
+    last_time_access: datetime.datetime

@@ -2,7 +2,6 @@ from typing import List
 
 from fastapi import HTTPException
 
-from app.core.dataclass import DataDriverCurrentSession
 from app.core.exception import InvalidRequestException, NotFoundException, BadRequestException
 from app.core.types import UUID, UserCode, StatusTravel
 from app.core.utils.scheme_json import create_travel_scheme
@@ -38,11 +37,13 @@ class ScheduleCase:
             schedule = await self.schedule_service.get_current_travel(driver.code)
             travel = await self.travel_service.get(schedule, driver.code)
 
+            """
             async with self.user_service.save(driver) as user:
                 user.push_session(DataDriverCurrentSession(
                     schedule=schedule.uuid,
                     driver_to=travel.uuid
                 ))
+            """
 
         return status
 

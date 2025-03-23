@@ -1,15 +1,11 @@
-import json
-from datetime import datetime
 from typing import Tuple
 
 from neomodel import AsyncStructuredNode, UniqueIdProperty, StringProperty, DateProperty, EmailProperty, \
     BooleanProperty, IntegerProperty, DateTimeProperty, AsyncStructuredRel, \
-    AsyncRelationshipTo, AsyncRelationshipFrom, AsyncOne, AsyncZeroOrOne, JSONProperty, ArrayProperty, AsyncZeroOrMore
+    AsyncRelationshipTo, AsyncRelationshipFrom, AsyncOne, JSONProperty, ArrayProperty, AsyncZeroOrMore
 
-from app.core.dataclass import DataSession, DataDriverCurrentSession, DataPassengerCurrentSession
 from app.core.encrypt import check_same_password
 from app.core.enum import RoleUser
-from app.core.exception import NotFoundException
 from app.domain.types import LocationData
 
 
@@ -60,29 +56,6 @@ class User(AsyncStructuredNode):
 
     rides = AsyncRelationshipTo("Schedule", 'RIDE_TO', model=Ride)
     schedules = AsyncRelationshipTo("Schedule", 'DRIVER_TO', model=Travel)
-
-    """Session data"""
-    all_sessions = ArrayProperty(default=[])
-
-    @property
-    def last_session(self) -> DataSession:
-        session = self.all_sessions if isinstance(self.all_sessions, list) else []
-
-        if len(session) == 0:
-            raise NotFoundException("Last session not found.")
-
-        last_session = json.loads(session[-1])
-
-        if last_session.get("driver_to"):
-            return DataDriverCurrentSession(**last_session)
-        else:
-            return DataPassengerCurrentSession(**last_session)
-
-    def push_session(self, session: DataSession):
-        if isinstance(self.all_sessions, list):
-            self.all_sessions.append(json.dumps(session.__dict__))
-        else:
-            raise NotFoundException("No session was found.")
 
     def same_password(self, password: str) -> bool:
         return check_same_password(
@@ -188,9 +161,9 @@ class Schedule(AsyncStructuredNode):
 
 
 class Rating(AsyncStructuredNode):
-    overall = IntegerProperty(required=True, choices=range(1,6))
-    punctuality = IntegerProperty(required=True, choices=range(1,6))
-    driving_behavior = IntegerProperty(required=True, choices=range(1,6))
+    overall = IntegerProperty(required=True, choices=range(1, 6))
+    punctuality = IntegerProperty(required=True, choices=range(1, 6))
+    driving_behavior = IntegerProperty(required=True, choices=range(1, 6))
 
     passenger = AsyncRelationshipFrom("User", "RATED")
     schedule = AsyncRelationshipFrom("Schedule", "RATING")
