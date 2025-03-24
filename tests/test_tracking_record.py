@@ -1,8 +1,7 @@
 import pytest
-from pydantic import ValidationError
 from app.presentation.schemes import (TrackingRecord, RideRequest)
 from faker import Faker
-from uuid import UUID, uuid4
+from uuid import uuid4
 from app.presentation.schemes.travels import (
     DriverUser,
     PassengerUser,
@@ -10,7 +9,7 @@ from app.presentation.schemes.travels import (
     TravelScheduleResponse,
     Tracking,
 )
-from app.presentation.schemes.status import PassengerRideStatus
+from app.presentation.schemes.status import PassengerRideStatus, PassengerProfile
 from app.core.utils.scheme_json import create_travel_scheme
 
 
@@ -60,6 +59,43 @@ def test_driver_user_schema(tracking_record_data):
     user = DriverUser(**data)
     assert isinstance(user.position.latitude, float)
     assert isinstance(user.position.longitude, float)
+
+def test_passenger_user_schema(tracking_record_data):
+    """Test PassengerUser schema without location in position"""
+    data = {
+        "code": "12345678",
+        "firstname": faker.first_name(),
+        "maternalSurname": faker.last_name(),
+        "paternalSurname": faker.last_name(),
+        "position": tracking_record_data
+    }
+    user = PassengerUser(**data)
+    assert isinstance(user.position.latitude, float)
+    assert isinstance(user.position.longitude, float)
+
+def test_schedule_travel_request_schema(tracking_record_data):
+    data = {
+        "start": tracking_record_data,
+        "end": tracking_record_data,
+        "price": 20,
+        "max_passengers": 4
+    }
+
+    request = ScheduleTravelRequest(**data)
+    assert isinstance(request.start.latitude, float)
+    assert isinstance(request.start.longitude, float)
+    assert isinstance(request.end.latitude, float)
+    assert isinstance(request.end.longitude, float)
+
+def test_tracking_schema(tracking_record_data):
+    data = {
+        "uuid": uuid4(),
+        "record": tracking_record_data
+    }
+
+    tracking = Tracking(**data)
+    assert isinstance(tracking.record.latitude, float)
+    assert isinstance(tracking.record.longitude, float)
 
 def test_travel_schedule_response_schema(tracking_record_data):
     """Test TravelScheduleResponse schema with valid TrackingRecords"""
