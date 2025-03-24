@@ -103,12 +103,10 @@ async def test_edge_cases():
         "max_passenger": 4,
         "price": 150,
         "start": {
-            "location": "City A",
             "latitude": "12.34",
             "longitude": "56.78",
         },
         "end": {
-            "location": "City B",
             "latitude": "23.45",
             "longitude": "67.89",
         },
