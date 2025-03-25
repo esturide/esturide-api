@@ -46,7 +46,7 @@ DependSEEConnectionManager = Annotated[SSEConnectionManager, Depends(get_see_con
 OAuth2Scheme = Annotated[Token, Depends(oauth2_scheme)]
 OAuth2Form = Annotated[OAuth2PasswordRequestForm, Depends()]
 UserCredentials = Annotated[Tuple[bool, Optional[User]], Depends(user_credentials)]
-AuthUserCredentials = Annotated[User, Depends(get_user_is_authenticated)]
+AuthUserCodeCredentials = Annotated[User, Depends(get_user_is_authenticated)]
 AdminAuthenticated = Annotated[bool, Depends(validate_admin_role)]
 ManagerAuthenticated = Annotated[bool, Depends(validate_permission_role)]
 
