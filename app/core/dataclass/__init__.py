@@ -3,6 +3,7 @@ import datetime
 
 from app.core.types import UUID
 
+
 @dataclasses.dataclass
 class DataSession:
     schedule: UUID

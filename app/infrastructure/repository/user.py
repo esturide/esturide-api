@@ -2,7 +2,6 @@ import contextlib
 from datetime import date
 from typing import Literal
 
-from app.core.dataclass import DataSession
 from app.core.encrypt import salty_password
 from app.core.exception import NotFoundException
 from app.core.oauth2 import get_code_from_token
