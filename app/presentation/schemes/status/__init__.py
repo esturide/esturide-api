@@ -2,7 +2,7 @@ from typing import List
 
 from pydantic import BaseModel, Field
 
-from app.core.types import UserCode
+from app.core.types import UserCode, UUID
 from app.presentation.schemes import TrackingRecord
 
 
@@ -25,6 +25,9 @@ class PassengerRideStatus(RideStatus):
 
 
 class ScheduleStatus(BaseModel):
+    ride_id: UUID = Field(..., alias='rideID')
+    schedule_id: UUID = Field(..., alias='scheduleID')
+
     active: bool = False
     terminate: bool = False
     cancel: bool = False

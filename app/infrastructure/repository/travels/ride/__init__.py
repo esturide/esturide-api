@@ -1,7 +1,6 @@
 import json
 from typing import Tuple, Literal, List
 
-from fastapi import HTTPException
 from neomodel import DoesNotExist, db
 
 from app.core.exception import NotFoundException
@@ -62,10 +61,10 @@ class RideRepository:
     async def get_by_uuid(uuid: UUID) -> Ride:
         query = f"""
         MATCH (p: User)-[r: RIDE_TO]->(c: Schedule) 
-            WHERE r.uuid = '{uuid}'
+            WHERE r.uuid = $uuid
             RETURN r
         """
-        results, meta = db.cypher_query(query)
+        results, meta = db.cypher_query(query, {'uuid': uuid})
 
         rides = [Ride.inflate(row[0]) for row in results]
 
@@ -78,7 +77,7 @@ class RideRepository:
     async def get_active_ride(code: UserCode, limit: int = 1) -> Ride:
         query = f"""
         MATCH (p: User)-[r: RIDE_TO]->(c: Schedule) 
-            WHERE p.code = {code} AND c.active = true AND r.cancel = false
+            WHERE p.code = {code} OR c.active = true OR r.cancel = false
             RETURN r
             ORDER BY r.time 
             DESC LIMIT {limit}

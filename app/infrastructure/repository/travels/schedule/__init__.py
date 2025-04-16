@@ -4,7 +4,7 @@ from typing import Tuple, List
 from neomodel import db
 
 from app.core.exception import NotFoundException
-from app.core.types import UserCode
+from app.core.types import UserCode, UUID
 from app.domain.models import Schedule, User, Travel
 from app.domain.types import LocationData
 from app.infrastructure.repository.user import UserRepository
@@ -81,6 +81,23 @@ class ScheduleRepository:
         schedules = [Schedule.inflate(row[0]) for row in results]
         schedules = [*filter(lambda schedule: not schedule.terminate, schedules)]
         schedules = [*filter(lambda schedule: not schedule.cancel, schedules)]
+
+        if len(schedules) <= 0:
+            raise NotFoundException(detail="Current travels not found.")
+
+        return schedules[0]
+
+    @staticmethod
+    async def get_from_uuid_ride(uuid: UUID) -> Schedule:
+        query = """
+        MATCH (u: User)-[r: RIDE_TO]->(s: Schedule)
+            WHERE r.uuid = $uuid
+            RETURN s
+        """
+
+        results, meta = db.cypher_query(query, {'uuid': uuid})
+
+        schedules = [Schedule.inflate(row[0]) for row in results]
 
         if len(schedules) <= 0:
             raise NotFoundException(detail="Current travels not found.")
