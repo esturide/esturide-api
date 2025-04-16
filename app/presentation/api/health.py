@@ -22,9 +22,15 @@ async def check_db_connection(db: DependDatabaseSession):
 
 @health.get('/cache', response_model=StatusMessage)
 async def check_cache_connection(cache: DependCacheSession):
-    await cache.ping()
+    result = await cache.ping()
+
+    if result:
+        return {
+            "status": Status.success,
+            "message": "Can connect to cache."
+        }
 
     return {
-        "status": Status.success,
-        "message": "Can connect to cache."
+        "status": Status.failure,
+        "message": "Can not connect to cache."
     }
