@@ -18,19 +18,19 @@ async def index():
 
 @status_socket.websocket('/token')
 async def validate_token(websocket: WebSocket, events: DependEventsSocketCase, manager: DependSocketConnectionManager):
-    async with manager.session(websocket) as session:
+    async with manager.last_session(websocket) as session:
         await events.validate_token(session)
 
 
 @status_socket.websocket('/driver/{uuid}')
 async def driver_notifications(uuid: UUID, websocket: WebSocket, events: DependDriverEventsSocketCase,
                                manager: DependSocketConnectionManager):
-    async with manager.session(websocket) as session:
+    async with manager.last_session(websocket) as session:
         await events.pipeline(session, uuid)
 
 
 @status_socket.websocket('/passenger/{uuid}')
 async def passenger_notifications(uuid: UUID, websocket: WebSocket, events: DependPassengerEventsSocketCase,
                                   manager: DependSocketConnectionManager):
-    async with manager.session(websocket) as session:
+    async with manager.last_session(websocket) as session:
         await events.pipeline(session, uuid)

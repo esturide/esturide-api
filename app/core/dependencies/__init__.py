@@ -7,6 +7,7 @@ from app.application.uses_cases.auth import AuthUseCase
 from app.application.uses_cases.automobile import AutomobileUseCase
 from app.application.uses_cases.driver import DriverUseCase
 from app.application.uses_cases.ride import RideCase
+from app.application.uses_cases.session import SessionUseCase
 from app.application.uses_cases.status import DriverStatusCase, UserStatusCase, EventsTestingCase
 from app.application.uses_cases.status.socket import EventsSocket
 from app.application.uses_cases.status.socket.driver import DriverEventsSocket
@@ -17,7 +18,7 @@ from app.core.dependencies.depends import get_user_case, get_auth_case, get_sche
     get_driver_events_case, \
     get_passenger_events_case, get_events_testing_case, get_events_socket, get_driver_events_socket, \
     get_passenger_events_socket, get_socket_connection_manager, get_automobile_use_case, get_driver_case, \
-    get_see_connection_manager
+    get_see_connection_manager, get_session_use_case
 from app.core.manager.sockets import SocketConnectionManager
 from app.core.manager.sse import SSEConnectionManager
 from app.core.oauth2 import oauth2_scheme
@@ -39,6 +40,8 @@ DependEventsTestingCase = Annotated[EventsTestingCase, Depends(get_events_testin
 DependEventsSocketCase = Annotated[EventsSocket, Depends(get_events_socket)]
 DependDriverEventsSocketCase = Annotated[DriverEventsSocket, Depends(get_driver_events_socket)]
 DependPassengerEventsSocketCase = Annotated[PassengerEventsSocket, Depends(get_passenger_events_socket)]
+
+DependSessionCase = Annotated[SessionUseCase, Depends(get_session_use_case)]
 
 DependSocketConnectionManager = Annotated[SocketConnectionManager, Depends(get_socket_connection_manager)]
 DependSEEConnectionManager = Annotated[SSEConnectionManager, Depends(get_see_connection_manager)]

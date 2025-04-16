@@ -1,6 +1,5 @@
 from fastapi import HTTPException
 
-from app.core.exception import NotFoundException
 from app.core.types import UUID, UserCode
 from app.domain.models import User, Schedule
 from app.infrastructure.repository.travels.schedule import ScheduleRepository, LocationData
@@ -8,9 +7,6 @@ from app.presentation.schemes.travels import ScheduleTravelRequest
 
 
 class ScheduleService:
-    def __init__(self):
-        pass
-
     async def get_all(self, limit: int):
         return [
             schedule for schedule, travel, user in await ScheduleRepository.filter_ordered_time(limit)

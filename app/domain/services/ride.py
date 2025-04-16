@@ -28,12 +28,12 @@ class RideService:
         status, user = await UserRepository.get_user_by_code(code)
 
         if not status:
-            raise HTTPException(status_code=404, detail="Passenger not found.")
+            raise NotFoundException(detail="Passenger not found.")
 
         status, ride = await RideRepository.get(schedule, user)
 
         if not status:
-            raise HTTPException(status_code=404, detail="Ride not found.")
+            raise NotFoundException(detail="Ride not found.")
 
         return ride
 

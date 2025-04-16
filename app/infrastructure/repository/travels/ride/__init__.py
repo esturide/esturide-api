@@ -1,7 +1,6 @@
 import json
 from typing import Tuple, Literal, List
 
-from fastapi import HTTPException
 from neomodel import DoesNotExist, db
 
 from app.core.exception import NotFoundException

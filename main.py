@@ -10,7 +10,7 @@ from app.presentation.api.auth import auth
 from app.presentation.api.health import health
 from app.presentation.api.v1.user_management import user_management_v1
 from app.presentation.api.v1.travel_match_network import travels_match_network_v1
-
+from app.presentation.api.v2 import get_graphql_route
 
 for _app in [app, user_management_v1, travels_match_network_v1]:
     _app.add_exception_handler(ResponseException, custom_http_exception_handler)
@@ -22,6 +22,7 @@ for _app in [app, user_management_v1, travels_match_network_v1]:
 app.include_router(root)
 app.include_router(auth)
 app.include_router(health)
+app.include_router(get_graphql_route(), prefix="/graphql")
 
 app.mount("/v1/user-management", user_management_v1)
 app.mount("/v1/travel-match-network", travels_match_network_v1)

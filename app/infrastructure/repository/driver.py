@@ -4,7 +4,7 @@ from typing import Literal
 from app.domain.models import User
 
 
-class DriverRepository:
+class UserDriverRepository:
     @staticmethod
     async def get(**kwargs) -> tuple[Literal[False], None] | tuple[Literal[True], User]:
         kwargs['role'] = 'D'
@@ -17,7 +17,7 @@ class DriverRepository:
 
     @staticmethod
     async def get_driver_by_code(code: int):
-        return await DriverRepository.get(code=code)
+        return await UserDriverRepository.get(code=code)
 
     @staticmethod
     async def create_or_update(
@@ -50,7 +50,7 @@ class DriverRepository:
 
     @staticmethod
     async def delete(code: int) -> bool:
-        status, user = await DriverRepository.get_driver_by_code(code)
+        status, user = await UserDriverRepository.get_driver_by_code(code)
 
         if not status:
             return False
