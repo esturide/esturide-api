@@ -1,9 +1,10 @@
-from typing import Tuple, List, Literal
+from datetime import datetime
+from typing import Tuple, List
 
 from neomodel import db
 
 from app.core.exception import NotFoundException
-from app.core.types import UserCode
+from app.core.types import UserCode, UUID
 from app.domain.models import Schedule, User, Travel
 from app.domain.types import LocationData
 from app.infrastructure.repository.user import UserRepository
@@ -11,13 +12,19 @@ from app.infrastructure.repository.user import UserRepository
 
 class ScheduleRepository:
     @staticmethod
-    async def get(**kwargs) -> Tuple[Literal[False], None] | Tuple[Literal[True], Schedule]:
-        node = await Schedule.nodes.get_or_none(**kwargs)
+    async def get(**kwargs) -> Schedule:
+        schedule = await Schedule.nodes.get_or_none(**kwargs)
 
-        if node is None:
-            return False, None
+        if schedule is None:
+            raise NotFoundException(detail='Schedule not found.')
 
-        return True, node
+        return schedule
+
+    @staticmethod
+    async def search(**kwargs) -> bool:
+        schedule = await Schedule.nodes.get_or_none(**kwargs)
+
+        return schedule is None
 
     @staticmethod
     async def get_all(limit: int = 16, **kwargs) -> List[Schedule]:
@@ -39,21 +46,6 @@ class ScheduleRepository:
             Schedule.inflate(row[0]),
             Travel.inflate(row[1]),
             User.inflate(row[2])
-        ) for row in results]
-
-    @staticmethod
-    async def _filter_actives(limit: int = 16) -> List[Tuple[Schedule, Travel, User]]:
-        query = f"""
-        MATCH (p: User)-[r: DRIVER_TO]->(c: Schedule) 
-            WHERE r.active = true 
-            RETURN c
-            ORDER BY r.time DESC 
-            LIMIT {limit}
-        """
-        results, meta = db.cypher_query(query)
-
-        return [(
-            Schedule.inflate(row[0])
         ) for row in results]
 
     @staticmethod
@@ -96,12 +88,32 @@ class ScheduleRepository:
         return schedules[0]
 
     @staticmethod
+    async def get_from_uuid_ride(uuid: UUID) -> Schedule:
+        query = """
+        MATCH (u: User)-[r: RIDE_TO]->(s: Schedule)
+            WHERE r.uuid = $uuid
+            RETURN s
+        """
+
+        results, meta = db.cypher_query(query, {'uuid': uuid})
+
+        schedules = [Schedule.inflate(row[0]) for row in results]
+
+        if len(schedules) <= 0:
+            raise NotFoundException(detail="Current travels not found.")
+
+        return schedules[0]
+
+    @staticmethod
     async def create(
             code: UserCode,
             max_passengers: int,
             price: int,
             start: LocationData,
             finished: LocationData,
+            star_time: datetime,
+            end_time: datetime,
+            seats: list[chr]
     ):
         status, user = await UserRepository.get_user_by_code(code)
 
@@ -113,6 +125,9 @@ class ScheduleRepository:
             price=price,
             start=start.dump,
             finished=finished.dump,
+            start_time=star_time,
+            end_time=end_time,
+            seats=seats,
         ).save()
 
         try:
