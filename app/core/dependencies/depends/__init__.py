@@ -6,6 +6,7 @@ from app.application.uses_cases.auth import AuthUseCase
 from app.application.uses_cases.automobile import AutomobileUseCase
 from app.application.uses_cases.driver import DriverUseCase
 from app.application.uses_cases.ride import RideCase
+from app.application.uses_cases.session import SessionUseCase
 from app.application.uses_cases.status import DriverStatusCase, UserStatusCase, EventsTestingCase
 from app.application.uses_cases.status.socket import EventsSocket
 from app.application.uses_cases.status.socket.driver import DriverEventsSocket

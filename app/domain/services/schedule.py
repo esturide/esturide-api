@@ -1,6 +1,5 @@
 from fastapi import HTTPException
 
-from app.core.exception import NotFoundException
 from app.core.types import UUID, UserCode
 from app.domain.models import User, Schedule
 from app.infrastructure.repository.travels.schedule import ScheduleRepository, LocationData
@@ -8,21 +7,18 @@ from app.presentation.schemes.travels import ScheduleTravelRequest
 
 
 class ScheduleService:
-    def __init__(self):
-        pass
-
     async def get_all(self, limit: int):
         return [
             schedule for schedule, travel, user in await ScheduleRepository.filter_ordered_time(limit)
         ]
 
     async def get_by_uuid(self, uuid: UUID) -> Schedule:
-        status, schedule = await ScheduleRepository.get(uuid=uuid)
-
-        if not status:
-            raise NotFoundException(detail="Schedule travel not found.")
+        schedule = await ScheduleRepository.get(uuid=uuid)
 
         return schedule
+
+    async def get_by_uuid_ride(self, uuid: UUID) -> Schedule:
+        return await ScheduleRepository.get_from_uuid_ride(uuid)
 
     async def get_current_travel(self, code: UserCode) -> Schedule:
         return await ScheduleRepository.get_active_travel(code)
@@ -50,7 +46,10 @@ class ScheduleService:
             LocationData(
                 end.latitude,
                 end.longitude,
-            )
+            ),
+            schedule.starting,
+            schedule.finished,
+            schedule.seats
         )
 
         return status
@@ -62,6 +61,30 @@ class ScheduleService:
         schedule.active = active if active is not None else schedule.active
         schedule.terminate = terminate if terminate is not None else schedule.terminate
         schedule.cancel = cancel if cancel is not None else schedule.cancel
+
+        await schedule.save()
+
+        return True
+
+    async def set_cancel(self, uuid: UUID):
+        schedule = await self.get_by_uuid(uuid)
+        schedule.cancel = True
+
+        await schedule.save()
+
+        return True
+
+    async def set_active(self, uuid: UUID):
+        schedule = await self.get_by_uuid(uuid)
+        schedule.active = True
+
+        await schedule.save()
+
+        return True
+
+    async def set_terminate(self, uuid: UUID):
+        schedule = await self.get_by_uuid(uuid)
+        schedule.terminate = True
 
         await schedule.save()
 

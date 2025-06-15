@@ -130,17 +130,17 @@ class UserStatusCase(EventsStatus):
         return event_generator()
 
     async def notify_http(self, uuid: UUID, user: User):
-        status, schedule = await self.schedule_service.get_by_uuid(uuid)
-
-        if not status:
-            raise HTTPException(status_code=404, detail="Travel schedule not found.")
-
-        ride = await self.ride_service.get(schedule, user)
+        schedule = await self.schedule_service.get_by_uuid_ride(uuid)
+        ride = await self.ride_service.get_by_uuid(uuid)
 
         return ScheduleStatus(**{
+            'rideID': uuid,
+            'scheduleID': schedule.uuid,
+
             'active': schedule.active,
-            'terminate': schedule.finished,
+            'terminate': schedule.terminate,
             'cancel': schedule.cancel,
+
             'currentPassengers': await schedule.current_passengers,
             'ride': RideStatus(
                 valid=ride.validate,

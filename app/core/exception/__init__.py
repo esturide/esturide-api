@@ -47,11 +47,17 @@ class FailureSaveDataException(ResponseException):
 
 class NotFoundException(ResponseException):
     def __init__(self, detail="Data not found."):
-        super().__init__(status_code=401, detail=detail)
+        super().__init__(status_code=404, detail=detail)
+        self.detail = detail
+
+
+class BadRequestException(ResponseException):
+    def __init__(self, detail="Data not found."):
+        super().__init__(status_code=400, detail=detail)
         self.detail = detail
 
 
 class InvalidRequestException(ResponseException):
     def __init__(self, detail="Invalid request."):
-        super().__init__(status_code=401, detail=detail)
+        super().__init__(status_code=409, detail=detail)
         self.detail = detail
