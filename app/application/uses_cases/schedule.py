@@ -192,7 +192,6 @@ class ScheduleCase:
                     paternalSurname=passenger.paternal_surname,
                     validate=ride.validate,
                     position=TrackingRecord(
-                        location=position.location,
                         latitude=position.latitude,
                         longitude=position.longitude,
                     )

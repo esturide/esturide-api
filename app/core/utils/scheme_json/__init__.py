@@ -6,13 +6,8 @@ from app.presentation.schemes import TrackingRecord
 from app.presentation.schemes.travels import TravelScheduleResponse, DriverUser, PassengerUser
 
 
-def create_travel_scheme(
-        schedule: Schedule,
-        driver: User, origin:
-        LocationData, destination:
-        LocationData,
-        users: List[Tuple[User, LocationData]]
-) -> TravelScheduleResponse:
+def create_travel_scheme(schedule: Schedule, driver: User, origin: LocationData,
+                         destination: LocationData) -> TravelScheduleResponse:
     return TravelScheduleResponse(
         uuid=schedule.uuid,
 
@@ -48,13 +43,11 @@ def create_travel_scheme(
         ),
 
         origin=TrackingRecord(
-            location=origin.location,
             latitude=origin.latitude,
             longitude=origin.longitude,
         ),
 
         destination=TrackingRecord(
-            location=destination.location,
             latitude=destination.latitude,
             longitude=destination.longitude,
         ),
