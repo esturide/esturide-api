@@ -2,7 +2,7 @@ from typing import Tuple
 
 from neomodel import AsyncStructuredNode, UniqueIdProperty, StringProperty, DateProperty, EmailProperty, \
     BooleanProperty, IntegerProperty, DateTimeProperty, AsyncStructuredRel, \
-    AsyncRelationshipTo, AsyncRelationshipFrom, AsyncOne, AsyncZeroOrOne, JSONProperty, ArrayProperty
+    AsyncRelationshipTo, AsyncRelationshipFrom, AsyncOne, JSONProperty, ArrayProperty, AsyncZeroOrMore
 
 from app.core.encrypt import check_same_password
 from app.core.enum import RoleUser
@@ -115,11 +115,15 @@ class Schedule(AsyncStructuredNode):
 
     price = IntegerProperty(required=True)
     max_passenger = IntegerProperty(required=False, default=4)
+    seats = ArrayProperty()
 
-    start = JSONProperty()
-    finished = JSONProperty()
+    start = JSONProperty(required=True)
+    finished = JSONProperty(required=True)
 
-    passengers = AsyncRelationshipFrom("User", 'RIDE_TO', model=Ride, cardinality=AsyncZeroOrOne)
+    start_time = DateTimeProperty(required=True)
+    end_time = DateTimeProperty(required=True)
+
+    passengers = AsyncRelationshipFrom("User", 'RIDE_TO', model=Ride, cardinality=AsyncZeroOrMore)
     driver = AsyncRelationshipFrom("User", 'DRIVER_TO', model=Travel, cardinality=AsyncOne)
     car = AsyncRelationshipFrom('Automobile', 'DRIVE')
 
@@ -157,9 +161,9 @@ class Schedule(AsyncStructuredNode):
 
 
 class Rating(AsyncStructuredNode):
-    overall = IntegerProperty(required=True, choices=range(1,6))
-    punctuality = IntegerProperty(required=True, choices=range(1,6))
-    driving_behavior = IntegerProperty(required=True, choices=range(1,6))
+    overall = IntegerProperty(required=True, choices=range(1, 6))
+    punctuality = IntegerProperty(required=True, choices=range(1, 6))
+    driving_behavior = IntegerProperty(required=True, choices=range(1, 6))
 
     passenger = AsyncRelationshipFrom("User", "RATED")
     schedule = AsyncRelationshipFrom("Schedule", "RATING")

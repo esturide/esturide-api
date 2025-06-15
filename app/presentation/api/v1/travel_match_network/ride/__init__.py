@@ -51,6 +51,7 @@ async def get_status_ride(uuid: UUID, events: DependPassengerEventsCase, auth_us
 @ride.delete("/", response_model=StatusMessage)
 async def cancel_ride(ride_case: DependRideCase, auth_user: AuthUserCodeCredentials):
     uuid = await ride_case.get_current_ride(auth_user.code)
+
     status = await ride_case.cancel(uuid, auth_user.code)
 
     if status:

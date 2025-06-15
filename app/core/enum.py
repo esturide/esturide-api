@@ -13,3 +13,8 @@ class RoleUser(str, Enum):
     staff = 'staff'
     admin = 'admin'
 
+
+class CurrentRuleUser(str, Enum):
+    no_session = 'no-session'
+    driver = 'driver'
+    passenger = 'passenger'

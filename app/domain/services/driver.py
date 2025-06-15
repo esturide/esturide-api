@@ -1,10 +1,10 @@
-from app.infrastructure.repository.driver import DriverRepository
+from app.infrastructure.repository.driver import UserDriverRepository
 from app.presentation.schemes import UserRequest
 
 
 class DriverService:
     def __init__(self):
-        self.__driver_repository = DriverRepository()
+        self.__driver_repository = UserDriverRepository()
 
     async def get_by_code(self, driver_code: int):
         return await self.__driver_repository.get_driver_by_code(driver_code)

@@ -1,7 +1,6 @@
 import json
 from typing import Tuple, Literal, List
 
-from fastapi import HTTPException
 from neomodel import DoesNotExist, db
 
 from app.core.exception import NotFoundException
@@ -36,8 +35,13 @@ class RideRepository:
         """
         results, meta = db.cypher_query(query)
 
+        result = results[0][0]
+
+        if result is None:
+            return LocationData(0, 0, 0)
+
         return LocationData(
-            **json.loads(results[0][0][-1])
+            **json.loads(results[-1])
         )
 
     @staticmethod
@@ -57,10 +61,10 @@ class RideRepository:
     async def get_by_uuid(uuid: UUID) -> Ride:
         query = f"""
         MATCH (p: User)-[r: RIDE_TO]->(c: Schedule) 
-            WHERE r.uuid = '{uuid}'
+            WHERE r.uuid = $uuid
             RETURN r
         """
-        results, meta = db.cypher_query(query)
+        results, meta = db.cypher_query(query, {'uuid': uuid})
 
         rides = [Ride.inflate(row[0]) for row in results]
 
@@ -73,12 +77,30 @@ class RideRepository:
     async def get_active_ride(code: UserCode, limit: int = 1) -> Ride:
         query = f"""
         MATCH (p: User)-[r: RIDE_TO]->(c: Schedule) 
-            WHERE p.code = {code} AND c.active = true AND r.cancel = false
+            WHERE p.code = {code} OR c.active = true OR r.cancel = false
             RETURN r
             ORDER BY r.time 
             DESC LIMIT {limit}
         """
         results, meta = db.cypher_query(query)
+
+        rides = [Ride.inflate(row[0]) for row in results]
+
+        if len(rides) <= 0:
+            raise NotFoundException(detail="No active rides found.")
+
+        return rides[0]
+
+    @staticmethod
+    async def get_ride_by_code(code: UserCode, active: bool = False, cancel: bool = False) -> Ride:
+        query = f"""
+        MATCH (p: User)-[r: RIDE_TO]->(c: Schedule) 
+            WHERE p.code = {code} AND c.active = $active AND r.cancel = $cancel
+            RETURN r
+            ORDER BY r.time 
+            DESC LIMIT 1
+        """
+        results, meta = db.cypher_query(query, {'active': active, 'cancel': cancel})
 
         rides = [Ride.inflate(row[0]) for row in results]
 
