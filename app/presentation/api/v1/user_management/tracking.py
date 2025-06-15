@@ -1,5 +1,5 @@
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect
-from app.core.dependencies import AuthUserCodeCredentials
+from app.core.dependencies import AuthUserCredentials
 
 tracking = APIRouter(
     prefix="/tracking",
