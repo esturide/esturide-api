@@ -20,6 +20,7 @@ SessionType = typing.TypeVar(
     "SessionType", bound=typing.Union[DriverCurrentSession, PassengerCurrentSession, None]
 )
 
+
 class SessionResponse(BaseModel, typing.Generic[SessionType]):
     code: UserCode
     current_role: CurrentRuleUser = Field(..., alias='currentRole')

@@ -1,4 +1,4 @@
-from neomodel import DoesNotExist, db
+from neomodel import db
 
 from app.core.exception import NotFoundException
 from app.domain.models import Schedule, Travel, User

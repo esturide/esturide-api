@@ -1,7 +1,7 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 from typing import List
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field
 
 from app.core.types import UUID, UserCode
 from app.presentation.schemes import TrackingRecord

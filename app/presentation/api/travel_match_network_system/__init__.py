@@ -1,9 +1,9 @@
 from fastapi import FastAPI
 
+from app.presentation.api.travel_match_network_system.auth_travel import auth_travel
 from app.presentation.api.travel_match_network_system.ride import ride
 from app.presentation.api.travel_match_network_system.status import status
 from app.presentation.api.travel_match_network_system.travel import travel
-from app.presentation.api.travel_match_network_system.auth_travel import auth_travel
 
 travels = FastAPI(title="Travel Match Network System (μ) API")
 travels.include_router(ride)

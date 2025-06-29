@@ -1,6 +1,7 @@
 from app.domain.services.automobile import AutomobileService
 from app.presentation.schemes import AutomobileRequest
 
+
 class AutomobileUseCase:
     def __init__(self):
         self.service = AutomobileService()

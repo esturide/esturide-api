@@ -8,12 +8,12 @@ from app.application.uses_cases.auth import AuthUseCase
 from app.application.uses_cases.automobile import AutomobileUseCase
 from app.application.uses_cases.driver import DriverUseCase
 from app.application.uses_cases.ride import RideCase
+from app.application.uses_cases.schedule import ScheduleCase
 from app.application.uses_cases.session import SessionUseCase
 from app.application.uses_cases.status import DriverStatusCase, UserStatusCase, EventsTestingCase
 from app.application.uses_cases.status.socket import EventsSocket
 from app.application.uses_cases.status.socket.driver import DriverEventsSocket
 from app.application.uses_cases.status.socket.passenger import PassengerEventsSocket
-from app.application.uses_cases.schedule import ScheduleCase
 from app.application.uses_cases.user import UserUseCase
 from app.core.dependencies.depends import get_user_case, get_auth_case, get_schedule_case, get_ride_case, \
     get_driver_events_case, \

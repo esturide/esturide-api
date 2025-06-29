@@ -1,7 +1,6 @@
 from functools import lru_cache
 
 import strawberry
-
 from strawberry.fastapi import GraphQLRouter
 
 
@@ -10,7 +9,6 @@ class Query:
     @strawberry.field
     def hello(self) -> str:
         return "Hello World"
-
 
 
 @lru_cache

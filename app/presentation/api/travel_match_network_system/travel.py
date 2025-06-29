@@ -1,11 +1,13 @@
-from fastapi import APIRouter, HTTPException , Query , Depends
-from typing import Optional , List
 from datetime import time
+from typing import Optional, List
+
+from fastapi import APIRouter, HTTPException, Query
+from neomodel.exceptions import DoesNotExist
+
 from app.core.dependencies import DependScheduleCase, AuthUserCredentials
 from app.core.types import UUID
 from app.domain.models import Schedule
-from app.presentation.schemes import DriverProfile , ScheduleTravel , TravelResult
-from neomodel.exceptions import DoesNotExist
+from app.presentation.schemes import DriverProfile, ScheduleTravel, TravelResult
 
 travel = APIRouter(prefix="/travel", tags=["Travels"])
 
@@ -46,28 +48,29 @@ async def cancel_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user
         "status": "success" if status else "failure",
     }
 
+
 @travel.get(
     "/search",
     response_model=List[TravelResult],
     summary="Buscar viajes con filtros y ordenamiento"
 )
 async def search_schedule(
-    schedule_case: DependScheduleCase ,
-    auth_user:     AuthUserCredentials,
-    start_time_from: Optional[time] = Query(None, alias="start_time_from"),
-    start_time_to:   Optional[time] = Query(None, alias="start_time_to"),
-    end_time_from:   Optional[time] = Query(None, alias="end_time_from"),
-    end_time_to:     Optional[time] = Query(None, alias="end_time_to"),
-    minimum_price:   Optional[int]  = Query(None, alias="minimum_price"),
-    maximum_price:   Optional[int]  = Query(None, alias="maximum_price"),
-    min_passengers:  Optional[int]  = Query(None, alias="min_passengers"),
-    max_passengers:  Optional[int]  = Query(None, alias="max_passengers"),
-    driver_gender:   Optional[str]  = Query(None, alias="driver_gender"),
-    sort:            Optional[str]  = Query(
-        None,
-        alias="sort",
-        description="Opciones: start-time, end-time, minimum-price, maximum-price"
-    )
+        schedule_case: DependScheduleCase,
+        auth_user: AuthUserCredentials,
+        start_time_from: Optional[time] = Query(None, alias="start_time_from"),
+        start_time_to: Optional[time] = Query(None, alias="start_time_to"),
+        end_time_from: Optional[time] = Query(None, alias="end_time_from"),
+        end_time_to: Optional[time] = Query(None, alias="end_time_to"),
+        minimum_price: Optional[int] = Query(None, alias="minimum_price"),
+        maximum_price: Optional[int] = Query(None, alias="maximum_price"),
+        min_passengers: Optional[int] = Query(None, alias="min_passengers"),
+        max_passengers: Optional[int] = Query(None, alias="max_passengers"),
+        driver_gender: Optional[str] = Query(None, alias="driver_gender"),
+        sort: Optional[str] = Query(
+            None,
+            alias="sort",
+            description="Opciones: start-time, end-time, minimum-price, maximum-price"
+        )
 ):
     return await schedule_case.search(
         user=auth_user,
@@ -83,27 +86,28 @@ async def search_schedule(
         sort=sort,
     )
 
+
 @travel.get(
     "/all",
     response_model=List[TravelResult],
     summary="Obtener todos los viajes con filtros avanzados"
 )
 async def get_all_schedules(
-    schedule_case: DependScheduleCase  ,
-    auth_user:     AuthUserCredentials  ,
-    start_time_from: Optional[time] = Query(None, alias="start_time_from"),
-    start_time_to:   Optional[time] = Query(None, alias="start_time_to"),
-    end_time_from:   Optional[time] = Query(None, alias="end_time_from"),
-    end_time_to:     Optional[time] = Query(None, alias="end_time_to"),
-    minimum_price:   Optional[int]  = Query(None, alias="minimum_price"),
-    maximum_price:   Optional[int]  = Query(None, alias="maximum_price"),
-    min_passengers:  Optional[int]  = Query(None, alias="min_passengers"),
-    max_passengers:  Optional[int]  = Query(None, alias="max_passengers"),
-    driver_gender:   Optional[str]  = Query(None, alias="driver_gender"),
-    active:    Optional[bool] = Query(None, description="True para solo activos"),
-    terminated: Optional[bool] = Query(None, description="True para solo terminados"),
-    canceled:  Optional[bool] = Query(None, description="True para solo cancelados"),
-    driver_code: Optional[int] = Query(None, alias="driver_code"), 
+        schedule_case: DependScheduleCase,
+        auth_user: AuthUserCredentials,
+        start_time_from: Optional[time] = Query(None, alias="start_time_from"),
+        start_time_to: Optional[time] = Query(None, alias="start_time_to"),
+        end_time_from: Optional[time] = Query(None, alias="end_time_from"),
+        end_time_to: Optional[time] = Query(None, alias="end_time_to"),
+        minimum_price: Optional[int] = Query(None, alias="minimum_price"),
+        maximum_price: Optional[int] = Query(None, alias="maximum_price"),
+        min_passengers: Optional[int] = Query(None, alias="min_passengers"),
+        max_passengers: Optional[int] = Query(None, alias="max_passengers"),
+        driver_gender: Optional[str] = Query(None, alias="driver_gender"),
+        active: Optional[bool] = Query(None, description="True para solo activos"),
+        terminated: Optional[bool] = Query(None, description="True para solo terminados"),
+        canceled: Optional[bool] = Query(None, description="True para solo cancelados"),
+        driver_code: Optional[int] = Query(None, alias="driver_code"),
 ):
     return await schedule_case.search(
         user=auth_user,
@@ -122,13 +126,14 @@ async def get_all_schedules(
         driver_code=driver_code,
     )
 
+
 @travel.get(
     "/status/{uuid}",
     summary="Obtener estado de un viaje: siempre driver; si eres conductor, también pasajeros"
 )
 async def get_schedule_status(
-    uuid: UUID,
-    auth_user: AuthUserCredentials ,
+        uuid: UUID,
+        auth_user: AuthUserCredentials,
 ):
     try:
         schedule = await Schedule.nodes.get(uuid=uuid)
@@ -158,17 +163,18 @@ async def get_schedule_status(
 
     return {"driver": driver}
 
+
 @travel.patch(
     "/modification/{uuid}",
     summary="Modificar flags de un schedule: start, finished, cancel"
 )
 async def modify_schedule(
-    schedule_case: DependScheduleCase   ,
-    auth_user:     AuthUserCredentials  ,
-    uuid: UUID,
-    start:    Optional[bool] = Query(None, description="True para activar/inactivar el viaje"),
-    finished: Optional[bool] = Query(None, description="True para marcar el viaje como terminado"),
-    cancel:   Optional[bool] = Query(None, description="True para cancelar el viaje"),
+        schedule_case: DependScheduleCase,
+        auth_user: AuthUserCredentials,
+        uuid: UUID,
+        start: Optional[bool] = Query(None, description="True para activar/inactivar el viaje"),
+        finished: Optional[bool] = Query(None, description="True para marcar el viaje como terminado"),
+        cancel: Optional[bool] = Query(None, description="True para cancelar el viaje"),
 ):
     try:
         updated_status = await schedule_case.modify(

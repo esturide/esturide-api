@@ -20,10 +20,10 @@ class StreamSSE(typing.Generic[C]):
 
         return str(data)
 
-    def send_model(self, model: C)-> str:
+    def send_model(self, model: C) -> str:
         return json.dumps(model.model_dump())
 
-    def send_json(self, data: dict)-> str:
+    def send_json(self, data: dict) -> str:
         return json.dumps(data)
 
     def send_string(self, string: str) -> str:

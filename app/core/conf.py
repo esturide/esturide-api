@@ -1,6 +1,8 @@
 from functools import lru_cache
+
 from pydantic import ConfigDict
 from pydantic_settings import BaseSettings
+
 
 class DefaultSettings(BaseSettings):
     # API
@@ -30,7 +32,9 @@ class DefaultSettings(BaseSettings):
         env_file=".env"
     )
 
+
 settings = DefaultSettings()
+
 
 @lru_cache()
 def get_settings() -> DefaultSettings:

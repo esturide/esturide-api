@@ -1,5 +1,6 @@
 from app.infrastructure.repository.rate import RatingRepository
 
+
 class RatingService:
     def __init__(self):
         self.repository = RatingRepository()

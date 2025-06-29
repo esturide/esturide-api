@@ -1,6 +1,4 @@
-from typing import List, Tuple
-
-from app.domain.models import Schedule, User, Ride
+from app.domain.models import Schedule, User
 from app.domain.types import LocationData
 from app.presentation.schemes import TrackingRecord
 from app.presentation.schemes.travels import TravelScheduleResponse, DriverUser, PassengerUser

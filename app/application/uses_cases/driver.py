@@ -1,6 +1,7 @@
 from fastapi import HTTPException
+
 from app.domain.services.driver import DriverService
-from app.presentation.schemes import UserRequest, UserResponse, ProfileUpdateRequest
+from app.presentation.schemes import UserRequest, UserResponse
 
 
 class DriverUseCase:
