@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 
-from app.core.dependencies import AuthUserCredentials, DependRideCase
+from app.core.dependencies import DependRideCase
 from app.core.types import UUID
 from app.presentation.schemes import RideRequest
 
