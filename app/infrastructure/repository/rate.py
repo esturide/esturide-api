@@ -1,6 +1,5 @@
 from app.domain.models import User, Schedule, Rating
 
-
 class RatingRepository:
     async def fetch_trip_and_user(self, user_id: str, schedule_id: str):
         try:
@@ -12,9 +11,9 @@ class RatingRepository:
 
     async def save_rating(self, user, schedule, overall: int, punctuality: int, driving_behavior: int):
         rating = Rating(
-            overall=overall,
-            punctuality=punctuality,
-            driving_behavior=driving_behavior
+            overall = overall,
+            punctuality = punctuality,
+            driving_behavior = driving_behavior
         )
 
         await rating.save()

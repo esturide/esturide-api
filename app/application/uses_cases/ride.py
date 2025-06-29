@@ -1,113 +1,51 @@
-import asyncio
-
 from fastapi import HTTPException
 
-from app.core.types import UUID, UserCode
+from app.core.types import UUID
+from app.domain.models import User
 from app.domain.services.ride import RideService
-from app.domain.services.schedule import ScheduleService
-from app.domain.services.user import UserService
-from app.domain.types import LocationData
+from app.domain.services.travel import ScheduleService
 from app.presentation.schemes import RideRequest
-from app.presentation.schemes.status import RideStatus, ScheduleStatus
-from app.presentation.schemes.travels import Tracking
 
 
 class RideCase:
     def __init__(self):
-        self.user_service = UserService()
-        self.ride_service = RideService()
-        self.schedule_service = ScheduleService()
+        self.__ride_service = RideService()
+        self.__schedule_service = ScheduleService()
 
-    async def set_tracking(self, tracking: Tracking, waiting_seconds: int = 5):
-        uuid = tracking.uuid
-        record = LocationData(**dict(tracking.record))
+    async def create(self, ride: RideRequest, user: User):
+        uuid = ride.travel_uuid
+        status, schedule = await self.__schedule_service.get(uuid)
 
-        await asyncio.sleep(waiting_seconds)
-
-        status = await self.ride_service.set_tracking(uuid, record)
-
-        return status
-
-    async def check_valid_ride(self, uuid: UUID, code: UserCode):
-        schedule = await self.schedule_service.get_by_uuid(uuid)
+        if not status:
+            raise HTTPException(status_code=404, detail="Travel schedule not found")
 
         driver = await schedule.designated_driver
-
-        if driver.code == code:
-            raise HTTPException(status_code=400, detail="The driver cannot request the same trip that he had planned.")
+        if driver.code == user.code:
+            raise HTTPException(status_code=400, detail="The driver cannot request the same trip that he had planned")
 
         if not schedule.is_valid:
-            raise HTTPException(status_code=400, detail="The schedule is not valid.")
+            raise HTTPException(status_code=400, detail="The travel is not valid")
 
         if await schedule.current_passengers >= schedule.max_passenger:
-            raise HTTPException(status_code=400, detail="The schedule has reached the maximum number of occupants.")
+            raise HTTPException(status_code=400, detail="The travel has reached the maximum number of occupants")
 
         if any([
-            code == passenger.code for passenger in await schedule.users
+            user.code == passenger.code for passenger in await schedule.users
         ]):
-            raise HTTPException(status_code=409, detail="The ride was previously requested.")
+            raise HTTPException(status_code=409, detail="The ride was previously requested")
 
-        return uuid, schedule, driver
+        await self.__ride_service.create(
+            schedule,
+            ride,
+            user
+        )
 
-    async def create(self, ride: RideRequest, code: UserCode):
-        uuid, schedule, driver = await self.check_valid_ride(ride.travel_uuid, code)
+        return True
 
-        if schedule.valid_for_ride:
-            user = await self.user_service.get_by_code(code)
+    async def get(self, uuid: UUID, user: User):
+        status, schedule = await self.__schedule_service.get(uuid)
 
-            if await self.ride_service.create(schedule, user):
-                ride = await self.ride_service.get(schedule, code)
-                """
-                async with self.user_service.save(user) as user:
-                    user.push_session(DataPassengerCurrentSession(schedule=schedule.uuid, ride_to=ride.uuid))
-                """
-                return True
+        if not status:
+            raise HTTPException(status_code=404, detail="Travel schedule not found")
 
-        return False
-
-    async def get_current_ride(self, code: UserCode, *args, **kwargs):
-        ride = await self.ride_service.get_current_ride(code, *args, **kwargs)
-
-        return ride.uuid
-
-    async def get_active_ride(self, code: UserCode) -> UUID:
-        ride = await self.ride_service.get_active_ride(code)
-
-        return ride.uuid
-
-    async def get_current_ride_from_user(self, code: UserCode):
-        ride = await self.ride_service.get_active_ride(code)
-        schedule = await self.schedule_service.get_by_uuid_ride(ride.uuid)
-
-        return ScheduleStatus(**{
-            'rideID': ride.uuid,
-            'scheduleID': schedule.uuid,
-
-            'active': schedule.active,
-            'terminate': schedule.terminate,
-            'cancel': schedule.cancel,
-
-            'currentPassengers': await schedule.current_passengers,
-            'ride': RideStatus(
-                valid=ride.validate,
-                cancel=ride.cancel,
-            )
-        })
-
-    async def cancel(self, uuid: UUID, code: UserCode):
-        schedule = await self.schedule_service.get_by_uuid(uuid)
-
-        driver = await schedule.designated_driver
-
-        if driver.code == code:
-            raise HTTPException(status_code=400, detail="The driver cannot request the same trip that he had planned.")
-
-        if not schedule.is_valid:
-            raise HTTPException(status_code=400, detail="The schedule is not valid.")
-
-        return await self.ride_service.set_cancel(schedule, code, True)
-
-    async def get(self, uuid: UUID, code: UserCode):
-        schedule = await self.schedule_service.get_by_uuid(uuid)
-
-        await self.ride_service.get(schedule, code)
+        await self.__ride_service.get(schedule, user)

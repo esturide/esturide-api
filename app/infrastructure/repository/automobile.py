@@ -1,6 +1,5 @@
 from app.domain.models import Automobile
 
-
 class AutomobileRepository:
     @staticmethod
     async def get_automobile_by_code(code: int):

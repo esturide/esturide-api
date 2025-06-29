@@ -1,4 +1,4 @@
-from app.domain.services.auth.travel import AuthService
+from app.domain.services.auth_travel import AuthService
 
 async def authenticate_trip(user_id: str, trip_id: str) -> bool:
     service = AuthService()

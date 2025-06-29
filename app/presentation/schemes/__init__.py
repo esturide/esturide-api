@@ -1,35 +1,36 @@
 import datetime
-from typing import List, TypeVar, Generic
+import enum
+from typing import List
 
-from pydantic import BaseModel, Field, field_validator, SecretStr, EmailStr
+from pydantic import BaseModel, Field, field_validator
 
-from app.core.enum import RoleUser
-from app.core.types import UUID, Status, UserCode
-
-T = TypeVar('T')
+from app.core.types import UUID
 
 
-class StatusResponse(BaseModel, Generic[T]):
-    data: List[T] | T
-    status: Status = Field(..., title="Status response")
+class AccessCredential(BaseModel):
+    access_token: str
+    token_type: str = "bearer"
 
 
-class StatusMessage(BaseModel):
-    status: Status = Field(..., title="Status response")
-    message: str = Field(..., title="Message response")
+class RoleUser(str, enum.Enum):
+    not_verified = 'not_verified'
+    user = 'user'
+    admin = 'admin'
+    staff = 'staff'
+    student = 'student'
 
 
 class UserRequest(BaseModel):
-    code: UserCode
+    code: int
 
     firstname: str
     maternal_surname: str
     paternal_surname: str
-    curp: str = Field(..., title="CURP", alias='curp')
-    birth_date: datetime.date = Field(..., title="Birth date", description="The user's birth date")
+    curp: str
+    birth_date: datetime.date
 
-    email: EmailStr = Field(..., title="Email", alias='email')
-    password: SecretStr
+    email: str
+    password: str
 
     @field_validator('birth_date')
     def check_age(cls, birth_date):
@@ -43,26 +44,34 @@ class UserRequest(BaseModel):
 
 
 class UserResponse(BaseModel):
-    code: UserCode
+    code: int
 
     firstname: str
-    maternal_surname: str = Field(..., title="Maternal surname", alias='maternalSurname')
-    paternal_surname: str = Field(..., title="Paternal surname", alias='paternalSurname')
+    maternal_surname: str
+    paternal_surname: str
 
-    email: EmailStr = Field(..., title="Email", alias='email')
+    email: str
 
     role: RoleUser = RoleUser.not_verified
 
 
 class ProfileUpdateRequest(BaseModel):
     firstname: str
-    maternal_surname: str = Field(..., title="Maternal surname", alias='maternalSurname')
-    paternal_surname: str = Field(..., title="Paternal surname", alias='paternalSurname')
+    maternal_surname: str
+    paternal_surname: str
     curp: str
-    birth_date: datetime.date = Field(..., title="Birth date", alias='birthDate')
+    birth_date: datetime.date
 
-    email: EmailStr = Field(..., title="Email", alias='email')
-    password: SecretStr
+    email: str
+    password: str
+
+
+class DriverProfile(BaseModel):
+    code: int
+
+    firstname: str
+    maternal_surname: str
+    paternal_surname: str
 
 
 class AutomobileProfile(BaseModel):
@@ -72,18 +81,61 @@ class AutomobileProfile(BaseModel):
 
 
 class TrackingRecord(BaseModel):
-    latitude: float = 0
-    longitude: float = 0
+    location: str = ""
+    latitude: str = "0.000000"
+    longitude: str = "0.000000"
+
+
+class ScheduleTravel(BaseModel):
+    start: TrackingRecord
+    end: TrackingRecord
+    price: int
+    max_passengers: int = 4
+
+
+class TravelResult(BaseModel):
+    uuid: UUID
+
+    price: int
+    active: bool = False
+    terminate: bool = False
+    cancel: bool = False
+    max_passengers: int = 4
+
+    driver: DriverProfile
+
+    origin: TrackingRecord
+    destination: TrackingRecord
 
 
 class RideRequest(BaseModel):
     origin: TrackingRecord
-    travel_uuid: UUID = Field(..., alias='UUID')
+    travel_uuid: UUID
+
+
+class RideStatus(BaseModel):
+    valid: bool
+    cancel: bool
+
+
+class ScheduleStatus(BaseModel):
+    active: bool = False
+    terminate: bool = False
+    cancel: bool = False
+    current_passengers: int
+
+    ride: RideStatus
+
+
+class ListRides(BaseModel):
+    rides: List[RideStatus]
+    total_passengers: int
 
 
 class AuthTravelRequest(BaseModel):
     user_id: str
     trip_id: str
+
 
 
 class RateRequest(BaseModel):
@@ -92,6 +144,9 @@ class RateRequest(BaseModel):
     overall: int = Field(..., ge=1, le=5)
     punctuality: int = Field(..., ge=1, le=5)
     driving_behavior: int = Field(..., ge=1, le=5)
+
+import datetime
+from pydantic import BaseModel
 
 
 class AutomobileRequest(BaseModel):

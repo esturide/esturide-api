@@ -1,23 +1,36 @@
-from app.core.enum import RoleUser
-from app.core.types import UserCode, Token
+from fastapi import HTTPException
 from app.domain.services.driver import DriverService
-from app.domain.services.user import UserService
+from app.presentation.schemes import UserRequest, UserResponse, ProfileUpdateRequest
 
 
 class DriverUseCase:
     def __init__(self):
         self.__driver_service = DriverService()
-        self.__user_service = UserService()
 
-    async def set_user_driver(self, token: Token) -> bool:
-        user = await self.__user_service.get_by_token(token)
+    async def get(self, code: int):
+        status, driver = await self.__driver_service.get_by_code(code)
 
-        async with self.__user_service.save(user) as node:
-            node.role_value = RoleUser.driver
+        if not status:
+            raise HTTPException(status_code=404, detail="Driver not found")
 
-        return True
+        return UserResponse(
+            code=driver.code,
+            firstname=driver.firstname,
+            maternal_surname=driver.maternal_surname,
+            paternal_surname=driver.paternal_surname,
+            email=driver.email,
+        )
 
-    async def check_user_driver(self, code: UserCode) -> bool:
-        user = await self.__user_service.get_by_code(code)
+    async def create(self, driver_req: UserRequest):
+        if not driver_req.code > 100000000:
+            raise HTTPException(status_code=401, detail="Invalid driver code")
 
-        return user.role_value == RoleUser.driver
+        response = await self.__driver_service.create(driver_req)
+
+        return response
+
+    async def delete(self, code: int, uuid_user_code: int):
+        if uuid_user_code == code:
+            return await self.__driver_service.delete(code)
+
+        raise HTTPException(status_code=401, detail="Invalid credentials")

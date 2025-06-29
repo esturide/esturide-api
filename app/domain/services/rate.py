@@ -1,6 +1,5 @@
 from app.infrastructure.repository.rate import RatingRepository
 
-
 class RatingService:
     def __init__(self):
         self.repository = RatingRepository()
@@ -14,7 +13,7 @@ class RatingService:
         if user not in await schedule.passengers.all():
             raise ValueError("User did not participate in this trip")
 
-        if not schedule.finished:
+        if not schedule.terminate:
             raise ValueError("Trip is not completed")
 
         await self.repository.save_rating(user, schedule, overall, punctuality, driving_behavior)
