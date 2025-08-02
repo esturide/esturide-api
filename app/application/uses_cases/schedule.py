@@ -2,6 +2,7 @@ from typing import List
 
 from fastapi import HTTPException
 
+from app.core.enum import StatusTravel
 from app.core.exception import InvalidRequestException, NotFoundException, BadRequestException
 from app.core.types import UUID
 from app.core.utils.scheme_json import create_travel_scheme
