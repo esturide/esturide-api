@@ -1,8 +1,5 @@
 from fastapi.responses import JSONResponse
 
-from app.core.types import Status
-from app.presentation.schemes import StatusMessage
-
 
 async def custom_http_exception_handler(request, exc):
     error_response = StatusMessage(

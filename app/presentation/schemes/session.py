@@ -3,7 +3,7 @@ import typing
 from pydantic import BaseModel, Field
 
 from app.core.enum import CurrentRuleUser
-from app.core.types import UserCode, UUID
+from app.core.types import UUID, UserCode
 
 
 class DriverCurrentSession(BaseModel):

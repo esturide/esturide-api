@@ -1,8 +1,8 @@
 from fastapi import APIRouter
 
 from app.core.dependencies.database import DependCacheSession, DependDatabaseSession
-from app.core.types import Status
-from app.presentation.schemes import StatusMessage
+from app.core.enum import Status
+from app.presentation.schemes.status.notifications import StatusMessage
 
 health = APIRouter(
     prefix="/health",
