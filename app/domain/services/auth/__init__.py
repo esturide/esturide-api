@@ -1,7 +1,7 @@
 from app.core import settings
 from app.core.exception import UnauthorizedAccessException
 from app.core.oauth2 import encode, check_if_expired, secure_decode, decode
-from app.core.types import Token, UserCode
+from app.core.types import Token
 from app.infrastructure.repository.user import UserRepository
 
 
@@ -9,7 +9,7 @@ class AuthenticationCredentialsService:
     def __init__(self):
         self.__user_repository = UserRepository()
 
-    async def authenticate(self, code: UserCode, password: str) -> Token:
+    async def authenticate(self, code: int, password: str) -> Token:
         status, user = await self.__user_repository.get_user_by_code(code)
 
         if not status:

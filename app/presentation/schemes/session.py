@@ -3,7 +3,7 @@ import typing
 from pydantic import BaseModel, Field
 
 from app.core.enum import CurrentRuleUser
-from app.core.types import UUID, UserCode
+from app.core.types import UUID
 
 
 class DriverCurrentSession(BaseModel):
@@ -22,6 +22,6 @@ SessionType = typing.TypeVar(
 
 
 class SessionResponse(BaseModel, typing.Generic[SessionType]):
-    code: UserCode
+    code: int
     current_role: CurrentRuleUser = Field(..., alias='currentRole')
     current: SessionType = Field(..., alias='current')

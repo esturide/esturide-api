@@ -2,7 +2,7 @@ from fastapi import HTTPException
 
 from app.domain.models import User, Schedule
 from app.infrastructure.repository.ride import RideData, RideRepository
-from app.infrastructure.repository.travels import ScheduleRepository
+from app.infrastructure.repository.travels.schedule import ScheduleRepository
 from app.infrastructure.repository.user import UserRepository
 from app.presentation.schemes import RideRequest
 

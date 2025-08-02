@@ -1,8 +1,12 @@
 from fastapi import HTTPException
 
+from app.core.exception import NotFoundException
 from app.core.types import UUID
-from app.domain.models import User
-from app.infrastructure.repository.travels import ScheduleRepository, LocationData
+from app.domain.models import User, Schedule, Travel
+from app.domain.types import LocationData
+from app.infrastructure.repository.auth_travel import TravelRepository
+from app.infrastructure.repository.travels.schedule import ScheduleRepository
+from app.infrastructure.repository.user import UserRepository
 from app.presentation.schemes import ScheduleTravel
 
 
@@ -37,12 +41,10 @@ class ScheduleService:
             LocationData(
                 start.location,
                 start.latitude,
-                start.longitude,
             ),
             LocationData(
                 end.location,
                 end.latitude,
-                end.longitude,
             )
         )
 
@@ -62,3 +64,13 @@ class ScheduleService:
         await schedule.save()
 
         return status
+
+
+class TravelService:
+    async def get(self, schedule: Schedule, code: int) -> Travel:
+        _, user = await UserRepository.get_user_by_code(code)
+
+        if user is None:
+            raise NotFoundException("Driver not found.")
+
+        return await TravelRepository.get(schedule, user)

@@ -2,7 +2,7 @@ from typing import List
 
 from pydantic import BaseModel, Field
 
-from app.core.types import UserCode, UUID
+from app.core.types import UUID
 from app.presentation.schemes import TrackingRecord
 
 
@@ -12,7 +12,7 @@ class RideStatus(BaseModel):
 
 
 class PassengerProfile(BaseModel):
-    code: UserCode
+    code: int
 
     firstname: str = Field(..., alias='firstName')
     maternal_surname: str = Field(..., alias='maternalSurname')

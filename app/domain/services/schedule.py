@@ -1,6 +1,6 @@
 from fastapi import HTTPException
 
-from app.core.types import UUID, UserCode
+from app.core.types import UUID
 from app.domain.models import User, Schedule
 from app.infrastructure.repository.travels.schedule import ScheduleRepository, LocationData
 from app.presentation.schemes.travels import ScheduleTravelRequest
@@ -20,7 +20,7 @@ class ScheduleService:
     async def get_by_uuid_ride(self, uuid: UUID) -> Schedule:
         return await ScheduleRepository.get_from_uuid_ride(uuid)
 
-    async def get_current_travel(self, code: UserCode) -> Schedule:
+    async def get_current_travel(self, code: int) -> Schedule:
         return await ScheduleRepository.get_active_travel(code)
 
     async def create(self, schedule: ScheduleTravelRequest, driver: User):

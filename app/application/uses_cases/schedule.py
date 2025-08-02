@@ -3,7 +3,7 @@ from typing import List
 from fastapi import HTTPException
 
 from app.core.exception import InvalidRequestException, NotFoundException, BadRequestException
-from app.core.types import UUID, UserCode, StatusTravel
+from app.core.types import UUID
 from app.core.utils.scheme_json import create_travel_scheme
 from app.domain.models import User
 from app.domain.services.ride import RideService
@@ -22,7 +22,7 @@ class ScheduleCase:
         self.ride_service = RideService()
         self.travel_service = TravelService()
 
-    async def create(self, schedule: ScheduleTravelRequest, driver: UserCode) -> bool:
+    async def create(self, schedule: ScheduleTravelRequest, driver: int) -> bool:
         driver = await self.user_service.get_by_code(driver)
 
         if not driver.is_driver:
@@ -47,7 +47,7 @@ class ScheduleCase:
 
         return status
 
-    async def get_ride_tracking(self, user_code: UserCode):
+    async def get_ride_tracking(self, user_code: int):
         schedule = await self.schedule_service.get_current_travel(user_code)
         users = await schedule.users
 
@@ -57,7 +57,7 @@ class ScheduleCase:
 
             yield user, tracking
 
-    async def get_current_travel(self, user_code: UserCode) -> TravelScheduleResponse:
+    async def get_current_travel(self, user_code: int) -> TravelScheduleResponse:
         schedule = await self.schedule_service.get_current_travel(user_code)
         driver = await schedule.designated_driver
         origin, destination = await schedule.path_routes
@@ -94,7 +94,7 @@ class ScheduleCase:
 
         return schedules
 
-    async def set_status(self, uuid: UUID, user_code: UserCode, status: StatusTravel):
+    async def set_status(self, uuid: UUID, user_code: int, status: StatusTravel):
         async def match_status(status: StatusTravel):
             all_status = {
                 StatusTravel.start: not (schedule.cancel or schedule.terminate),
@@ -127,7 +127,7 @@ class ScheduleCase:
 
         return await match_status(status)
 
-    async def start(self, uuid: UUID, user_code: UserCode):
+    async def start(self, uuid: UUID, user_code: int):
         schedule = await self.schedule_service.get_by_uuid(uuid)
         driver = await schedule.designated_driver
 
@@ -141,7 +141,7 @@ class ScheduleCase:
 
         return can_start
 
-    async def finished(self, uuid: UUID, user_code: UserCode):
+    async def finished(self, uuid: UUID, user_code: int):
         schedule = await self.schedule_service.get_by_uuid(uuid)
         driver = await schedule.designated_driver
 
@@ -155,7 +155,7 @@ class ScheduleCase:
 
         return can_finished
 
-    async def cancel(self, uuid: UUID, user_code: UserCode):
+    async def cancel(self, uuid: UUID, user_code: int):
         schedule = await self.schedule_service.get_by_uuid(uuid)
         driver = await schedule.designated_driver
 

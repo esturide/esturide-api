@@ -3,12 +3,12 @@ from typing import List
 
 from pydantic import BaseModel, Field
 
-from app.core.types import UUID, UserCode
+from app.core.types import UUID
 from app.presentation.schemes import TrackingRecord
 
 
 class DriverUser(BaseModel):
-    code: UserCode
+    code: int
 
     firstname: str
     maternal_surname: str = Field(..., title="Maternal surname", alias='maternalSurname')
@@ -17,7 +17,7 @@ class DriverUser(BaseModel):
 
 
 class PassengerUser(BaseModel):
-    code: UserCode
+    code: int
 
     firstname: str
     maternal_surname: str = Field(..., title="Maternal surname", alias='maternalSurname')
@@ -64,7 +64,7 @@ class Tracking(BaseModel):
 
 
 class RideStatusRequest(BaseModel):
-    code: UserCode
+    code: int
     validate: bool = True
 
 

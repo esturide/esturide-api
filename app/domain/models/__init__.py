@@ -6,6 +6,7 @@ from neomodel import AsyncStructuredNode, UniqueIdProperty, StringProperty, Date
 
 from app.core.encrypt import check_same_password
 from app.core.enum import RoleUser
+from app.domain.types import LocationData
 
 
 class RecordTrackingMixin:

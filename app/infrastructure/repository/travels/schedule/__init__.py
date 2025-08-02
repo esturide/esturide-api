@@ -4,7 +4,7 @@ from typing import Tuple, List
 from neomodel import db
 
 from app.core.exception import NotFoundException
-from app.core.types import UserCode, UUID
+from app.core.types import UUID
 from app.domain.models import Schedule, User, Travel
 from app.domain.types import LocationData
 from app.infrastructure.repository.user import UserRepository
@@ -55,7 +55,7 @@ class ScheduleRepository:
         return [*filter(lambda schedule: schedule.active, schedules)]
 
     @staticmethod
-    async def filter_last_travels_by_driver(code: UserCode, limit: int = 16) -> List[Schedule]:
+    async def filter_last_travels_by_driver(code: int, limit: int = 16) -> List[Schedule]:
         query = f"""
         MATCH (p: User)-[r: DRIVER_TO]->(c: Schedule) 
             WHERE p.code = {code} 
@@ -68,7 +68,7 @@ class ScheduleRepository:
         return [Schedule.inflate(row[0]) for row in results]
 
     @staticmethod
-    async def get_active_travel(code: UserCode, limit: int = 5) -> Schedule:
+    async def get_active_travel(code: int, limit: int = 5) -> Schedule:
         query = f"""
         MATCH (p: User)-[r: DRIVER_TO]->(c: Schedule) 
             WHERE p.code = {code}
@@ -106,7 +106,7 @@ class ScheduleRepository:
 
     @staticmethod
     async def create(
-            code: UserCode,
+            code: int,
             max_passengers: int,
             price: int,
             start: LocationData,
@@ -141,7 +141,7 @@ class ScheduleRepository:
 
     @staticmethod
     async def tracking_user(
-            code: UserCode,
+            code: int,
             tracking: LocationData
     ):
         ...

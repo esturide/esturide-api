@@ -18,3 +18,15 @@ class CurrentRuleUser(str, Enum):
     no_session = 'no-session'
     driver = 'driver'
     passenger = 'passenger'
+
+
+class Gender(str, Enum):
+    male = 'male'
+    female = 'female'
+    other = 'other'
+
+
+class StatusTravel(str, Enum):
+    start = 'start'
+    terminate = 'terminate'
+    cancel = 'cancel'

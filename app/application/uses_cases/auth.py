@@ -1,5 +1,5 @@
 from app.core.types import Token
-from app.domain.services.user import AuthenticationCredentialsService
+from app.domain.services.auth import AuthenticationCredentialsService
 
 
 class AuthUseCase:
