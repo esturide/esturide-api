@@ -22,7 +22,6 @@ async def create_user_factory(role="S"):
 
 async def create_record_factory():
     record = LocationData(
-        location=random.uniform(0, 1),
         latitude=random.uniform(0, 1),
         longitude=random.uniform(0, 1),
     )

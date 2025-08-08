@@ -1,8 +1,10 @@
+import contextlib
 from datetime import date
 from typing import Literal
 
 from app.core.encrypt import salty_password
-from app.core.oauth2 import secure_decode, get_code_from_token
+from app.core.exception import NotFoundException
+from app.core.oauth2 import get_code_from_token
 from app.core.types import Token, UserCode
 from app.domain.models import User
 
@@ -121,3 +123,60 @@ class UserRepository:
         await user.delete()
 
         return True
+
+
+class UserRepositoryContext:
+    @contextlib.asynccontextmanager
+    async def create(self,
+                     code: UserCode,
+                     firstname: str,
+                     maternal_surname: str,
+                     paternal_surname: str,
+                     curp: str,
+                     birth_date: date,
+                     email: str,
+                     password: str,
+                     exception=False):
+        user, result = await UserRepository.create(
+            code,
+            firstname,
+            maternal_surname,
+            paternal_surname,
+            curp,
+            birth_date,
+            email,
+            password
+        )
+
+        if user is not None:
+            yield user
+        else:
+            if exception:
+                raise NotFoundException(detail="User not created.")
+
+        return
+
+    @contextlib.asynccontextmanager
+    async def get(self, exception=False, **kwargs):
+        user, result = await UserRepository.get(**kwargs)
+
+        if user is not None:
+            yield user
+        else:
+            if exception:
+                raise NotFoundException(detail="User not found.")
+
+        return
+
+    @contextlib.asynccontextmanager
+    async def patch(self, exception=False, **kwargs):
+        user, result = await UserRepository.get(**kwargs)
+
+        if user is not None:
+            yield user
+            await user.save()
+        else:
+            if exception:
+                raise NotFoundException(detail="User not patch.")
+
+        return

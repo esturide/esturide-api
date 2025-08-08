@@ -24,3 +24,9 @@ class Gender(str, Enum):
     male = 'male'
     female = 'female'
     other = 'other'
+
+
+class StatusTravel(str, Enum):
+    start = 'start'
+    terminate = 'terminate'
+    cancel = 'cancel'

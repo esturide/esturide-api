@@ -8,6 +8,7 @@ from app.application.uses_cases.auth import AuthUseCase
 from app.application.uses_cases.automobile import AutomobileUseCase
 from app.application.uses_cases.driver import DriverUseCase
 from app.application.uses_cases.ride import RideCase
+from app.application.uses_cases.session import SessionUseCase
 from app.application.uses_cases.status import DriverStatusCase, UserStatusCase, EventsTestingCase
 from app.application.uses_cases.status.socket import EventsSocket
 from app.application.uses_cases.status.socket.driver import DriverEventsSocket
@@ -41,13 +42,15 @@ DependEventsSocketCase = Annotated[EventsSocket, Depends(get_events_socket)]
 DependDriverEventsSocketCase = Annotated[DriverEventsSocket, Depends(get_driver_events_socket)]
 DependPassengerEventsSocketCase = Annotated[PassengerEventsSocket, Depends(get_passenger_events_socket)]
 
+DependSessionCase = Annotated[SessionUseCase, Depends(get_session_use_case)]
+
 DependSocketConnectionManager = Annotated[SocketConnectionManager, Depends(get_socket_connection_manager)]
 DependSEEConnectionManager = Annotated[SSEConnectionManager, Depends(get_see_connection_manager)]
 
 OAuth2Scheme = Annotated[Token, Depends(oauth2_scheme)]
 OAuth2Form = Annotated[OAuth2PasswordRequestForm, Depends()]
 UserCredentials = Annotated[Tuple[bool, Optional[User]], Depends(user_credentials)]
-AuthUserCredentials = Annotated[User, Depends(get_user_is_authenticated)]
+AuthUserCodeCredentials = Annotated[User, Depends(get_user_is_authenticated)]
 AdminAuthenticated = Annotated[bool, Depends(validate_admin_role)]
 ManagerAuthenticated = Annotated[bool, Depends(validate_permission_role)]
 

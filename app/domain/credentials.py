@@ -38,15 +38,6 @@ async def get_user_is_authenticated(token: Annotated[Token, Depends(oauth2_schem
     raise HTTPException(status_code=401, detail="Not authenticated.")
 
 
-async def get_username_is_authenticated(token: Annotated[Token, Depends(oauth2_scheme)]) -> User | None:
-    result, user = await user_credentials(token)
-
-    if result:
-        return user
-
-    raise HTTPException(status_code=401, detail="Not authenticated.")
-
-
 async def validate_admin_role(token: Annotated[Token, Depends(oauth2_scheme)]) -> bool | None:
     result, user = await user_credentials(token)
 
