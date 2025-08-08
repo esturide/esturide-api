@@ -28,7 +28,7 @@ async def create_user(user: UserRequest, user_case: DependUserUseCase):
 
 @user.get('/{code}')
 async def get_user(code: UserCode, user_case: DependUserUseCase) -> UserResponse:
-    return await user_case.get_by_uuid(code)
+    return await user_case.get(code)
 
 
 @user.put('/{code}', response_model=StatusMessage)
