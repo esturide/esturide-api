@@ -88,5 +88,10 @@ def get_see_connection_manager() -> SSEConnectionManager:
 
 
 @lru_cache
+def get_session_use_case() -> SessionUseCase:
+    return SessionUseCase()
+
+
+@lru_cache
 def get_locator_agent() -> Nominatim:
     return Nominatim(user_agent="esturide")

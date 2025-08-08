@@ -14,10 +14,7 @@ class UserUseCase:
         self.__auth_service = AuthenticationCredentialsService()
 
     async def get(self, code: int):
-        status, user = await self.__user_service.get_by_code(code)
-
-        if not status:
-            raise HTTPException(status_code=404, detail="User not found")
+        user = await self.__user_service.get_by_code(code)
 
         return UserResponse(
             code=user.code,

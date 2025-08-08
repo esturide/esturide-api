@@ -3,7 +3,8 @@ from typing import List, Tuple
 from app.domain.models import Schedule, User, Ride
 from app.domain.types import LocationData
 from app.presentation.schemes import TrackingRecord
-from app.presentation.schemes.travels import TravelScheduleResponse, DriverUser, PassengerUser
+from app.presentation.schemes.location import DataAddressLocation
+from app.presentation.schemes.travels import TravelScheduleResponse, DriverUser
 
 
 def create_travel_scheme(schedule: Schedule, driver: User, origin: LocationData,
@@ -42,12 +43,14 @@ def create_travel_scheme(schedule: Schedule, driver: User, origin: LocationData,
             paternalSurname=driver.paternal_surname,
         ),
 
-        origin=TrackingRecord(
+        origin=DataAddressLocation(
+            address="",
             latitude=origin.latitude,
             longitude=origin.longitude,
         ),
 
-        destination=TrackingRecord(
+        destination=DataAddressLocation(
+            address="",
             latitude=destination.latitude,
             longitude=destination.longitude,
         ),

@@ -22,9 +22,9 @@ class StatusMessage(BaseModel):
 class UserRequest(BaseModel):
     code: UserCode
 
-    firstname: str
-    maternal_surname: str
-    paternal_surname: str
+    firstname: str = Field(..., title="firstName", alias="firstName")
+    maternal_surname: str = Field(..., title="maternalSurname", alias="maternalSurname")
+    paternal_surname: str = Field(..., title="paternalSurname", alias="paternalSurname")
     curp: str = Field(..., title="CURP", alias='curp')
     birth_date: datetime.date = Field(..., title="Birth date", description="The user's birth date")
 

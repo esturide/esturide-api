@@ -4,12 +4,12 @@ from fastapi import APIRouter
 
 from app.core.dependencies import NominatimDepend
 from app.core.exception import NotFoundException
-from app.presentation.schemes.AddressLocation import FoundLocation
+from app.presentation.schemes.location import DataAddressLocation
 
 location = APIRouter(prefix="/location", tags=["Location"])
 
 
-@location.get("/search", response_model=List[FoundLocation])
+@location.get("/search", response_model=List[DataAddressLocation])
 async def search_location(query: str, geolocator: NominatimDepend):
     def search_direction(direction: str):
         return geolocator.geocode(direction, exactly_one=False)
