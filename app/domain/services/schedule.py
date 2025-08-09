@@ -40,12 +40,10 @@ class ScheduleService:
             schedule.max_passengers,
             schedule.price,
             LocationData(
-                start.location,
                 start.latitude,
                 start.longitude,
             ),
             LocationData(
-                end.location,
                 end.latitude,
                 end.longitude,
             ),

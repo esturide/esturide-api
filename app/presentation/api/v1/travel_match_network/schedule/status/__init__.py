@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from sse_starlette.sse import EventSourceResponse
 from starlette.websockets import WebSocket
 
-from app.core.dependencies import DependDriverEventsCase, DependPassengerEventsCase, AuthUserCredentials, \
+from app.core.dependencies import DependDriverEventsCase, DependPassengerEventsCase, AuthUserCodeCredentials, \
     DependEventsTestingCase
 from app.core.types import UUID
 from app.domain.credentials import get_user_credentials_header
@@ -27,7 +27,6 @@ async def ws_echo_auth(websocket: WebSocket, events: DependEventsTestingCase):
         status, user = await get_user_credentials_header({"access_token": f"{token}"})
 
         if not status:
-            # raise HTTPException(status_code=401, detail="Token no found")
             await websocket.close(code=1008, reason="Token not found or invalid.")
             return
 
@@ -65,10 +64,10 @@ async def notify_user_status(uuid: UUID, websocket: WebSocket, events: DependPas
 
 
 @status.get("/events/driver/{uuid}", response_model=ListRides)
-async def events_notify_driver(uuid: UUID, events: DependDriverEventsCase, auth_user: AuthUserCredentials):
+async def events_notify_driver(uuid: UUID, events: DependDriverEventsCase, auth_user: AuthUserCodeCredentials):
     return EventSourceResponse(await events.notify_sse(uuid, auth_user))
 
 
 @status.get("/events/passenger/{uuid}", response_model=ScheduleStatus)
-async def events_notify_passenger(uuid: UUID, events: DependPassengerEventsCase, auth_user: AuthUserCredentials):
+async def events_notify_passenger(uuid: UUID, events: DependPassengerEventsCase, auth_user: AuthUserCodeCredentials):
     return EventSourceResponse(await events.notify_sse(uuid, auth_user))

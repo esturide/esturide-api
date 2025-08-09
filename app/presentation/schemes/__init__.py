@@ -4,7 +4,7 @@ from typing import List, TypeVar, Generic
 from pydantic import BaseModel, Field, field_validator, SecretStr, EmailStr
 
 from app.core.enum import RoleUser
-from app.core.types import UUID, Status, UserCode
+from app.core.types import UUID, Status
 
 T = TypeVar('T')
 
@@ -20,13 +20,13 @@ class StatusMessage(BaseModel):
 
 
 class UserRequest(BaseModel):
-    code: UserCode
+    code: int
 
-    firstname: str
-    maternal_surname: str
-    paternal_surname: str
+    firstname: str = Field(..., title="firstName", alias="firstName")
+    maternal_surname: str = Field(..., title="maternalSurname", alias="maternalSurname")
+    paternal_surname: str = Field(..., title="paternalSurname", alias="paternalSurname")
     curp: str = Field(..., title="CURP", alias='curp')
-    birth_date: datetime.date = Field(..., title="Birth date", description="The user's birth date")
+    birth_date: datetime.date = Field(..., title="Birth date", alias="birthDate", description="The user's birth date")
 
     email: EmailStr = Field(..., title="Email", alias='email')
     password: SecretStr
@@ -43,7 +43,7 @@ class UserRequest(BaseModel):
 
 
 class UserResponse(BaseModel):
-    code: UserCode
+    code: int
 
     firstname: str
     maternal_surname: str = Field(..., title="Maternal surname", alias='maternalSurname')
@@ -72,7 +72,6 @@ class AutomobileProfile(BaseModel):
 
 
 class TrackingRecord(BaseModel):
-    location: float = 0
     latitude: float = 0
     longitude: float = 0
 

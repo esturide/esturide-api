@@ -2,7 +2,7 @@ from typing import List
 
 from fastapi import APIRouter, HTTPException
 
-from app.core.dependencies import DependScheduleCase, AuthUserCredentials
+from app.core.dependencies import DependScheduleCase, AuthUserCodeCredentials
 from app.core.types import UUID, Status
 from app.presentation.schemes import StatusMessage
 from app.presentation.schemes.travels import ScheduleTravelRequest, TravelScheduleResponse, RideStatusResponse, \
@@ -12,18 +12,18 @@ schedule_travel = APIRouter(prefix="/schedule", tags=["Schedule travels"])
 
 
 @schedule_travel.get("/search", response_model=List[TravelScheduleResponse])
-async def search_travel(schedule_case: DependScheduleCase, auth_user: AuthUserCredentials, limit: int = 16):
+async def search_travel(schedule_case: DependScheduleCase, auth_user: AuthUserCodeCredentials, limit: int = 16):
     return await schedule_case.get_all_travels(limit)
 
 
 @schedule_travel.get("/current", response_model=TravelScheduleResponse)
-async def get_current_schedule(schedule_case: DependScheduleCase, auth_user: AuthUserCredentials):
+async def get_current_schedule(schedule_case: DependScheduleCase, auth_user: AuthUserCodeCredentials):
     return await schedule_case.get_current_travel(auth_user.code)
 
 
 @schedule_travel.post("/", response_model=StatusMessage)
 async def schedule_new_travel(schedule: ScheduleTravelRequest, schedule_case: DependScheduleCase,
-                              auth_user: AuthUserCredentials):
+                              auth_user: AuthUserCodeCredentials):
     status = await schedule_case.create(schedule, auth_user.code)
 
     if status:
@@ -39,7 +39,7 @@ async def schedule_new_travel(schedule: ScheduleTravelRequest, schedule_case: De
 
 
 @schedule_travel.put("/{uuid}", response_model=StatusMessage)
-async def edit_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: AuthUserCredentials):
+async def edit_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: AuthUserCodeCredentials):
 
     return {
         "status": Status.success,
@@ -48,12 +48,12 @@ async def edit_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: 
 
 
 @schedule_travel.get("/{uuid}", response_model=TravelScheduleResponse)
-async def get_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: AuthUserCredentials):
+async def get_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: AuthUserCodeCredentials):
     return await schedule_case.get(uuid, auth_user)
 
 
 @schedule_travel.patch("/start/{uuid}", response_model=StatusMessage)
-async def start_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: AuthUserCredentials):
+async def start_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: AuthUserCodeCredentials):
     status = await schedule_case.start(uuid, auth_user.code)
 
     if status:
@@ -69,7 +69,7 @@ async def start_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user:
 
 
 @schedule_travel.patch("/finished/{uuid}", response_model=StatusMessage)
-async def finished_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: AuthUserCredentials):
+async def finished_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: AuthUserCodeCredentials):
     status = await schedule_case.finished(uuid, auth_user.code)
 
     if status:
@@ -85,7 +85,7 @@ async def finished_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_us
 
 
 @schedule_travel.patch("/cancel/{uuid}", response_model=StatusMessage)
-async def cancel_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: AuthUserCredentials):
+async def cancel_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user: AuthUserCodeCredentials):
     status = await schedule_case.cancel(uuid, auth_user.code)
 
     if status:
@@ -101,12 +101,12 @@ async def cancel_travel(uuid: UUID, schedule_case: DependScheduleCase, auth_user
 
 
 @schedule_travel.get("/passengers/{uuid}")
-async def get_passengers_status(uuid: UUID, schedule_case: DependScheduleCase, auth_user: AuthUserCredentials) -> List[RideStatusResponse]:
+async def get_passengers_status(uuid: UUID, schedule_case: DependScheduleCase, auth_user: AuthUserCodeCredentials) -> List[RideStatusResponse]:
     return await schedule_case.get_all_current_passengers(uuid)
 
 
 @schedule_travel.patch("/passengers/{uuid}", response_model=StatusMessage)
-async def set_passengers_status(uuid: UUID, ride: RideStatusRequest, schedule_case: DependScheduleCase, auth_user: AuthUserCredentials):
+async def set_passengers_status(uuid: UUID, ride: RideStatusRequest, schedule_case: DependScheduleCase, auth_user: AuthUserCodeCredentials):
     status = await schedule_case.valid_passenger(uuid, ride)
 
     if status:

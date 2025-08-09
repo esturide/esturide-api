@@ -11,7 +11,7 @@ class UserService:
     def __init__(self):
         self.__user_repository = UserRepository()
 
-    async def get_by_code(self, code: UserCode) -> User:
+    async def get_by_code(self, code: int) -> User:
         status, user = await self.__user_repository.get_user_by_code(code)
 
         if not status:
@@ -41,7 +41,7 @@ class UserService:
 
         return status
 
-    async def update(self, code: UserCode, user_req: ProfileUpdateRequest):
+    async def update(self, code: int, user_req: ProfileUpdateRequest):
         status, user = await self.__user_repository.update(
             code,
             user_req.firstname,
@@ -64,5 +64,5 @@ class UserService:
         if not status:
             raise FailureSaveDataException()
 
-    async def delete(self, code: UserCode):
+    async def delete(self, code: int):
         return await self.__user_repository.delete(code)

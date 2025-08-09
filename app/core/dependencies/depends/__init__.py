@@ -1,5 +1,7 @@
 from functools import lru_cache
 
+from geopy import Nominatim
+
 from app.application.uses_cases.auth import AuthUseCase
 from app.application.uses_cases.automobile import AutomobileUseCase
 from app.application.uses_cases.driver import DriverUseCase
@@ -88,3 +90,8 @@ def get_see_connection_manager() -> SSEConnectionManager:
 @lru_cache
 def get_session_use_case() -> SessionUseCase:
     return SessionUseCase()
+
+
+@lru_cache
+def get_locator_agent() -> Nominatim:
+    return Nominatim(user_agent="esturide")
