@@ -1,3 +1,5 @@
+import functools
+
 from fastapi import FastAPI
 
 from app.core.types import Status
@@ -8,13 +10,23 @@ from app.presentation.api.v1.travel_match_network.schedule.status.http import st
 from app.presentation.api.v1.travel_match_network.schedule import schedule_travel
 from app.presentation.schemes import StatusMessage
 
-travels_match_network_v1 = FastAPI(title="Travel Match Network (μ) API")
-travels_match_network_v1.include_router(ride)
-travels_match_network_v1.include_router(schedule_travel)
-travels_match_network_v1.include_router(status_http)
-travels_match_network_v1.include_router(auth_travel)
-travels_match_network_v1.include_router(location)
 
+@functools.lru_cache()
+def get_travels_match_network_v1() -> FastAPI:
+    travels_match_network = FastAPI(
+        title="Travel Match Network (μ) API"
+    )
+
+    travels_match_network.include_router(ride)
+    travels_match_network.include_router(schedule_travel)
+    travels_match_network.include_router(status_http)
+    travels_match_network.include_router(auth_travel)
+    travels_match_network.include_router(location)
+
+    return travels_match_network
+
+
+travels_match_network_v1 = get_travels_match_network_v1()
 
 @travels_match_network_v1.get('/', response_model=StatusMessage)
 async def index():

@@ -26,7 +26,7 @@ class UserRequest(BaseModel):
     maternal_surname: str = Field(..., title="maternalSurname", alias="maternalSurname")
     paternal_surname: str = Field(..., title="paternalSurname", alias="paternalSurname")
     curp: str = Field(..., title="CURP", alias='curp')
-    birth_date: datetime.date = Field(..., title="Birth date", description="The user's birth date")
+    birth_date: datetime.date = Field(..., title="Birth date", alias="birthDate", description="The user's birth date")
 
     email: EmailStr = Field(..., title="Email", alias='email')
     password: SecretStr

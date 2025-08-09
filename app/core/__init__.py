@@ -1,4 +1,5 @@
 import contextlib
+import functools
 
 from fastapi import FastAPI
 from starlette.middleware.cors import CORSMiddleware
@@ -11,40 +12,44 @@ from app.core.enum import Status
 
 DEFAULT_APP_NAME = "Esturide (μ) API"
 
+@functools.lru_cache()
+def get_root_app() -> FastAPI:
+    @contextlib.asynccontextmanager
+    async def lifespan(_app: FastAPI):
+        db = get_db()
+        redis = get_cache()
 
-@contextlib.asynccontextmanager
-async def lifespan(_app: FastAPI):
-    db = get_db()
-    redis = get_cache()
+        yield
 
-    yield
-
-    await redis.quit()
+        await redis.quit()
 
 
-app = FastAPI(
-    title=DEFAULT_APP_NAME,
-    lifespan=lifespan,
-)
+    app = FastAPI(
+        title=DEFAULT_APP_NAME,
+        lifespan=lifespan,
+    )
 
-origins = [
-    "localhost",
-    "localhost:8000",
-    "localhost:80",
-    "127.0.0.1:8000",
-    "0.0.0.0:8000",
-]
+    origins = [
+        "localhost",
+        "localhost:8000",
+        "localhost:80",
+        "127.0.0.1:8000",
+        "0.0.0.0:8000",
+    ]
 
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=origins,
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
-)
+    app.add_middleware(
+        CORSMiddleware,
+        allow_origins=origins,
+        allow_credentials=True,
+        allow_methods=["*"],
+        allow_headers=["*"],
+    )
 
-app.add_middleware(
-    GZipMiddleware,
-    minimum_size=1000,
-    compresslevel=5
-)
+    app.add_middleware(
+        GZipMiddleware,
+        minimum_size=1000,
+        compresslevel=5
+    )
+
+    return app
+
