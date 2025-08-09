@@ -4,7 +4,7 @@ from typing import List, TypeVar, Generic
 from pydantic import BaseModel, Field, field_validator, SecretStr, EmailStr
 
 from app.core.enum import RoleUser
-from app.core.types import UUID, Status, UserCode
+from app.core.types import UUID, Status
 
 T = TypeVar('T')
 
@@ -20,7 +20,7 @@ class StatusMessage(BaseModel):
 
 
 class UserRequest(BaseModel):
-    code: UserCode
+    code: int
 
     firstname: str = Field(..., title="firstName", alias="firstName")
     maternal_surname: str = Field(..., title="maternalSurname", alias="maternalSurname")
@@ -43,7 +43,7 @@ class UserRequest(BaseModel):
 
 
 class UserResponse(BaseModel):
-    code: UserCode
+    code: int
 
     firstname: str
     maternal_surname: str = Field(..., title="Maternal surname", alias='maternalSurname')
