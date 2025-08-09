@@ -5,7 +5,7 @@ from typing import Literal
 from app.core.encrypt import salty_password
 from app.core.exception import NotFoundException
 from app.core.oauth2 import get_code_from_token
-from app.core.types import Token, UserCode
+from app.core.types import Token
 from app.domain.models import User
 
 
@@ -17,7 +17,7 @@ class UserRepository:
         return user is not None, user
 
     @staticmethod
-    async def get_user_by_code(code: UserCode):
+    async def get_user_by_code(code: int):
         return await UserRepository.get(code=code)
 
     @staticmethod
@@ -37,14 +37,14 @@ class UserRepository:
         return result
 
     @staticmethod
-    async def user_exist_by_username(code: UserCode):
+    async def user_exist_by_username(code: int):
         result, user = await UserRepository.get_user_by_code(code)
 
         return result
 
     @staticmethod
     async def create(
-            code: UserCode,
+            code: int,
             firstname: str,
             maternal_surname: str,
             paternal_surname: str,
@@ -78,7 +78,7 @@ class UserRepository:
 
     @staticmethod
     async def update(
-            code: UserCode,
+            code: int,
             firstname: str,
             maternal_surname: str,
             paternal_surname: str,
@@ -114,7 +114,7 @@ class UserRepository:
         return True
 
     @staticmethod
-    async def delete(code: UserCode) -> bool:
+    async def delete(code: int) -> bool:
         status, user = await UserRepository.get(code=code)
 
         if not status:
@@ -128,7 +128,7 @@ class UserRepository:
 class UserRepositoryContext:
     @contextlib.asynccontextmanager
     async def create(self,
-                     code: UserCode,
+                     code: int,
                      firstname: str,
                      maternal_surname: str,
                      paternal_surname: str,
